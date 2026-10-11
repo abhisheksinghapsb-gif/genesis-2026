@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="480" viewBox="0 0 480 480">
+  <defs>
+    <!-- Skull Icon -->
+    <g id="skull" fill="white" opacity="0.12">
+      <!-- Cranium -->
+      <path d="M 60 15 C 28 15 15 42 15 72 C 15 95 28 112 40 120 L 40 135 C 40 142 46 148 54 148 L 66 148 C 74 148 80 142 80 135 L 80 120 C 92 112 105 95 105 72 C 105 42 92 15 60 15 Z" />
+      <!-- Left Eye -->
+      <ellipse cx="42" cy="74" rx="13" ry="15" fill="#003BC8" opacity="0.9" />
+      <!-- Right Eye -->
+      <ellipse cx="78" cy="74" rx="13" ry="15" fill="#003BC8" opacity="0.9" />
+      <!-- Nose -->
+      <polygon points="60,94 54,104 66,104" fill="#003BC8" opacity="0.9" />
+      <!-- Teeth / jaw lines -->
+      <line x1="52" y1="126" x2="52" y2="144" stroke="#003BC8" stroke-width="4" stroke-linecap="round" opacity="0.9" />
+      <line x1="68" y1="126" x2="68" y2="144" stroke="#003BC8" stroke-width="4" stroke-linecap="round" opacity="0.9" />
+      <!-- Angry brows -->
+      <line x1="32" y1="56" x2="50" y2="64" stroke="#003BC8" stroke-width="5" stroke-linecap="round" opacity="0.9" />
+      <line x1="88" y1="56" x2="70" y2="64" stroke="#003BC8" stroke-width="5" stroke-linecap="round" opacity="0.9" />
+    </g>
+
+    <!-- Star Icon -->
+    <g id="star" fill="white" opacity="0.12">
+      <path d="M 60 12 C 62 12 66 28 72 38 C 78 48 95 50 102 54 C 110 58 100 72 94 82 C 88 92 92 110 86 116 C 80 122 66 110 58 106 C 50 102 36 116 30 112 C 24 108 30 90 26 80 C 22 70 10 58 16 52 C 22 46 40 46 46 36 C 52 26 58 12 60 12 Z" />
+    </g>
+
+    <!-- Revolver Icon -->
+    <g id="revolver" fill="white" opacity="0.12">
+      <!-- Barrel -->
+      <rect x="20" y="42" width="75" height="24" rx="6" />
+      <!-- Front Sight -->
+      <path d="M 85 42 L 95 42 L 92 32 Z" />
+      <!-- Cylinder -->
+      <rect x="25" y="36" width="36" height="34" rx="8" />
+      <!-- Frame & Hammer -->
+      <path d="M 25 40 C 15 40 10 32 6 30 C 8 38 12 45 16 48 L 18 64 L 6 92 C 2 102 12 118 26 114 C 36 110 42 98 42 86 L 38 68 Z" />
+      <!-- Trigger Guard -->
+      <path d="M 40 68 C 50 68 54 84 42 88" stroke="white" stroke-width="6" fill="none" stroke-linecap="round" />
+    </g>
+
+    <!-- Potion Flask Icon -->
+    <g id="potion" fill="white" opacity="0.12">
+      <!-- Neck & Lip -->
+      <rect x="42" y="16" width="36" height="12" rx="4" />
+      <rect x="48" y="26" width="24" height="22" />
+      <!-- Bulb body -->
+      <path d="M 48 46 C 26 58 18 82 18 102 C 18 124 34 138 60 138 C 86 138 102 124 102 102 C 102 82 94 58 72 46 Z" />
+      <!-- Jug handle -->
+      <path d="M 80 48 C 108 48 114 80 94 92" stroke="white" stroke-width="12" fill="none" stroke-linecap="round" />
+    </g>
+  </defs>
+
+  <!-- 480x480 Tile grid with staggered positions and rotations -->
+  <!-- Row 1 -->
+  <use href="#skull" x="30" y="20" transform="rotate(-15, 90, 80)" />
+  <use href="#star" x="270" y="10" transform="rotate(20, 330, 70)" />
+  
+  <!-- Row 2 -->
+  <use href="#potion" x="150" y="130" transform="rotate(12, 210, 190)" />
+  <use href="#revolver" x="370" y="140" transform="rotate(-22, 420, 200)" />
+
+  <!-- Row 3 -->
+  <use href="#star" x="20" y="260" transform="rotate(-18, 80, 320)" />
+  <use href="#skull" x="260" y="250" transform="rotate(15, 320, 310)" />
+
+  <!-- Row 4 -->
+  <use href="#revolver" x="140" y="370" transform="rotate(18, 190, 430)" />
+  <use href="#potion" x="380" y="360" transform="rotate(-15, 440, 420)" />
+</svg>

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="480" viewBox="0 0 480 480">
+  <defs>
+    <!-- Skull Planet with Ring -->
+    <g id="skull-planet" fill="white" opacity="0.10">
+      <!-- Ring behind -->
+      <path d="M -15 50 C -15 25 115 10 135 25 C 145 32 140 42 120 52 L 105 45 C 120 38 120 32 110 28 C 95 20 -5 32 -5 45 C -5 50 10 56 30 60 L 22 68 C -5 62 -15 56 -15 50 Z" />
+      <!-- Sphere body -->
+      <circle cx="60" cy="50" r="42" />
+      <!-- Left Eye Cutout -->
+      <ellipse cx="46" cy="46" rx="9" ry="11" fill="#351694" opacity="0.9" />
+      <!-- Right Eye Cutout -->
+      <ellipse cx="74" cy="46" rx="9" ry="11" fill="#351694" opacity="0.9" />
+      <!-- Nose Hole -->
+      <polygon points="60,60 55,68 65,68" fill="#351694" opacity="0.9" />
+      <!-- Brow lines -->
+      <line x1="38" y1="34" x2="52" y2="40" stroke="#351694" stroke-width="4" stroke-linecap="round" opacity="0.9" />
+      <line x1="82" y1="34" x2="68" y2="40" stroke="#351694" stroke-width="4" stroke-linecap="round" opacity="0.9" />
+      <!-- Ring in front -->
+      <path d="M 15 58 C 25 72 95 72 105 58 C 125 45 145 55 135 68 C 115 85 -15 85 -5 68 C 0 62 8 58 15 58 Z" />
+    </g>
+
+    <!-- 4-point Sparkle -->
+    <g id="sparkle" fill="white" opacity="0.10">
+      <path d="M 24 0 Q 24 24 48 24 Q 24 24 24 48 Q 24 24 0 24 Q 24 24 24 0 Z" />
+    </g>
+
+    <!-- 5-point Star -->
+    <g id="star-5" fill="white" opacity="0.10">
+      <path d="M 25 3 L 31 18 L 47 18 L 34 28 L 39 43 L 25 33 L 11 43 L 16 28 L 3 18 L 19 18 Z" />
+    </g>
+  </defs>
+
+  <!-- Staggered grid -->
+  <use href="#skull-planet" x="40" y="30" transform="rotate(-12, 100, 80)" />
+  <use href="#sparkle" x="320" y="50" transform="scale(1.2)" />
+  <use href="#star-5" x="220" y="160" transform="scale(1.1)" />
+
+  <use href="#sparkle" x="70" y="270" transform="scale(1.4)" />
+  <use href="#skull-planet" x="260" y="240" transform="rotate(18, 320, 290)" />
+  <use href="#star-5" x="420" y="380" transform="scale(1.2)" />
+  <use href="#sparkle" x="190" y="410" transform="scale(1.1)" />
+</svg>

@@ -1,0 +1,21 @@
+{
+  "name": "GENESIS 2026 — 5th Edition | GDXR Club",
+  "short_name": "GENESIS 2026",
+  "description": "Official website for GENESIS 2026 (Fifth Edition) organised by GDXR Club, AIT Pune",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#01072B",
+  "theme_color": "#291588",
+  "icons": [
+    {
+      "src": "/art/badge.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/art/badge.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

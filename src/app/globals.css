@@ -1,0 +1,328 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Blue screens: Timeline, Prize Pool, Memories, Sponsors, FAQs */
+  --blue-center: #0CA8FD;
+  --blue-edge: #003BC8;
+  --panel-header: #248EF6;
+  --panel-header-bevel-light: #187CDC;
+  --panel-header-bevel-dark: #0742AB;
+  --panel-body: #105DE5;
+  --panel-inset: #0B4BBE;
+
+  /* Chrome */
+  --ink: #000000;
+  --banner-orange: #EE7123;
+  --slate: #353C52;
+  --slate-lip: #272C3D;
+  --cta-yellow: #EFC609;
+  --cta-yellow-hi: #FBEF44;
+  --cta-yellow-lip: #DDAA12;
+  --node-gold: #FDD944;
+  --node-ring: #F07527;
+  --info-blue: #2373FF;
+  --close-red: #E6311F;
+  --close-red-lip: #CD0034;
+  --placeholder-grey: #D9D9D9;
+
+  /* About */
+  --about-bg: #01072B;
+  --cream: #F7EAD8;
+  --title-red: #D80A0B;
+  --wordmark-grey: #D9D9D9;
+  --bronze: #774732;
+
+  /* Prize badges */
+  --gold-face: #F59524;
+  --gold-top: #FFF23A;
+  --orange-face: #D7590B;
+  --orange-top: #F59524;
+  --silver-face: #838BD0;
+  --silver-top: #C8DEFF;
+  --plaque: #660138;
+
+  /* Landing */
+  --sky-top: #291588;
+  --sky-mid: #351694;
+  --sky-horizon: #9146EA;
+  --moon: #97DDFD;
+  --moon-crater: #83C8FC;
+  --moon-glow: #ACE7FD;
+  --platform-edge: #2541E7;
+  --planet-blue: #282FBE;
+  --badge-gold: #FFBF21;
+
+  /* Timing and animation easing */
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Base Body Setup */
+body {
+  background-color: var(--about-bg);
+  color: #ffffff;
+  font-family: var(--font-body), system-ui, sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Outlined Display Text (Section 3.3) */
+.text-outline {
+  color: #ffffff;
+  -webkit-text-stroke: 6px #000000;
+  paint-order: stroke fill;
+  text-shadow: 0 4px 0 #000000;
+}
+
+.text-outline-sm {
+  color: #ffffff;
+  -webkit-text-stroke: 3.5px #000000;
+  paint-order: stroke fill;
+  text-shadow: 0 2px 0 #000000;
+}
+
+.text-outline-lg {
+  color: #ffffff;
+  -webkit-text-stroke: 8px #000000;
+  paint-order: stroke fill;
+  text-shadow: 0 6px 0 #000000;
+}
+
+.text-outline-xl {
+  color: var(--wordmark-grey);
+  -webkit-text-stroke: 10px #000000;
+  paint-order: stroke fill;
+  text-shadow: 0 12px 0 #000000;
+}
+
+/* Background Patterns */
+.bg-blue-screen {
+  background-color: var(--blue-edge);
+  background-image: 
+    url('/art/pattern-blue.svg'),
+    radial-gradient(circle at 50% 50%, var(--blue-center) 0%, var(--blue-edge) 100%);
+  background-repeat: repeat, no-repeat;
+  background-size: 480px 480px, cover;
+  background-attachment: scroll, fixed;
+  position: relative;
+}
+
+.bg-pattern-tile {
+  background-image: url('/art/pattern-blue.svg');
+  background-repeat: repeat;
+  background-size: 480px 480px;
+}
+
+.bg-blue-screen.bg-pattern-tile {
+  background-image: 
+    url('/art/pattern-blue.svg'),
+    radial-gradient(circle at 50% 50%, var(--blue-center) 0%, var(--blue-edge) 100%);
+  background-repeat: repeat, no-repeat;
+  background-size: 480px 480px, cover;
+  background-attachment: scroll, fixed;
+}
+
+.bg-violet-tile {
+  background-image: url('/art/pattern-violet.svg');
+  background-repeat: repeat;
+  background-size: 480px 480px;
+}
+
+/* 3D Chunky Button (Section 3.3) */
+.btn-3d-yellow {
+  --face: var(--cta-yellow);
+  --hi: var(--cta-yellow-hi);
+  --lip: var(--cta-yellow-lip);
+  background-color: var(--face);
+  border: 1.5px solid #000000;
+  box-shadow: inset 0 4px 0 var(--hi), inset 0 -7px 0 var(--lip), 0 -14px 0 #000000;
+  transform: skewX(-8deg);
+  transition: transform 0.12s var(--ease-out), box-shadow 0.12s var(--ease-out);
+}
+
+.btn-3d-yellow:hover {
+  filter: brightness(1.05);
+  transform: skewX(-8deg) translateY(-2px);
+  box-shadow: inset 0 4px 0 var(--hi), inset 0 -7px 0 var(--lip), 0 -16px 0 #000000;
+}
+
+.btn-3d-yellow:active {
+  transform: skewX(-8deg) translateY(6px);
+  box-shadow: inset 0 4px 0 var(--hi), inset 0 -3px 0 var(--lip), 0 -8px 0 #000000;
+}
+
+.btn-3d-slate {
+  --face: var(--slate);
+  --lip: var(--slate-lip);
+  background-color: var(--face);
+  border: 1.5px solid #000000;
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.2), inset 0 -6px 0 var(--lip), 0 -12px 0 #000000;
+  transform: skewX(-8deg);
+  transition: transform 0.12s var(--ease-out), box-shadow 0.12s var(--ease-out);
+}
+
+.btn-3d-slate:hover {
+  filter: brightness(1.1);
+  transform: skewX(-8deg) translateY(-2px);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.2), inset 0 -6px 0 var(--lip), 0 -14px 0 #000000;
+}
+
+.btn-3d-slate:active {
+  transform: skewX(-8deg) translateY(6px);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.2), inset 0 -3px 0 var(--lip), 0 -6px 0 #000000;
+}
+
+.btn-3d-orange {
+  --face: var(--banner-orange);
+  --lip: #C6510D;
+  background-color: var(--face);
+  border: 1.5px solid #000000;
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.3), inset 0 -6px 0 var(--lip), 0 -12px 0 #000000;
+  transform: skewX(-8deg);
+  transition: transform 0.12s var(--ease-out), box-shadow 0.12s var(--ease-out);
+}
+
+.btn-3d-orange:hover {
+  --face: var(--cta-yellow);
+  --lip: var(--cta-yellow-lip);
+  filter: brightness(1.05);
+  transform: skewX(-8deg) translateY(-2px);
+  box-shadow: inset 0 4px 0 var(--cta-yellow-hi), inset 0 -7px 0 var(--lip), 0 -14px 0 #000000;
+}
+
+.btn-3d-orange:active {
+  transform: skewX(-8deg) translateY(5px);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.2), inset 0 -3px 0 var(--lip), 0 -6px 0 #000000;
+}
+
+/* Close Red Button */
+.btn-close-red {
+  background-color: var(--close-red);
+  border: 1.5px solid #000000;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35), inset 0 -4px 0 var(--close-red-lip), 0 3px 0 #000000;
+  transition: transform 0.1s var(--ease-out);
+}
+
+.btn-close-red:active {
+  transform: translateY(3px);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35), inset 0 -2px 0 var(--close-red-lip), 0 0 0 #000000;
+}
+
+/* Chamfered Cream Card (Section 3.3) */
+.chamfer-outer {
+  clip-path: polygon(
+    34px 0%,
+    calc(100% - 34px) 0%,
+    100% 34px,
+    100% calc(100% - 34px),
+    calc(100% - 34px) 100%,
+    34px 100%,
+    0% calc(100% - 34px),
+    0% 34px
+  );
+  background-color: #000000;
+  padding: 6px;
+}
+
+.chamfer-inner {
+  clip-path: polygon(
+    30px 0%,
+    calc(100% - 30px) 0%,
+    100% 30px,
+    100% calc(100% - 30px),
+    calc(100% - 30px) 100%,
+    30px 100%,
+    0% calc(100% - 30px),
+    0% 30px
+  );
+  background-color: var(--cream);
+  border-left: 1px solid #7B756C;
+}
+
+/* Custom Scrollbar for FAQs and Modals */
+.game-scrollbar::-webkit-scrollbar {
+  width: 12px;
+}
+
+.game-scrollbar::-webkit-scrollbar-track {
+  background: var(--panel-inset);
+  border-radius: 6px;
+}
+
+.game-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--panel-header);
+  border: 2px solid var(--panel-inset);
+  border-radius: 6px;
+}
+
+.game-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--panel-header-bevel-light);
+}
+
+/* Idle Loops & Keyframe Animations */
+@keyframes register-pulse {
+  0%, 100% {
+    transform: skewX(-8deg) scale(1);
+  }
+  50% {
+    transform: skewX(-8deg) scale(1.04);
+  }
+}
+
+.animate-register-pulse {
+  animation: register-pulse 4s ease-in-out infinite;
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float-gentle 6s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.animate-twinkle {
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-register-pulse,
+  .animate-float,
+  .animate-twinkle {
+    animation: none !important;
+  }
+}
+
+/* Low-end device mode */
+[data-motion="lite"] .animate-register-pulse,
+[data-motion="lite"] .animate-float,
+[data-motion="lite"] .animate-twinkle {
+  animation: none !important;
+}
