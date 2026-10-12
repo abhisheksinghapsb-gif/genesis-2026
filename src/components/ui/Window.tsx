@@ -36,7 +36,7 @@ export const Window: React.FC<WindowProps> = ({
 
   return (
     <div
-      className={`rounded-lg overflow-hidden shadow-[0_12px_32px_rgba(0,0,0,0.45)] transition-all duration-300 ${className}`}
+      className={`cq-window rounded-lg overflow-hidden shadow-[0_12px_32px_rgba(0,0,0,0.45)] transition-all duration-300 ${className}`}
     >
       {/* Window Header */}
       <div

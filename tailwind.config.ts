@@ -61,6 +61,10 @@ const config: Config = {
         display: ['var(--font-display)', 'cursive', 'sans-serif'],
         body: ['var(--font-body)', 'sans-serif'],
       },
+      screens: {
+        short: { raw: '(min-width: 900px) and (max-height: 760px)' },
+        'short-landscape': { raw: '(max-height: 500px)' },
+      },
     },
   },
   plugins: [],

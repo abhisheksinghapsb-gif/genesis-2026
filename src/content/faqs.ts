@@ -3,15 +3,15 @@ import type { FaqItem } from '@/lib/schema';
 export const faqs: FaqItem[] = [
   {
     q: 'Who can participate?',
-    a: 'TODO: College students and tech/gaming enthusiasts across India. Undergraduate and postgraduate students from any branch are welcome.',
+    a: 'TODO: Eligibility details will be announced soon by the organising team.',
   },
   {
     q: 'Is there a registration fee?',
-    a: 'TODO: Registration is completely free for all rounds of GENESIS 2026.',
+    a: 'TODO: Fee and registration policy will be announced soon.',
   },
   {
     q: 'What is the team size?',
-    a: 'TODO: Teams can have 2 to 4 members. Solo brawlers can also form teams during the orientation stage.',
+    a: 'TODO: Team size guidelines will be announced soon.',
   },
   {
     q: 'How do I register?',
@@ -27,18 +27,18 @@ export const faqs: FaqItem[] = [
   },
   {
     q: 'When and where will GENESIS 2026 take place?',
-    a: 'TODO: Dates and venue details will be announced shortly. The grand finale will be held at AIT Pune.',
+    a: 'TODO: Dates and venue schedule will be announced soon.',
   },
   {
     q: 'What should I bring on the day?',
-    a: 'TODO: Bring your college ID, laptops, chargers, game controllers, and test headsets if your project requires VR hardware.',
+    a: 'TODO: Required checklist and equipment guidelines will be announced soon.',
   },
   {
     q: 'Will participants get certificates?',
-    a: 'TODO: Yes, all qualified teams receive verified participation certificates from GDXR Club and sponsors.',
+    a: 'TODO: Certificate and recognition policies will be announced soon.',
   },
   {
     q: 'Who do I contact if I need help?',
-    a: 'TODO: Reach out to the GDXR Club organising team via our Discord server or email us at contact@gdxrclub.com.',
+    a: 'TODO: Support contacts and community channels will be announced soon.',
   },
 ];

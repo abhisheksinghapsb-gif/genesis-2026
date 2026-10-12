@@ -1,0 +1,16 @@
+{
+  "name": "GENESIS 2026 — 5th Edition",
+  "short_name": "GENESIS 2026",
+  "description": "GDXR Club Gaming & XR Hackathon at AIT Pune",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#01072B",
+  "theme_color": "#291588",
+  "icons": [
+    {
+      "src": "/art/badge.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}

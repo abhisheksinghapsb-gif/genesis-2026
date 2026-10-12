@@ -326,3 +326,107 @@ body {
 [data-motion="lite"] .animate-twinkle {
   animation: none !important;
 }
+
+/* Container Queries (Section 4.1) */
+.cq-window {
+  container-type: inline-size;
+}
+
+.cq-card {
+  container-type: inline-size;
+}
+
+/* Touch & Input Optimization (Section 4.5) */
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: none) {
+  /* Prevent sticky hover effects on touch screens */
+  .hover\:scale-105:hover,
+  .hover\:-translate-y-1:hover,
+  .hover\:-translate-y-2:hover {
+    transform: none !important;
+  }
+}
+
+/* Short viewports (Section 4.2: min-width: 900px and max-height: 760px) */
+@media (min-width: 900px) and (max-height: 760px) {
+  :root {
+    --u: min(1.2vh, 0.7vw);
+  }
+}
+
+/* Phase U3: Animation Upgrades (Section 5) */
+@keyframes moon-breathe {
+  0%, 100% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+.animate-moon-breathe {
+  animation: moon-breathe 8s ease-in-out infinite;
+}
+
+@keyframes telescope-scan {
+  0%, 100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+.animate-telescope {
+  animation: telescope-scan 10s ease-in-out infinite;
+}
+
+@keyframes shooting-star {
+  0% {
+    transform: translate(0, 0) scale(0);
+    opacity: 0;
+  }
+  15% {
+    transform: translate(60px, 60px) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(450px, 450px) scale(0.2);
+    opacity: 0;
+  }
+}
+
+.animate-shooting-star {
+  animation: shooting-star 2.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+@keyframes star-fall {
+  0% {
+    transform: translateY(-40px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(540deg);
+    opacity: 0;
+  }
+}
+
+/* Button Jelly Press */
+.btn-jelly:active {
+  animation: btn-jelly 180ms ease-out forwards;
+}
+
+@keyframes btn-jelly {
+  0% { transform: scale(1); }
+  35% { transform: scale(0.95); }
+  75% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+

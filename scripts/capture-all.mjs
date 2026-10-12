@@ -17,6 +17,7 @@ const routes = [
   { path: '/sponsors', name: 'sponsors' },
   { path: '/faqs', name: 'faqs' },
   { path: '/memories', name: 'memories' },
+  { path: '/privacy', name: 'privacy' },
 ];
 
 const port = process.env.PORT || 3000;
@@ -43,7 +44,15 @@ async function run() {
     await page.screenshot({ path: desktopFile, fullPage: false });
     console.log(`  ✓ Desktop: ${desktopFile}`);
 
-    // 2. Mobile: 390 x 844
+    // 2. Short Laptop Window: 1280 x 600
+    await page.setViewport({ width: 1280, height: 600, deviceScaleFactor: 1 });
+    await page.reload({ waitUntil: 'networkidle0', timeout: 30000 });
+    await new Promise((res) => setTimeout(res, 600));
+    const shortFile = path.join(outputDir, `${r.name}-short.png`);
+    await page.screenshot({ path: shortFile, fullPage: false });
+    console.log(`  ✓ Short laptop: ${shortFile}`);
+
+    // 3. Mobile: 390 x 844
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
     await page.reload({ waitUntil: 'networkidle0', timeout: 30000 });
     await new Promise((res) => setTimeout(res, 600));

@@ -4,6 +4,8 @@ import React from 'react';
 import Image from 'next/image';
 import { TopBar } from '../ui/TopBar';
 import { Footer } from '../layout/Footer';
+import { NavigationRail } from '../ui/NavigationRail';
+import { ScrollAffordance } from '../ui/ScrollAffordance';
 import { about } from '@/content/about';
 
 const aboutTransforms = [
@@ -26,21 +28,21 @@ const genesisTransforms = [
 
 export const AboutScreen: React.FC = () => {
   return (
-    <div className="relative min-h-[100dvh] bg-[#01072B] flex flex-col justify-between overflow-x-hidden select-none">
+    <div className="relative min-h-[100dvh] bg-[#01072B] flex flex-col justify-between overflow-x-clip select-none">
       {/* Pinned Top Bar with Back and Home tabs (no banner) */}
       <TopBar showBanner={false} />
 
       {/* Main Content Area */}
-      <main className="relative flex-1 w-full max-w-[1440px] mx-auto px-4 sm:px-8 md:px-12 pt-2 md:pt-4 pb-12 flex flex-col lg:flex-row items-center lg:items-start justify-between z-10">
+      <main className="relative flex-1 w-full max-w-[1440px] mx-auto px-4 sm:px-8 md:px-12 pt-[84px] sm:pt-[96px] pb-8 flex flex-col lg:flex-row items-center lg:items-start justify-between z-10">
         {/* Left Column: Stacked Title + Cream Card */}
         <div className="relative w-full lg:w-[680px] xl:w-[720px] flex flex-col z-20 mt-2 sm:mt-4">
           {/* Accessible Hidden H1 */}
           <h1 className="sr-only">{about.title}</h1>
 
           {/* Outlined Stacked Bouncy Title: "ABOUT" over "GENESIS" */}
-          <div className="relative z-30 mb-[-36px] sm:mb-[-44px] md:mb-[-52px] ml-4 sm:ml-8 pointer-events-none">
+          <div className="relative z-30 mb-[-36px] sm:mb-[-44px] md:mb-[-52px] short:mb-[-32px] ml-4 sm:ml-8 pointer-events-none">
             {/* "ABOUT" in --title-red (#D80A0B) */}
-            <div className="flex items-center text-[52px] sm:text-[76px] md:text-[98px] font-display font-black leading-none">
+            <div className="flex items-center text-[52px] sm:text-[76px] md:text-[98px] short:text-[60px] font-display font-black leading-none">
               {'ABOUT'.split('').map((char, idx) => {
                 const trans = aboutTransforms[idx % aboutTransforms.length];
                 return (
@@ -62,7 +64,7 @@ export const AboutScreen: React.FC = () => {
             </div>
 
             {/* "GENESIS" in --wordmark-grey (#D9D9D9) */}
-            <div className="flex items-center text-[56px] sm:text-[84px] md:text-[108px] font-display font-black leading-none -mt-3 sm:-mt-5">
+            <div className="flex items-center text-[56px] sm:text-[84px] md:text-[108px] short:text-[68px] font-display font-black leading-none -mt-3 sm:-mt-5 short:-mt-2">
               {'GENESIS'.split('').map((char, idx) => {
                 const trans = genesisTransforms[idx % genesisTransforms.length];
                 return (
@@ -85,13 +87,13 @@ export const AboutScreen: React.FC = () => {
           </div>
 
           {/* Chamfered Cream Card (§3.3) */}
-          <div className="chamfer-outer w-full shadow-[0_16px_40px_rgba(0,0,0,0.8)] animate-popIn">
-            <div className="chamfer-inner p-6 sm:p-10 md:p-12 text-black font-body">
-              <div className="space-y-6 pt-10 sm:pt-14 md:pt-16">
+          <div className="cq-card chamfer-outer w-full shadow-[0_16px_40px_rgba(0,0,0,0.8)] animate-popIn">
+            <div className="chamfer-inner p-6 sm:p-10 md:p-12 short:p-6 text-black font-body">
+              <div className="space-y-6 short:space-y-3 pt-10 sm:pt-14 md:pt-16 short:pt-8">
                 {about.paragraphs.map((p, idx) => (
                   <p
                     key={idx}
-                    className="text-base sm:text-lg md:text-[22px] lg:text-[24px] font-extrabold leading-[1.3] text-black tracking-normal"
+                    className="text-base sm:text-lg md:text-[22px] lg:text-[24px] short:text-[16px] font-extrabold leading-[1.3] text-black tracking-normal"
                   >
                     {p}
                   </p>
@@ -102,7 +104,7 @@ export const AboutScreen: React.FC = () => {
         </div>
 
         {/* Right Column: Hero Art (Robot Astronomer + Holographic Planets) */}
-        <div className="relative w-full lg:w-[620px] xl:w-[680px] h-[340px] sm:h-[480px] md:h-[620px] lg:h-[780px] flex items-center justify-center lg:justify-end mt-8 lg:mt-0 z-10">
+        <div className="relative w-full lg:w-[620px] xl:w-[680px] h-[340px] sm:h-[480px] md:h-[620px] lg:h-[780px] short:h-[460px] short:w-[480px] flex items-center justify-center lg:justify-end mt-8 lg:mt-0 z-10">
           <div className="relative w-full h-full animate-float">
             <Image
               src="/art/about-hero.webp"
@@ -114,6 +116,12 @@ export const AboutScreen: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* Scroll Affordance (Section 4.4) */}
+      <ScrollAffordance />
+
+      {/* Navigation Sequence Rail (Section 3.6) */}
+      <NavigationRail />
 
       {/* Footer */}
       <Footer />

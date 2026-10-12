@@ -21,8 +21,12 @@ export const Footer: React.FC<FooterProps> = ({ onRegisterClick }) => {
 
   return (
     <footer className="w-full mt-auto py-8 px-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/10 bg-[#002787]/80 text-white/90 text-sm select-none z-20">
-      <div className="flex items-center gap-2 font-body font-medium">
+      <div className="flex items-center gap-3 font-body font-medium flex-wrap">
         <span>© {site.year} {site.club} · {site.college}</span>
+        <span className="text-white/40">·</span>
+        <Link href="/privacy" className="text-white/80 hover:text-cta-yellow underline underline-offset-2 text-xs">
+          Privacy Policy
+        </Link>
       </div>
 
       {/* Social links (if configured and not TODO) */}

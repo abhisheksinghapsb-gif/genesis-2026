@@ -90,3 +90,26 @@ Confirm that the response contains:
 ## 6. Uptime Monitoring
 
 Set up a free HTTP/HTTPS monitor (e.g., [Better Stack](https://betterstack.com/) or [UptimeRobot](https://uptimerobot.com/)) monitoring `https://genesis.aitpune.edu.in/` at 1-minute intervals to ensure 99.99% availability during registrations.
+
+---
+
+## 7. Cloudflare Functions & D1 Database Setup (Backend B1)
+
+When activating the optional backend (`NEXT_PUBLIC_BACKEND=on`):
+
+1. **Create D1 Database**:
+   ```bash
+   npx wrangler d1 create genesis-d1
+   ```
+2. **Apply Migrations**:
+   ```bash
+   npx wrangler d1 execute genesis-d1 --file=./migrations/0001_init.sql
+   ```
+3. **Bind D1 in Cloudflare Pages Dashboard**:
+   - Go to **Pages Project** > **Settings** > **Functions** > **D1 Database Bindings**.
+   - Set variable name to `DB` and select `genesis-d1`.
+4. **Environment Variables**:
+   - `NEXT_PUBLIC_BACKEND`: `on`
+   - `REGISTRATION_OPEN`: `false` (or `true` during registration rush)
+   - `TURNSTILE_SECRET_KEY`: `<secret-key>`
+

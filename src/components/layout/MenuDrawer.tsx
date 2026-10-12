@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button3D } from '../ui/Button3D';
 import { site } from '@/content/site';
 import { trackEvent } from '@/lib/analytics';
 
 interface MenuDrawerProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (navigating?: boolean) => void;
   onRegisterClick?: () => void;
 }
 
@@ -79,7 +80,59 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
   onClose,
   onRegisterClick,
 }) => {
+  const pathname = usePathname()?.replace(/\/$/, '') || '';
   const drawerRef = useRef<HTMLDivElement>(null);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [copiedShare, setCopiedShare] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('__sound_pref');
+      setSoundEnabled(saved === 'on');
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const toggleSound = () => {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    try {
+      localStorage.setItem('__sound_pref', next ? 'on' : 'off');
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleShare = async () => {
+    const shareUrl = window.location.origin;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'GENESIS 2026 — 5th Edition | GDXR Club AIT Pune',
+          text: 'Join the ultimate game dev & XR hackathon at AIT Pune!',
+          url: shareUrl,
+        });
+        return;
+      } catch {
+        // fall back to copy
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedShare(true);
+      setTimeout(() => setCopiedShare(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleWhatsAppInvite = () => {
+    const text = encodeURIComponent(
+      `Gear up for GENESIS 2026, the 5th edition of AIT Pune's flagship hackathon! Check it out: ${window.location.origin}`
+    );
+    window.open(`https://wa.me/?text=${text}`, '_blank', 'noopener,noreferrer');
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -112,8 +165,11 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Navigation Menu"
       className="fixed inset-0 z-50 flex justify-end bg-[#01072B]/60 select-none animate-fadeIn"
-      onClick={onClose}
+      onClick={() => onClose()}
     >
       {/* Sliding Window Drawer */}
       <div
@@ -126,7 +182,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
           <h2 className="font-display text-white text-2xl tracking-wider text-outline uppercase m-0">
             MENU
           </h2>
-          <Button3D variant="red-close" onClick={onClose} ariaLabel="Close menu" />
+          <Button3D variant="red-close" onClick={() => onClose()} ariaLabel="Close menu" />
         </div>
 
         {/* Bevel Strip */}
@@ -136,34 +192,85 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
         {/* Drawer Body */}
         <div className="flex-1 p-5 sm:p-6 overflow-y-auto game-scrollbar flex flex-col justify-between gap-6">
           {/* Navigation Links */}
-          <nav className="flex flex-col gap-3.5">
-            {navLinks.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                onClick={() => {
-                  trackEvent({ name: 'nav_click', destination: item.href });
-                  onClose();
-                }}
-                className="w-full h-[62px] btn-3d-orange flex items-center justify-start px-6 rounded cursor-pointer"
-              >
-                <span className="transform skew-x-[8deg] flex items-center gap-3 font-display text-white text-xl tracking-wider text-outline">
-                  <span className="text-white drop-shadow-[0_2px_0_#000]">
-                    {item.icon}
+          <nav className="flex flex-col gap-3">
+            {navLinks.map((item) => {
+              const isCurrent = pathname === item.href;
+
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  aria-current={isCurrent ? 'page' : undefined}
+                  onClick={(e) => {
+                    if (isCurrent) {
+                      e.preventDefault();
+                      onClose(false);
+                    } else {
+                      trackEvent({ name: 'nav_click', destination: item.href });
+                      if (typeof window !== 'undefined' && window.location.hash === '#menu') {
+                        window.history.replaceState(null, '', window.location.pathname);
+                      }
+                      onClose(true);
+                    }
+                  }}
+                  className={`w-full h-[58px] sm:h-[62px] ${
+                    isCurrent ? 'btn-3d-yellow' : 'btn-3d-orange'
+                  } flex items-center justify-between px-5 sm:px-6 rounded cursor-pointer transition-all`}
+                >
+                  <span className="transform skew-x-[8deg] flex items-center gap-3 font-display text-white text-lg sm:text-xl tracking-wider text-outline">
+                    <span className="text-white drop-shadow-[0_2px_0_#000]">
+                      {item.icon}
+                    </span>
+                    {item.name}
                   </span>
-                  {item.name}
-                </span>
-              </Link>
-            ))}
+
+                  {isCurrent && (
+                    <span className="transform skew-x-[8deg] px-2 py-0.5 rounded bg-black text-cta-yellow font-display text-[10px] tracking-wider border border-cta-yellow">
+                      YOU ARE HERE
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
+          {/* Quick Controls: Sound & Share (F-03, F-05) */}
+          <div className="flex items-center justify-between gap-3 p-3 bg-panel-inset rounded-lg border border-black/40">
+            <button
+              type="button"
+              onClick={toggleSound}
+              className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded bg-slate text-xs font-display tracking-wider hover:brightness-110 active:translate-y-0.5"
+            >
+              <span>{soundEnabled ? '🔊' : '🔇'}</span>
+              <span>{soundEnabled ? 'SFX ON' : 'SFX MUTED'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleShare}
+              className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded bg-slate text-xs font-display tracking-wider hover:brightness-110 active:translate-y-0.5"
+            >
+              <span>🔗</span>
+              <span>{copiedShare ? 'COPIED!' : 'SHARE'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleWhatsAppInvite}
+              title="Invite squad on WhatsApp"
+              className="py-2 px-3 rounded bg-[#25D366] text-black text-xs font-display tracking-wider hover:brightness-110 active:translate-y-0.5"
+            >
+              <span>💬</span>
+            </button>
+          </div>
+
           {/* Bottom Actions */}
-          <div className="flex flex-col gap-5 pt-4 border-t border-white/20">
+          <div className="flex flex-col gap-4 pt-3 border-t border-white/20">
             {/* REGISTER CTA Button */}
             <button
               type="button"
               onClick={handleRegister}
-              className="w-full h-[66px] btn-3d-yellow flex items-center justify-center rounded cursor-pointer"
+              className="w-full h-[62px] btn-3d-yellow flex items-center justify-center rounded cursor-pointer"
             >
               <span className="transform skew-x-[8deg] font-display text-white text-2xl tracking-wider text-outline">
                 REGISTER
@@ -171,7 +278,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
             </button>
 
             {/* Social Links */}
-            <div className="flex items-center justify-center gap-6 py-2 text-white/80">
+            <div className="flex items-center justify-center gap-6 py-1 text-white/80">
               {site.socials
                 .filter((s) => !s.url.includes('TODO'))
                 .map((s, idx) => (
@@ -180,7 +287,7 @@ export const MenuDrawer: React.FC<MenuDrawerProps> = ({
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="hover:text-cta-yellow transition-colors font-body text-sm font-semibold"
+                    className="hover:text-cta-yellow transition-colors font-body text-xs font-semibold"
                   >
                     {s.label}
                   </a>
