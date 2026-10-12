@@ -1,0 +1,20 @@
+{
+  "name": "GENESIS 2026",
+  "edition": "5th Edition",
+  "organizer": "GDXR Club",
+  "institution": "Army Institute of Technology (AIT) Pune",
+  "startDate": "2026-12-12T09:00:00+05:30",
+  "endDate": "2026-12-13T18:00:00+05:30",
+  "venue": "AIT Pune (demo)",
+  "registrationOpens": "2026-10-20T00:00:00+05:30",
+  "registrationCloses": "2026-12-05T23:59:59+05:30",
+  "teamSizeMin": 1,
+  "teamSizeMax": 4,
+  "registrationFee": 0,
+  "paymentsEnabled": false,
+  "tracks": ["Gaming", "VR"],
+  "demoSeedTeamsRegistered": 128,
+  "prizePoolTotal": 60000,
+  "contactEmail": "gdxr@aitpune.edu.in",
+  "isDemoMode": true
+}

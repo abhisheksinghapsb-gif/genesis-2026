@@ -9,13 +9,8 @@ fs.mkdirSync(outDir, { recursive: true });
 console.log('▶ Starting Next.js production server on port 3000...');
 const server = spawn('cmd.exe', ['/c', 'npm.cmd', 'run', 'start', '--', '-p', '3000'], {
   stdio: 'pipe',
-  detached: false,
 });
 
-server.stdout.on('data', (d) => process.stdout.write(d.toString()));
-server.stderr.on('data', (d) => process.stderr.write(d.toString()));
-
-// Wait for server to become ready
 const waitForServer = async (url, maxAttempts = 30) => {
   for (let i = 0; i < maxAttempts; i++) {
     try {
@@ -37,28 +32,29 @@ const run = async () => {
     process.exit(1);
   }
 
-  console.log('▶ Server is ready. Launching headless browser to capture multi-breakpoint screenshots...');
   const browser = await chromium.launch();
 
   const viewports = [
-    { name: 'phase1-390', width: 390, height: 844 },
-    { name: 'phase1-768', width: 768, height: 1024 },
-    { name: 'phase1-1440', width: 1440, height: 1024 },
+    { name: 'phase2-hero-390', scroll: 0, width: 390, height: 844 },
+    { name: 'phase2-hero-768', scroll: 0, width: 768, height: 1024 },
+    { name: 'phase2-hero-1440', scroll: 0, width: 1440, height: 1024 },
+    { name: 'phase2-about-390', scroll: 900, width: 390, height: 844 },
+    { name: 'phase2-about-768', scroll: 1050, width: 768, height: 1024 },
+    { name: 'phase2-about-1440', scroll: 1050, width: 1440, height: 1024 },
   ];
 
   for (const vp of viewports) {
-    console.log(`  📸 Capturing ${vp.name} (${vp.width}x${vp.height})...`);
     const page = await browser.newPage({
       viewport: { width: vp.width, height: vp.height },
     });
 
     await page.goto('http://localhost:3000', { waitUntil: 'networkidle' });
-    // Wait for the light loader to dismiss
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(1600);
 
-    // Scroll down a bit to show HUD in action
-    await page.evaluate(() => window.scrollTo(0, window.innerHeight * 0.9));
-    await page.waitForTimeout(500);
+    if (vp.scroll > 0) {
+      await page.evaluate((s) => window.scrollTo(0, s), vp.scroll);
+      await page.waitForTimeout(600);
+    }
 
     const shotPath = path.join(outDir, `${vp.name}.png`);
     await page.screenshot({ path: shotPath, fullPage: false });
@@ -67,7 +63,6 @@ const run = async () => {
   }
 
   await browser.close();
-  console.log('▶ Stopping server...');
   server.kill();
   process.exit(0);
 };

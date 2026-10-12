@@ -54,6 +54,51 @@ body {
   background: #FFAA00;
 }
 
+/* Keyframe animations */
+@keyframes shooting-star {
+  0% {
+    transform: translate3d(0, 0, 0) scaleX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translate3d(80px, 80px, 0) scaleX(1);
+  }
+  20% {
+    transform: translate3d(350px, 350px, 0) scaleX(1.5);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(350px, 350px, 0) scaleX(0);
+  }
+}
+
+.animate-shooting-star {
+  animation: shooting-star 8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  animation-delay: -3s;
+}
+
+@keyframes wing-flap-left {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-8deg); }
+}
+
+@keyframes wing-flap-right {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(8deg); }
+}
+
+.animate-wing-left {
+  animation: wing-flap-left 2.4s ease-in-out infinite;
+  transform-origin: right center;
+}
+
+.animate-wing-right {
+  animation: wing-flap-right 2.4s ease-in-out infinite;
+  transform-origin: left center;
+}
+
 /* Accessibility: Reduced motion overrides */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {

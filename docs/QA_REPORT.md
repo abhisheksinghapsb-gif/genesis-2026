@@ -1,34 +1,46 @@
 # GENESIS 2026 — QA & Verification Report
 
-## Phase 0 & Phase 1: Setup, Shell, Scroll Engine, and HUD
+## Phase 2: Hero & About Living Scenes
 
 ### Verification Summary
-- **Target Route:** Single page `"/"` with hash anchors (`#home`, `#about`, `#timeline`, `#prizes`, `#sponsors`, `#memories`, `#faq`, `#register`).
-- **Build Status:** ✅ Production build passed with Next.js 15.5.
-- **TypeScript:** ✅ Strict mode passed (`tsc --noEmit` exited 0).
-- **ESLint:** ✅ 0 errors, 0 warnings (`eslint . --max-warnings=0` exited 0).
-- **Unit Tests:** ✅ 6/6 tests passing (Vitest).
-- **E2E Tests:** ✅ 9/9 tests passing across 3 responsive viewports: 390px Mobile, 768px Tablet, 1440px Desktop (Playwright).
-- **CI Budget Checks:** ✅ Passed. First load JS (gzipped): **131.77 KB** (Budget: <= 170 KB).
-- **Fonts:** Self-hosted latin subsets (`lilita-one.woff2`: 10.6 KB, `nunito.woff2`: 39.1 KB).
+- **Hero Scene (`landing page.png`):**
+  - Seamless diagonal watermark drift in 60s loop.
+  - 3-depth starfield with random 2–6s twinkle + periodic shooting star streak.
+  - Ringed planet with +-10–16px float, slow axial tilt, and interactive click wobble.
+  - 3 floating luminescent orbs with desynchronized bobbing.
+  - Big pale-blue moon dome with 6s ambient pulse and glow.
+  - Winged star-skull crest badge with flapping wings (+-8 deg), shine sweep, and interactive star burst explosion on click.
+  - Animated title letters (G-E-N-E-S-I-S) with drop bounce and wave loop.
+  - Live countdown in flip-digit box style (DD:HH:MM:SS) targeting `2026-12-12T09:00:00+05:30`.
+  - Live entrants counter seeded with 128 squads.
+  - Foreground scenery: Observatory telescope with +-4 deg panning, lens glint every ~7s, and planet crate with grounded settling bob.
+  - Tactile Register button with pulse, shine sweep, and 4px mechanical press depression.
+  - Mouse move & gyroscope parallax integration across 3 depth planes.
+
+- **About Scene (`about.png`):**
+  - Nebula glass-dome background with slow hue drift.
+  - Robot Brawler on round podium with breathing torso, eye visor pulse, and interactive scanline trigger.
+  - 3 glowing holo planets (VR Core, Arena, Nexus) orbiting in elliptical paths that speed up when robot scans; click pops them into stars.
+  - Cheering crowd silhouettes along the bottom edge with staggered cheering bob.
+  - Red ABOUT + Grey GENESIS outlined title.
+  - Cream chamfered card with black outline, featuring the exact official briefing copy with glowing yellow tags for `GDXR Club`, `GENESIS 2026`, and `Brawler`.
+
+### Automated Test & Audit Results
+
+| Check | Tool / Test Suite | Result | Details |
+| :--- | :--- | :--- | :--- |
+| **Lint** | ESLint 9 (`eslint . --max-warnings=0`) | **PASS** | 0 errors, 0 warnings |
+| **Typecheck** | TypeScript Strict (`tsc --noEmit`) | **PASS** | Strict mode compliant |
+| **Unit Tests** | Vitest (`tests/unit/`) | **PASS** | 10/10 tests passing across 2 test suites |
+| **E2E Tests** | Playwright (`tests/e2e/navigation.spec.ts`) | **PASS** | 9/9 tests passing across 390px, 768px, and 1440px |
+| **Production Build** | Next.js 15 (`next build`) | **PASS** | Clean static generation in 4.3s |
+| **Bundle Budget** | `scripts/check-budgets.mjs` | **PASS** | **136.69 KB** gzipped (Budget: <= 170 KB) |
+| **Image Layers** | Public assets budget | **PASS** | All image layers <= 140.8 KB (Budget: <= 150 KB) |
 
 ### Visual Verification Screenshots
-- **390px Mobile:** `docs/screenshots/phase1-390.png`
-- **768px Tablet:** `docs/screenshots/phase1-768.png`
-- **1440px Desktop:** `docs/screenshots/phase1-1440.png`
-
-### Feature Verification
-1. **Desktop Lenis Engine:** Enabled for fine pointers; native scroll preserved on touch devices.
-2. **Global HUD:**
-   - Hidden on Hero, slides down at ~60% scroll with thin yellow progress bar.
-   - Left Back button operates via persistent `section-history stack`.
-   - Center slanted orange banner dynamically reflects the active section title.
-   - Right Home button smoothly returns to `#home`.
-   - Right hamburger button triggers accessible `GameDrawer` with focus trapping, Escape key closing, audio toggle, motion toggle, and prominent Register button.
-3. **Mobile Sticky Register Pill:** Prominently anchored on screens < 768px once hero is passed.
-4. **URL & Navigation Integrity:**
-   - Silent hash synchronization via `history.replaceState`.
-   - Direct deep links (`/#prizes`, `/#timeline`, etc.) jump smoothly to target anchors.
-5. **Game UI Componentry:**
-   - Reconstructed purely in CSS and SVG: `GameButton`, `SlantedBanner`, `ChamferCard`, `PanelWindow`, `ShieldBadge`, `NumberedCoin`, `WatermarkPattern`, `ThemedDivider`.
-   - Zero flat mockup images used as backgrounds.
+- **Hero Mobile (390×844):** `docs/screenshots/phase2-hero-390.png`
+- **Hero Tablet (768×1024):** `docs/screenshots/phase2-hero-768.png`
+- **Hero Desktop (1440×1024):** `docs/screenshots/phase2-hero-1440.png`
+- **About Mobile (390×844):** `docs/screenshots/phase2-about-390.png`
+- **About Tablet (768×1024):** `docs/screenshots/phase2-about-768.png`
+- **About Desktop (1440×1024):** `docs/screenshots/phase2-about-1440.png`

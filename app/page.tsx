@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { useLenis } from '@/animations/useLenis';
-import { HeroSkeleton } from '@/components/hero/HeroSkeleton';
-import { AboutSkeleton } from '@/components/about/AboutSkeleton';
+import { HeroSection } from '@/components/hero/HeroSection';
+import { AboutSection } from '@/components/about/AboutSection';
 import { TimelineSkeleton } from '@/components/timeline/TimelineSkeleton';
 import { PrizesSkeleton } from '@/components/prizes/PrizesSkeleton';
 import { SponsorsSkeleton } from '@/components/sponsors/SponsorsSkeleton';
@@ -20,13 +20,13 @@ export default function HomePage() {
   return (
     <div className="relative min-h-screen w-full bg-[#060D24] text-white">
       {/* 1. Hero Section */}
-      <HeroSkeleton />
+      <HeroSection />
 
       {/* Themed Divider */}
       <ThemedDivider variant="gold" />
 
       {/* 2. About Section */}
-      <AboutSkeleton />
+      <AboutSection />
 
       {/* Themed Divider */}
       <ThemedDivider variant="cyan" />
