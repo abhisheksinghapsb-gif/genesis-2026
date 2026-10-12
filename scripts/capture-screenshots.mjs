@@ -35,12 +35,12 @@ const run = async () => {
   const browser = await chromium.launch();
 
   const viewports = [
-    { name: 'phase2-hero-390', scroll: 0, width: 390, height: 844 },
-    { name: 'phase2-hero-768', scroll: 0, width: 768, height: 1024 },
-    { name: 'phase2-hero-1440', scroll: 0, width: 1440, height: 1024 },
-    { name: 'phase2-about-390', scroll: 900, width: 390, height: 844 },
-    { name: 'phase2-about-768', scroll: 1050, width: 768, height: 1024 },
-    { name: 'phase2-about-1440', scroll: 1050, width: 1440, height: 1024 },
+    { name: 'phase3-timeline-390', selector: '#timeline', width: 390, height: 844 },
+    { name: 'phase3-timeline-768', selector: '#timeline', width: 768, height: 1024 },
+    { name: 'phase3-timeline-1440', selector: '#timeline', width: 1440, height: 1024 },
+    { name: 'phase3-prizes-390', selector: '#prizes', width: 390, height: 844 },
+    { name: 'phase3-prizes-768', selector: '#prizes', width: 768, height: 1024 },
+    { name: 'phase3-prizes-1440', selector: '#prizes', width: 1440, height: 1024 },
   ];
 
   for (const vp of viewports) {
@@ -51,10 +51,9 @@ const run = async () => {
     await page.goto('http://localhost:3000', { waitUntil: 'networkidle' });
     await page.waitForTimeout(1600);
 
-    if (vp.scroll > 0) {
-      await page.evaluate((s) => window.scrollTo(0, s), vp.scroll);
-      await page.waitForTimeout(600);
-    }
+    const el = page.locator(vp.selector);
+    await el.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(600);
 
     const shotPath = path.join(outDir, `${vp.name}.png`);
     await page.screenshot({ path: shotPath, fullPage: false });

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "step-1",
+    "num": "01",
+    "title": "REGISTRATIONS OPEN",
+    "date": "20 OCT 2026",
+    "shortDesc": "Squad applications officially launch across all tracks.",
+    "venue": "Online Portal",
+    "details": "Assemble your squad of 1 to 4 members. Pick your battleground between Main Gaming and the VR Arena. Early team submissions receive priority qualifier scheduling.",
+    "rulesLink": "#rules-01"
+  },
+  {
+    "id": "step-2",
+    "num": "02",
+    "title": "QUALIFIER ROUND",
+    "date": "05 DEC 2026",
+    "shortDesc": "Online preliminary playoffs to determine top seeds.",
+    "venue": "Online Play-in Servers",
+    "details": "Knockout single-elimination tournament bracket. Top 16 squads from each competitive pool advance to the live LAN semi-finals at the AIT campus.",
+    "rulesLink": "#rules-02"
+  },
+  {
+    "id": "step-3",
+    "num": "03",
+    "title": "SEMI-FINALS",
+    "date": "12 DEC 2026",
+    "shortDesc": "Main stage LAN brackets hosted at AIT Pune.",
+    "venue": "AIT Pune Main Auditorium",
+    "details": "High-octane live LAN showdown on high-refresh tournament rigs and dedicated Meta Quest 3 headsets. Live audience viewing with shoutcasters and stage production.",
+    "rulesLink": "#rules-03"
+  },
+  {
+    "id": "step-4",
+    "num": "04",
+    "title": "GRAND FINALE",
+    "date": "13 DEC 2026",
+    "shortDesc": "Championship finals, VR showcase, and awards ceremony.",
+    "venue": "AIT Pune Arena Stage",
+    "details": "Best-of-5 championship finals to crown the Genesis 2026 Champions followed by official prize disbursements and trophy celebrations.",
+    "rulesLink": "#rules-04"
+  }
+]

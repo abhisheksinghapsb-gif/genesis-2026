@@ -4,8 +4,8 @@ import React from 'react';
 import { useLenis } from '@/animations/useLenis';
 import { HeroSection } from '@/components/hero/HeroSection';
 import { AboutSection } from '@/components/about/AboutSection';
-import { TimelineSkeleton } from '@/components/timeline/TimelineSkeleton';
-import { PrizesSkeleton } from '@/components/prizes/PrizesSkeleton';
+import { TimelineSection } from '@/components/timeline/TimelineSection';
+import { PrizesSection } from '@/components/prizes/PrizesSection';
 import { SponsorsSkeleton } from '@/components/sponsors/SponsorsSkeleton';
 import { MemoriesSkeleton } from '@/components/memories/MemoriesSkeleton';
 import { FaqSkeleton } from '@/components/faq/FaqSkeleton';
@@ -32,13 +32,13 @@ export default function HomePage() {
       <ThemedDivider variant="cyan" />
 
       {/* 3. Timeline Section */}
-      <TimelineSkeleton />
+      <TimelineSection />
 
       {/* Themed Divider */}
       <ThemedDivider variant="gold" />
 
       {/* 4. Prize Pool Section */}
-      <PrizesSkeleton />
+      <PrizesSection />
 
       {/* Themed Divider */}
       <ThemedDivider variant="purple" />
