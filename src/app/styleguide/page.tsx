@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Button3D } from '@/components/ui/Button3D';
 import { Banner } from '@/components/ui/Banner';
-import { TopBar } from '@/components/ui/TopBar';
 import { Window } from '@/components/ui/Window';
 import { Badge } from '@/components/ui/Badge';
 import { Node } from '@/components/ui/Node';
@@ -30,7 +29,12 @@ export default function StyleguidePage() {
 
   return (
     <div className="min-h-screen bg-blue-screen bg-pattern-tile p-6 md:p-12 text-white">
-      <TopBar title="STYLEGUIDE" />
+      <div className="max-w-5xl mx-auto flex items-center justify-between mb-8">
+        <a href="/" className="px-4 py-2 bg-slate-800 text-white rounded font-bold hover:bg-slate-700 transition">
+          ← BACK HOME
+        </a>
+        <h1 className="text-2xl font-bold font-display">STYLEGUIDE</h1>
+      </div>
 
       <main className="max-w-5xl mx-auto space-y-12 mt-8">
         {/* Wordmark */}

@@ -7,6 +7,7 @@ import { Tilt3D } from '../motion/Tilt3D';
 import { CountUp } from '../motion/CountUp';
 import { ScreenShake } from '../motion/ScreenShake';
 import { StarBurst } from '../motion/StarBurst';
+import { NpcDialogBubble } from '../ui/NpcDialogBubble';
 import { prizePool } from '@/content/prizes';
 import { sound } from '@/lib/audio';
 
@@ -140,6 +141,16 @@ export const PrizeScene: React.FC<PrizeSceneProps> = ({ scrollProgress = 0 }) =>
           </Window>
         )}
       </ScreenShake>
+
+      {/* NPC Dialogue Bubble */}
+      <div className="mt-8 self-start max-w-lg z-20">
+        <NpcDialogBubble
+          avatar="villager"
+          characterName="CHIEF BRAWLER"
+          dialogue="WIN LOOT BIG ENOUGH TO MAKE THE ENTIRE LOBBY JEALOUS!"
+          position="left"
+        />
+      </div>
     </div>
   );
 };

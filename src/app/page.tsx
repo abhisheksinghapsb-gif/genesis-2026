@@ -9,12 +9,16 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { initTier } from '@/lib/tier';
 import { sound } from '@/lib/audio';
 import { Toast } from '@/components/ui/Toast';
-import { HUDLayer } from '@/components/hud/HUDLayer';
-import { STATIONS } from '@/components/hud/TrophyRoad';
+import { GameNavbar } from '@/components/ui/GameNavbar';
+import { GameDivider } from '@/components/ui/GameDivider';
+import { FloatingControls } from '@/components/ui/FloatingControls';
+import { CosmicBackground } from '@/components/motion/CosmicBackground';
 
 import { LoaderScene } from '@/components/scenes/LoaderScene';
 import { HeroScene } from '@/components/scenes/HeroScene';
+import { CountdownSection } from '@/components/scenes/CountdownSection';
 import { AboutScene } from '@/components/scenes/AboutScene';
+import { TracksSection } from '@/components/scenes/TracksSection';
 import { TimelineScene } from '@/components/scenes/TimelineScene';
 import { PrizeScene } from '@/components/scenes/PrizeScene';
 import { MemoriesScene } from '@/components/scenes/MemoriesScene';
@@ -28,9 +32,21 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 }
 
+const SECTIONS = [
+  'hero',
+  'countdown',
+  'about',
+  'tracks',
+  'timeline',
+  'prize-pool',
+  'memories',
+  'sponsors',
+  'faqs',
+  'register',
+];
+
 export default function HomePage() {
   const [currentSection, setCurrentSection] = useState<string>('hero');
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [activeOverlay, setActiveOverlay] = useState<string | null>(null);
   const [brawlerCardOpen, setBrawlerCardOpen] = useState(false);
@@ -73,18 +89,13 @@ export default function HomePage() {
       gsap.ticker.lagSmoothing(0);
     }
 
-    // Scroll listener for progress & active section
+    // Scroll listener for active section tracking
     const handleScroll = () => {
-      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = totalScroll > 0 ? window.scrollY / totalScroll : 0;
-      setScrollProgress(progress);
-
-      // Determine active section based on scroll position
       const scrollPos = window.scrollY + window.innerHeight * 0.4;
-      for (let i = STATIONS.length - 1; i >= 0; i--) {
-        const el = document.getElementById(STATIONS[i].id);
+      for (let i = SECTIONS.length - 1; i >= 0; i--) {
+        const el = document.getElementById(SECTIONS[i]);
         if (el && el.offsetTop <= scrollPos) {
-          setCurrentSection(STATIONS[i].id);
+          setCurrentSection(SECTIONS[i]);
           break;
         }
       }
@@ -100,17 +111,17 @@ export default function HomePage() {
       }, 400);
     }
 
-    // Keyboard Shortcuts: 1-8 jump, M menu, Esc close overlay
+    // Keyboard Shortcuts: Esc close overlay, Home/End
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
 
-      const num = parseInt(e.key, 10);
-      if (num >= 1 && num <= STATIONS.length) {
-        jumpToSection(STATIONS[num - 1].id);
-      } else if (e.key === 'Home') {
+      if (e.key === 'Home') {
         jumpToSection('hero');
       } else if (e.key === 'End') {
         jumpToSection('register');
+      } else if (e.key === 'Escape') {
+        if (activeOverlay) setActiveOverlay(null);
+        if (brawlerCardOpen) setBrawlerCardOpen(false);
       }
     };
 
@@ -121,37 +132,57 @@ export default function HomePage() {
       window.removeEventListener('keydown', handleKeyDown);
       lenisRef.current?.destroy();
     };
-  }, []);
+  }, [activeOverlay, brawlerCardOpen]);
 
   return (
-    <div className="relative w-full bg-[#01072B] text-white overflow-x-hidden">
+    <div className="relative w-full bg-[#01072B] text-white overflow-x-hidden min-h-screen">
       {/* 1. Lobby First-Visit Loader */}
       <LoaderScene onComplete={() => ScrollTrigger.refresh()} />
 
-      {/* 2. Master Fixed HUD Layer */}
-      <HUDLayer
-        currentSection={currentSection}
-        scrollProgress={scrollProgress}
-        onJump={jumpToSection}
-        activeOverlay={activeOverlay}
-        onCloseOverlay={() => setActiveOverlay(null)}
-        onOpenBrawlerCard={() => setBrawlerCardOpen(true)}
-        onToast={showToast}
+      {/* 2. Continuous Ambient Cosmic Motion Background */}
+      <CosmicBackground />
+
+      {/* 3. Fixed Top Game Navbar */}
+      <GameNavbar
+        onNavigate={jumpToSection}
+        onRegisterClick={() => jumpToSection('register')}
       />
 
-      {/* 3. Main Continuous Single-Page Stages */}
-      <main className="relative w-full">
-        {/* Stage 1: Hero */}
+      {/* 4. Fixed Bottom-Right Controls (Audio + Back-to-Top) */}
+      <FloatingControls
+        onBackToTop={() => jumpToSection('hero')}
+        showBackToTop={currentSection !== 'hero'}
+      />
+
+      {/* 5. Main Continuous Single-Page Stages */}
+      <main className="relative w-full z-10 pt-16 md:pt-20">
+        {/* Stage 1: Hero Observatory Sky */}
         <section id="hero" data-scene="hero">
-          <HeroScene onToast={showToast} scrollProgress={currentSection === 'hero' ? scrollProgress * 5 : 0} />
+          <HeroScene onToast={showToast} />
         </section>
 
-        {/* Stage 2: About */}
+        {/* Stage 2: Countdown & Date Board */}
+        <section id="countdown" data-scene="countdown">
+          <CountdownSection />
+        </section>
+
+        <GameDivider />
+
+        {/* Stage 3: About Observatory */}
         <section id="about" data-scene="about">
           <AboutScene />
         </section>
 
-        {/* Stage 3: Timeline */}
+        <GameDivider />
+
+        {/* Stage 4: Hackathon Challenge Arenas */}
+        <section id="tracks" data-scene="tracks">
+          <TracksSection />
+        </section>
+
+        <GameDivider />
+
+        {/* Stage 5: Timeline Quest Road */}
         <section id="timeline" data-scene="timeline">
           <TimelineScene
             onOpenOverlay={(id) => setActiveOverlay(id)}
@@ -159,12 +190,16 @@ export default function HomePage() {
           />
         </section>
 
-        {/* Stage 4: Prize Pool */}
+        <GameDivider />
+
+        {/* Stage 6: Prize Pool Vault */}
         <section id="prize-pool" data-scene="prize-pool">
           <PrizeScene />
         </section>
 
-        {/* Stage 5: Memories */}
+        <GameDivider />
+
+        {/* Stage 7: Memories & Highlights */}
         <section id="memories" data-scene="memories">
           <MemoriesScene
             onOpenOverlay={(id) => setActiveOverlay(id)}
@@ -172,17 +207,23 @@ export default function HomePage() {
           />
         </section>
 
-        {/* Stage 6: Sponsors */}
+        <GameDivider />
+
+        {/* Stage 8: Sponsors Showcase */}
         <section id="sponsors" data-scene="sponsors">
           <SponsorsScene />
         </section>
 
-        {/* Stage 7: FAQs */}
+        <GameDivider />
+
+        {/* Stage 9: FAQs Game Accordion */}
         <section id="faqs" data-scene="faqs">
           <FaqScene onToast={showToast} />
         </section>
 
-        {/* Stage 8: Register Final Scene */}
+        <GameDivider />
+
+        {/* Stage 10: Register Final Scene & Footer */}
         <section id="register" data-scene="register">
           <RegisterScene
             onToast={showToast}
@@ -191,14 +232,14 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* 4. Global Toast Notification */}
+      {/* 6. Global Toast Notification */}
       <Toast
         message={toastMessage || ''}
         isVisible={!!toastMessage}
         onClose={() => setToastMessage(null)}
       />
 
-      {/* 5. Brawler Card Generator Modal */}
+      {/* 7. Brawler Card Generator Modal */}
       <BrawlerCardModal
         isOpen={brawlerCardOpen}
         onClose={() => setBrawlerCardOpen(false)}

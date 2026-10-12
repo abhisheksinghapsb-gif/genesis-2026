@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Tilt3D } from '../motion/Tilt3D';
 import { FloatLoop } from '../motion/FloatLoop';
+import { NpcDialogBubble } from '../ui/NpcDialogBubble';
 import { about } from '@/content/about';
 import { sound } from '@/lib/audio';
 
@@ -145,6 +146,16 @@ export const AboutScene: React.FC<AboutSceneProps> = ({ scrollProgress = 0 }) =>
             </div>
           </FloatLoop>
         </div>
+      </div>
+
+      {/* NPC Dialogue Bubble */}
+      <div className="mt-8 self-start max-w-lg z-20">
+        <NpcDialogBubble
+          avatar="robot"
+          characterName="ROBOT OBSERVER"
+          dialogue="DISCOVER THE POWER OF SPATIAL COMPUTING & AR/VR WITH GDXR CLUB!"
+          position="left"
+        />
       </div>
     </div>
   );

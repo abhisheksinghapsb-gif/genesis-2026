@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Wordmark } from '../ui/Wordmark';
 import { Button3D } from '../ui/Button3D';
+import { NpcDialogBubble } from '../ui/NpcDialogBubble';
 import { StarBurst } from '../motion/StarBurst';
 import { FloatLoop } from '../motion/FloatLoop';
 import { siteConfig } from '@/content/site';
@@ -345,6 +346,22 @@ export const HeroScene: React.FC<HeroSceneProps> = ({ onToast, scrollProgress = 
           >
             REGISTER
           </Button3D>
+        </div>
+
+        {/* NPC Welcome Dialogue Bubble */}
+        <div
+          className="absolute bottom-6 left-4 sm:left-8 pointer-events-auto hidden sm:block transform-gpu"
+          style={{
+            transform: `translate3d(0, ${scrollProgress * 80}px, 50px)`,
+            opacity: Math.max(0, 1 - scrollProgress * 2),
+          }}
+        >
+          <NpcDialogBubble
+            avatar="villager"
+            characterName="COLT"
+            dialogue="WELCOME TO THE BRAWL OBSERVATORY, TECH CHIEFS - DEPLOY BRAINS NOT BARBARIANS!"
+            position="left"
+          />
         </div>
       </div>
     </div>

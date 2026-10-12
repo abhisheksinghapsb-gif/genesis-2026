@@ -11,12 +11,14 @@ if (!fs.existsSync(outputDir)) {
 
 const sections = [
   { id: 'hero', name: 'hero' },
+  { id: 'countdown', name: 'countdown' },
   { id: 'about', name: 'about' },
+  { id: 'tracks', name: 'tracks' },
   { id: 'timeline', name: 'timeline' },
   { id: 'prize-pool', name: 'prize-pool' },
+  { id: 'memories', name: 'memories' },
   { id: 'sponsors', name: 'sponsors' },
   { id: 'faqs', name: 'faqs' },
-  { id: 'memories', name: 'memories' },
   { id: 'register', name: 'register' },
 ];
 
@@ -44,7 +46,10 @@ async function run() {
     console.log(`📸 Capturing Desktop ${s.name}...`);
     await page.evaluate((id) => {
       const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: 'instant' });
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo(0, y);
+      }
     }, s.id);
     await new Promise((res) => setTimeout(res, 600));
 
@@ -62,7 +67,10 @@ async function run() {
     console.log(`📸 Capturing Mobile ${s.name}...`);
     await page.evaluate((id) => {
       const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: 'instant' });
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo(0, y);
+      }
     }, s.id);
     await new Promise((res) => setTimeout(res, 600));
 
