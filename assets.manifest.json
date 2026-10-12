@@ -1,0 +1,416 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "GENESIS 2026",
+  "version": "1.0.0",
+  "budgets": {
+    "initialJsGzipKb": 170,
+    "firstLoadPageWeightMb": 1.5,
+    "maxHeroLayerAvifWebpKb": 150,
+    "max3DModelKb": 300
+  },
+  "sections": {
+    "global_ui": [
+      {
+        "id": "ui_watermark_pattern",
+        "name": "Brawl Watermark Pattern",
+        "type": "vector",
+        "format": "svg",
+        "source": "landing page.png, timeline.png",
+        "targetSizeKb": 4.5,
+        "animated": true,
+        "animationType": "seamless-diagonal-drift",
+        "description": "Repeating seamless tiling SVG pattern featuring skull, star, blaster pistol, and potion flask icons"
+      },
+      {
+        "id": "ui_game_button",
+        "name": "Tactile Game Button with Drop-Base",
+        "type": "component",
+        "format": "css/svg",
+        "source": "all mockups",
+        "targetSizeKb": 2.0,
+        "animated": true,
+        "animationType": "hover-squash-active-depress",
+        "description": "Beveled button with thick black drop-base, top inner shine highlight, and press displacement"
+      },
+      {
+        "id": "ui_orange_banner",
+        "name": "Slanted Orange Game Banner",
+        "type": "component",
+        "format": "css/svg",
+        "source": "timeline.png, prize pool.png, FAQs.png, sponsor.png",
+        "targetSizeKb": 3.0,
+        "animated": true,
+        "animationType": "entrance-slam-idle-shimmer",
+        "description": "Polygon-cut orange header banner with 3D bottom bevel, dark border, and metallic shine overlay"
+      },
+      {
+        "id": "ui_panel_window",
+        "name": "Chamfered Game Panel with Red Close X",
+        "type": "component",
+        "format": "css/svg",
+        "source": "FAQs.png, sponsor.png, prize pool.png",
+        "targetSizeKb": 4.0,
+        "animated": true,
+        "animationType": "modal-pop-idle-float",
+        "description": "Slanted beveled window panel with custom top blue-accent tab and embossed red X close button"
+      },
+      {
+        "id": "ui_shield_badge",
+        "name": "Tiered Shield Badges (Gold/Orange/Silver)",
+        "type": "component",
+        "format": "svg",
+        "source": "prize pool.png",
+        "targetSizeKb": 5.0,
+        "animated": true,
+        "animationType": "gleam-idle-wobble",
+        "description": "Vector crest shield badges for 1st, 2nd, 3rd, and VR tracks with beveled star accents"
+      },
+      {
+        "id": "ui_numbered_coin",
+        "name": "Numbered Golden Game Coins (01-04)",
+        "type": "component",
+        "format": "svg",
+        "source": "timeline.png",
+        "targetSizeKb": 2.5,
+        "animated": true,
+        "animationType": "coin-spin-hover-pulse",
+        "description": "Chunky metallic gold coins displaying event stage numbers 01 to 04"
+      },
+      {
+        "id": "ui_themed_divider",
+        "name": "Game Star-Button Section Divider",
+        "type": "component",
+        "format": "css/svg",
+        "source": "system design specification",
+        "targetSizeKb": 3.0,
+        "animated": true,
+        "animationType": "shine-sweep-gentle-bounce",
+        "description": "Animated strip with star badges and beveled borders separating full-page sections"
+      }
+    ],
+    "hero": [
+      {
+        "id": "hero_bg_watermark",
+        "name": "Deep Space Watermark Wallpaper",
+        "type": "vector",
+        "format": "svg",
+        "source": "landing page.png",
+        "targetSizeKb": 5.0,
+        "animated": true,
+        "animationType": "infinite-subtle-parallax"
+      },
+      {
+        "id": "hero_procedural_stars",
+        "name": "Procedural Twinkling Starfield",
+        "type": "3d/canvas",
+        "format": "three.js",
+        "source": "landing page.png",
+        "targetSizeKb": 0.0,
+        "animated": true,
+        "animationType": "twinkle-and-rotational-drift"
+      },
+      {
+        "id": "hero_ringed_planet",
+        "name": "Ringed Planet (Top-Right)",
+        "type": "illustration/3d",
+        "format": "webp/avif (fallback: procedural 3D)",
+        "source": "landing page.png",
+        "targetSizeKb": 45.0,
+        "animated": true,
+        "animationType": "slow-orbital-axial-rotation"
+      },
+      {
+        "id": "hero_space_orbs",
+        "name": "Luminescent Small Orbs (Trio)",
+        "type": "illustration",
+        "format": "webp/avif",
+        "source": "landing page.png",
+        "targetSizeKb": 18.0,
+        "animated": true,
+        "animationType": "floating-desynced-bobbing"
+      },
+      {
+        "id": "hero_moon_dome",
+        "name": "Big Pale-Blue Moon Dome",
+        "type": "procedural-3d/illustration",
+        "format": "three.js / webp",
+        "source": "landing page.png",
+        "targetSizeKb": 65.0,
+        "animated": true,
+        "animationType": "ambient-rotation-and-pulse"
+      },
+      {
+        "id": "hero_badge_crest",
+        "name": "Winged Star-Skull Crest Badge",
+        "type": "illustration-composite",
+        "format": "webp/svg",
+        "source": "landing page.png",
+        "targetSizeKb": 35.0,
+        "animated": true,
+        "animationType": "heroic-idle-sway-and-glow"
+      },
+      {
+        "id": "hero_badge_wings_left",
+        "name": "Wing Left Layer",
+        "type": "illustration",
+        "format": "webp",
+        "source": "landing page.png",
+        "targetSizeKb": 15.0,
+        "animated": true,
+        "animationType": "subtle-wing-flap-breathe"
+      },
+      {
+        "id": "hero_badge_wings_right",
+        "name": "Wing Right Layer",
+        "type": "illustration",
+        "format": "webp",
+        "source": "landing page.png",
+        "targetSizeKb": 15.0,
+        "animated": true,
+        "animationType": "subtle-wing-flap-breathe"
+      },
+      {
+        "id": "hero_title_letters",
+        "name": "GENESIS Outlined Title Letters (G-E-N-E-S-I-S)",
+        "type": "vector/text",
+        "format": "svg/css",
+        "source": "landing page.png",
+        "targetSizeKb": 8.0,
+        "animated": true,
+        "animationType": "per-letter-bounce-and-gradient-wave"
+      },
+      {
+        "id": "hero_telescope",
+        "name": "Observatory Telescope (Bottom-Left)",
+        "type": "illustration",
+        "format": "webp/avif",
+        "source": "landing page.png",
+        "targetSizeKb": 40.0,
+        "animated": true,
+        "animationType": "interactive-mouse-pivot-sway"
+      },
+      {
+        "id": "hero_planet_crate",
+        "name": "Planet Storage Crate (Bottom-Right)",
+        "type": "illustration",
+        "format": "webp/avif",
+        "source": "landing page.png",
+        "targetSizeKb": 42.0,
+        "animated": true,
+        "animationType": "gentle-grounded-settle-bounce"
+      },
+      {
+        "id": "hero_observatory_floor",
+        "name": "Curved Observatory Floor",
+        "type": "vector/illustration",
+        "format": "svg/webp",
+        "source": "landing page.png",
+        "targetSizeKb": 25.0,
+        "animated": false,
+        "animationType": "parallax-base-anchor"
+      }
+    ],
+    "about": [
+      {
+        "id": "about_nebula_dome",
+        "name": "Nebula Glass-Dome Background (Orange + Purple)",
+        "type": "vector/gradient",
+        "format": "css/svg",
+        "source": "about.png",
+        "targetSizeKb": 12.0,
+        "animated": true,
+        "animationType": "pulsing-nebula-aurora-glow"
+      },
+      {
+        "id": "about_robot_brawler",
+        "name": "Robot Brawler on Round Podium",
+        "type": "illustration-rigged",
+        "format": "webp/avif",
+        "source": "about.png",
+        "targetSizeKb": 85.0,
+        "animated": true,
+        "animationType": "idle-breathing-head-tilt-eye-glow"
+      },
+      {
+        "id": "about_holo_planets",
+        "name": "3 Glowing Hologram Planets",
+        "type": "illustration/vector",
+        "format": "webp/svg",
+        "source": "about.png",
+        "targetSizeKb": 28.0,
+        "animated": true,
+        "animationType": "orbital-float-with-scanline-flicker"
+      },
+      {
+        "id": "about_light_beams",
+        "name": "Dynamic Light Beams & Spotlights",
+        "type": "vector",
+        "format": "svg/css",
+        "source": "about.png",
+        "targetSizeKb": 4.0,
+        "animated": true,
+        "animationType": "sweeping-volumetric-fades"
+      },
+      {
+        "id": "about_sparkles",
+        "name": "4-Point Comic Sparkles",
+        "type": "vector",
+        "format": "svg",
+        "source": "about.png",
+        "targetSizeKb": 2.0,
+        "animated": true,
+        "animationType": "twinkle-scale-bursts"
+      },
+      {
+        "id": "about_crowd_silhouettes",
+        "name": "Crowd Silhouettes (Bottom Edge)",
+        "type": "vector",
+        "format": "svg",
+        "source": "about.png",
+        "targetSizeKb": 6.0,
+        "animated": true,
+        "animationType": "concert-cheer-bobbing"
+      },
+      {
+        "id": "about_card_chamfered",
+        "name": "Cream Chamfered Information Card",
+        "type": "component",
+        "format": "css/svg",
+        "source": "about.png",
+        "targetSizeKb": 3.0,
+        "animated": false,
+        "animationType": "scroll-reveal-and-tilt"
+      }
+    ],
+    "timeline": [
+      {
+        "id": "timeline_trading_card",
+        "name": "Brawler Trading Card (Cash, Ticket Tag, Stopwatch)",
+        "type": "illustration/component",
+        "format": "webp/svg",
+        "source": "timeline.png",
+        "targetSizeKb": 75.0,
+        "animated": true,
+        "animationType": "3d-card-tilt-and-cash-flutter"
+      },
+      {
+        "id": "timeline_gold_track",
+        "name": "Orange-Gold Circuit Track Line",
+        "type": "vector",
+        "format": "svg",
+        "source": "timeline.png",
+        "targetSizeKb": 3.5,
+        "animated": true,
+        "animationType": "scroll-progress-line-fill"
+      },
+      {
+        "id": "timeline_slanted_cards",
+        "name": "Slanted Milestone Info Cards (1-4) with Info Icon",
+        "type": "component",
+        "format": "css/svg",
+        "source": "timeline.png",
+        "targetSizeKb": 4.0,
+        "animated": true,
+        "animationType": "staggered-entrance-hover-lift"
+      }
+    ],
+    "prize_pool": [
+      {
+        "id": "prizes_main_panel",
+        "name": "Prizes Showcase Chamber Panel",
+        "type": "component",
+        "format": "css/svg",
+        "source": "prize pool.png",
+        "targetSizeKb": 5.0,
+        "animated": false,
+        "animationType": "panel-reveal-unfold"
+      },
+      {
+        "id": "prizes_vr_panel",
+        "name": "VR Track Showcase Chamber Panel",
+        "type": "component",
+        "format": "css/svg",
+        "source": "prize pool.png",
+        "targetSizeKb": 5.0,
+        "animated": false,
+        "animationType": "panel-reveal-unfold"
+      },
+      {
+        "id": "prizes_shield_assets",
+        "name": "Tiered Gold, Orange, and Silver Prize Shields",
+        "type": "vector",
+        "format": "svg",
+        "source": "prize pool.png",
+        "targetSizeKb": 8.0,
+        "animated": true,
+        "animationType": "trophy-gleam-and-wobble"
+      }
+    ],
+    "faqs": [
+      {
+        "id": "faqs_large_panel",
+        "name": "Large Chamfered FAQ Game Board",
+        "type": "component",
+        "format": "css/svg",
+        "source": "FAQs.png",
+        "targetSizeKb": 5.0,
+        "animated": false,
+        "animationType": "scale-up-reveal"
+      },
+      {
+        "id": "faqs_accordion_rows",
+        "name": "Slanted FAQ Accordion Rows",
+        "type": "component",
+        "format": "css/svg",
+        "source": "FAQs.png",
+        "targetSizeKb": 3.0,
+        "animated": true,
+        "animationType": "accordion-open-close-spring"
+      }
+    ],
+    "memories": [
+      {
+        "id": "memories_frame_tiles",
+        "name": "Game Photo Tiles with Gradient Bevel Frames",
+        "type": "component",
+        "format": "css/svg",
+        "source": "memories.png",
+        "targetSizeKb": 4.0,
+        "animated": true,
+        "animationType": "masonry-hover-pop-and-shine"
+      }
+    ],
+    "sponsors": [
+      {
+        "id": "sponsors_title_window",
+        "name": "Title Sponsors Game Window with Blue Tab & Red X",
+        "type": "component",
+        "format": "css/svg",
+        "source": "sponsor.png",
+        "targetSizeKb": 4.5,
+        "animated": false,
+        "animationType": "entrance-drop"
+      },
+      {
+        "id": "sponsors_platform_window",
+        "name": "Platform Sponsors Game Window with Blue Tab & Red X",
+        "type": "component",
+        "format": "css/svg",
+        "source": "sponsor.png",
+        "targetSizeKb": 4.5,
+        "animated": false,
+        "animationType": "entrance-drop"
+      },
+      {
+        "id": "sponsors_logo_plates",
+        "name": "Beveled Logo Mounting Pedestals",
+        "type": "component",
+        "format": "css/svg",
+        "source": "sponsor.png",
+        "targetSizeKb": 3.0,
+        "animated": true,
+        "animationType": "pedestal-hover-levitate"
+      }
+    ]
+  }
+}

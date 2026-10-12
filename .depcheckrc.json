@@ -1,0 +1,19 @@
+{
+  "ignores": [
+    "@react-three/drei",
+    "@react-three/fiber",
+    "three",
+    "@types/three",
+    "gsap",
+    "zod",
+    "svgo",
+    "autoprefixer",
+    "postcss"
+  ],
+  "ignore-patterns": [
+    ".next",
+    "node_modules",
+    "coverage",
+    "dist"
+  ]
+}
