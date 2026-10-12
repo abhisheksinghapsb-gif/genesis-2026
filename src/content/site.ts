@@ -21,3 +21,5 @@ export const site: SiteConfig = {
     timezone: 'Asia/Kolkata',
   },
 };
+
+export const siteConfig = site;

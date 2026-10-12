@@ -1,11 +1,25 @@
-import { SponsorsScreen } from '@/components/screens/SponsorsScreen';
-import type { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Sponsors | GENESIS 2026',
-  description: 'Meet the official sponsors backing GENESIS 2026: GameCloud Technologies and Gamedoora.',
-};
+import { useEffect } from 'react';
 
-export default function SponsorsPage() {
-  return <SponsorsScreen />;
+export default function SponsorsRedirect() {
+  useEffect(() => {
+    window.location.replace('/#sponsors');
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-blue-screen flex items-center justify-center text-center p-4">
+      <link rel="canonical" href="/" />
+      <div className="space-y-4">
+        <p className="font-display text-2xl text-cta-yellow animate-pulse">WARPING TO SPONSORS...</p>
+        <p className="text-sm text-gray-400">
+          If you are not redirected automatically,{' '}
+          <a href="/#sponsors" className="underline text-white font-bold">
+            click here
+          </a>
+          .
+        </p>
+      </div>
+    </div>
+  );
 }

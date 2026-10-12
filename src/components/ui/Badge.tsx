@@ -8,6 +8,7 @@ interface BadgeProps {
   amount: number;
   trackName?: string;
   className?: string;
+  label?: string;
 }
 
 export const Badge: React.FC<BadgeProps> = ({

@@ -24,3 +24,5 @@ export const sponsorTiers: SponsorTier[] = [
     ],
   },
 ];
+
+export const sponsors = sponsorTiers;

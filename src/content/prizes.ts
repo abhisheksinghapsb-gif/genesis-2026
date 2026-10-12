@@ -19,3 +19,5 @@ export const prizeTracks: PrizeTrack[] = [
     ],
   },
 ];
+
+export const prizePool = prizeTracks;

@@ -1,21 +1,18 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Wordmark } from '../ui/Wordmark';
 import { Button3D } from '../ui/Button3D';
 import { Toast } from '../ui/Toast';
+import { MenuDrawer } from '../layout/MenuDrawer';
 import { site } from '@/content/site';
 import { trackEvent } from '@/lib/analytics';
-import { useNavigation } from '@/context/NavigationContext';
 
 export const LandingScene: React.FC = () => {
-  const { openMenu } = useNavigation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isToastVisible, setIsToastVisible] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [tapCount, setTapCount] = useState(0);
-  const [showStarRain, setShowStarRain] = useState(false);
-  const tapTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Parallax on desktop
   useEffect(() => {
@@ -31,27 +28,8 @@ export const LandingScene: React.FC = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Easter egg: Tap badge 5 times for skull-star rain (Section 5)
-  const handleBadgeTap = () => {
-    if (tapTimeoutRef.current) clearTimeout(tapTimeoutRef.current);
-    const next = tapCount + 1;
-    if (next >= 5) {
-      setShowStarRain(true);
-      setTapCount(0);
-      setTimeout(() => setShowStarRain(false), 2600);
-    } else {
-      setTapCount(next);
-      tapTimeoutRef.current = setTimeout(() => setTapCount(0), 1500);
-    }
-  };
-
   const handleRegister = () => {
     trackEvent({ name: 'register_click', placement: 'landing' });
-    if (typeof navigator !== 'undefined' && navigator.vibrate) {
-      try {
-        navigator.vibrate(8);
-      } catch {}
-    }
     if (site.registrationUrl && site.registrationUrl.startsWith('https://')) {
       const url = new URL(site.registrationUrl);
       if (!url.search) {
@@ -194,15 +172,9 @@ export const LandingScene: React.FC = () => {
         </div>
       </div>
 
-      {/* Shooting Star (Section 5) */}
-      <div
-        className="absolute top-[8%] left-[12%] w-[160px] h-[2px] bg-gradient-to-r from-transparent via-white to-transparent pointer-events-none z-10 animate-shooting-star"
-        aria-hidden="true"
-      />
-
       {/* 5. Giant Glowing Moon - top edge at y ~ 440 (43%) */}
       <div
-        className="absolute left-1/2 -translate-x-1/2 top-[42%] w-[380px] sm:w-[540px] md:w-[640px] h-[380px] sm:h-[540px] md:h-[640px] rounded-full pointer-events-none z-10 animate-moon-breathe"
+        className="absolute left-1/2 -translate-x-1/2 top-[42%] w-[380px] sm:w-[540px] md:w-[640px] h-[380px] sm:h-[540px] md:h-[640px] rounded-full pointer-events-none z-10"
         style={{
           background: 'radial-gradient(circle at 45% 45%, #ACE7FD 0%, #97DDFD 50%, #79C2F5 100%)',
           boxShadow: '0 0 80px rgba(172, 231, 253, 0.7), 0 0 140px rgba(145, 70, 234, 0.5)',
@@ -279,7 +251,7 @@ export const LandingScene: React.FC = () => {
           alt=""
           width={240}
           height={300}
-          className="w-[140px] sm:w-[190px] md:w-[240px] h-auto drop-shadow-[0_12px_24px_rgba(0,0,0,0.8)] animate-telescope origin-bottom"
+          className="w-[140px] sm:w-[190px] md:w-[240px] h-auto drop-shadow-[0_12px_24px_rgba(0,0,0,0.8)]"
           priority
         />
       </div>
@@ -326,9 +298,11 @@ export const LandingScene: React.FC = () => {
       <header className="absolute top-5 sm:top-8 right-5 sm:right-8 z-40">
         <button
           type="button"
-          onClick={openMenu}
+          onClick={() => setIsMenuOpen(true)}
           aria-label="Open menu"
-          className="btn-3d-slate btn-jelly w-[56px] sm:w-[68px] md:w-[78px] h-[48px] sm:h-[54px] md:h-[58px] flex items-center justify-center cursor-pointer select-none rounded-sm"
+          aria-expanded={isMenuOpen}
+          aria-controls="main-menu-drawer"
+          className="btn-3d-slate w-[56px] sm:w-[68px] md:w-[78px] h-[48px] sm:h-[54px] md:h-[58px] flex items-center justify-center cursor-pointer select-none rounded-sm"
         >
           <span className="transform skew-x-[8deg] flex flex-col items-center justify-center gap-1.5 drop-shadow-[0_2px_0_#000]">
             <span className="w-6 sm:w-7 h-[3.5px] bg-white rounded-full" />
@@ -344,48 +318,24 @@ export const LandingScene: React.FC = () => {
         <Wordmark size="large" />
       </div>
 
-      {/* Winged Skull-Star Badge at y ~ 228-415 (top: 24%) - Tap 5 times easter egg */}
-      <div
-        onClick={handleBadgeTap}
-        className="absolute top-[23%] sm:top-[24%] left-1/2 -translate-x-1/2 z-30 pointer-events-auto animate-popIn cursor-pointer active:scale-95 transition-transform"
-        title="Tap 5 times!"
-      >
+      {/* Winged Skull-Star Badge at y ~ 228-415 (top: 24%) */}
+      <div className="absolute top-[23%] sm:top-[24%] left-1/2 -translate-x-1/2 z-30 pointer-events-auto animate-popIn">
         <Image
           src="/art/badge.png"
           alt="GENESIS skull star trophy badge"
           width={204}
           height={187}
-          className="w-[120px] sm:w-[160px] md:w-[195px] h-auto drop-shadow-[0_12px_24px_rgba(0,0,0,0.7)] hover:rotate-2 transition-transform duration-200"
+          className="w-[120px] sm:w-[160px] md:w-[195px] h-auto drop-shadow-[0_12px_24px_rgba(0,0,0,0.7)]"
           priority
         />
       </div>
-
-      {/* 5-Tap Badge Easter Egg: Skull-Star Rain (Section 5) */}
-      {showStarRain && (
-        <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden" aria-hidden="true">
-          {Array.from({ length: 14 }).map((_, i) => (
-            <div
-              key={i}
-              className="absolute text-2xl sm:text-3xl"
-              style={{
-                left: `${i * 7 + 3}%`,
-                top: '-40px',
-                animation: `star-fall ${1.6 + (i % 4) * 0.3}s ease-in forwards`,
-                animationDelay: `${(i % 5) * 0.12}s`,
-              }}
-            >
-              ⭐
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* REGISTER Button at y ~ 598 (top: 58%) */}
       <div className="absolute top-[58%] sm:top-[59%] left-1/2 -translate-x-1/2 z-40 pointer-events-auto">
         <button
           type="button"
           onClick={handleRegister}
-          className="btn-3d-yellow btn-jelly w-[220px] sm:w-[250px] md:w-[260px] h-[64px] sm:h-[68px] md:h-[72px] text-xl sm:text-2xl md:text-3xl tracking-wider text-outline uppercase font-display rounded-sm cursor-pointer animate-register-pulse focus:outline-none focus:ring-4 focus:ring-node-gold"
+          className="btn-3d-yellow w-[220px] sm:w-[250px] md:w-[260px] h-[64px] sm:h-[68px] md:h-[72px] text-xl sm:text-2xl md:text-3xl tracking-wider text-outline uppercase font-display rounded-sm cursor-pointer animate-register-pulse focus:outline-none focus:ring-4 focus:ring-node-gold"
         >
           <span className="transform skew-x-[8deg]">
             REGISTER
@@ -393,11 +343,18 @@ export const LandingScene: React.FC = () => {
         </button>
       </div>
 
+      {/* Menu Drawer */}
+      <MenuDrawer
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        onRegisterClick={handleRegister}
+      />
+
       {/* Toast Notification */}
       <Toast
         message="Registrations opening soon!"
         isVisible={isToastVisible}
-        onClose={() => setIsToastVisible(false)}
+        onDismiss={() => setIsToastVisible(false)}
       />
     </div>
   );

@@ -9,21 +9,21 @@ if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
 
-const routes = [
-  { path: '/', name: 'landing' },
-  { path: '/about', name: 'about' },
-  { path: '/timeline', name: 'timeline' },
-  { path: '/prize-pool', name: 'prize-pool' },
-  { path: '/sponsors', name: 'sponsors' },
-  { path: '/faqs', name: 'faqs' },
-  { path: '/memories', name: 'memories' },
-  { path: '/privacy', name: 'privacy' },
+const sections = [
+  { id: 'hero', name: 'hero' },
+  { id: 'about', name: 'about' },
+  { id: 'timeline', name: 'timeline' },
+  { id: 'prize-pool', name: 'prize-pool' },
+  { id: 'sponsors', name: 'sponsors' },
+  { id: 'faqs', name: 'faqs' },
+  { id: 'memories', name: 'memories' },
+  { id: 'register', name: 'register' },
 ];
 
 const port = process.env.PORT || 3000;
 
 async function run() {
-  console.log('🚀 Launching Chrome for screenshot capture...');
+  console.log('🚀 Launching Chrome for V2 continuous page screenshots...');
   const browser = await puppeteer.launch({
     executablePath: chromePath,
     headless: true,
@@ -32,37 +32,47 @@ async function run() {
 
   const page = await browser.newPage();
 
-  for (const r of routes) {
-    const url = `http://localhost:${port}${r.path}`;
-    console.log(`📸 Capturing ${r.name} (${url})...`);
+  // Load the page
+  const baseUrl = `http://localhost:${port}/`;
 
-    // 1. Desktop: 1440 x 1024
-    await page.setViewport({ width: 1440, height: 1024, deviceScaleFactor: 1 });
-    await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 });
+  // 1. Desktop: 1440 x 900
+  await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
+  await page.goto(baseUrl, { waitUntil: 'networkidle0', timeout: 30000 });
+  await new Promise((res) => setTimeout(res, 1200)); // allow loader to finish
+
+  for (const s of sections) {
+    console.log(`📸 Capturing Desktop ${s.name}...`);
+    await page.evaluate((id) => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'instant' });
+    }, s.id);
     await new Promise((res) => setTimeout(res, 600));
-    const desktopFile = path.join(outputDir, `${r.name}-desktop.png`);
+
+    const desktopFile = path.join(outputDir, `${s.name}-desktop.png`);
     await page.screenshot({ path: desktopFile, fullPage: false });
     console.log(`  ✓ Desktop: ${desktopFile}`);
+  }
 
-    // 2. Short Laptop Window: 1280 x 600
-    await page.setViewport({ width: 1280, height: 600, deviceScaleFactor: 1 });
-    await page.reload({ waitUntil: 'networkidle0', timeout: 30000 });
-    await new Promise((res) => setTimeout(res, 600));
-    const shortFile = path.join(outputDir, `${r.name}-short.png`);
-    await page.screenshot({ path: shortFile, fullPage: false });
-    console.log(`  ✓ Short laptop: ${shortFile}`);
+  // 2. Mobile: 390 x 844
+  await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  await page.goto(baseUrl, { waitUntil: 'networkidle0', timeout: 30000 });
+  await new Promise((res) => setTimeout(res, 1200));
 
-    // 3. Mobile: 390 x 844
-    await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
-    await page.reload({ waitUntil: 'networkidle0', timeout: 30000 });
+  for (const s of sections) {
+    console.log(`📸 Capturing Mobile ${s.name}...`);
+    await page.evaluate((id) => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'instant' });
+    }, s.id);
     await new Promise((res) => setTimeout(res, 600));
-    const mobileFile = path.join(outputDir, `${r.name}-mobile.png`);
+
+    const mobileFile = path.join(outputDir, `${s.name}-mobile.png`);
     await page.screenshot({ path: mobileFile, fullPage: false });
     console.log(`  ✓ Mobile: ${mobileFile}`);
   }
 
   await browser.close();
-  console.log('🎉 All screenshots captured successfully!');
+  console.log('🎉 All V2 screenshots captured successfully!');
 }
 
 run().catch((err) => {

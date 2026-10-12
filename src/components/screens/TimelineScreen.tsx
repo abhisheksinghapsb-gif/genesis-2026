@@ -1,14 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { TopBar } from '../ui/TopBar';
 import { Footer } from '../layout/Footer';
-import { NavigationRail } from '../ui/NavigationRail';
 import { Node } from '../ui/Node';
 import { InfoDot } from '../ui/InfoDot';
 import { Modal } from '../ui/Modal';
-import { ScrollAffordance } from '../ui/ScrollAffordance';
 import { timeline } from '@/content/timeline';
 import { formatDate, getTimelineStatus } from '@/lib/format';
 import type { TimelineStage } from '@/lib/schema';
@@ -16,50 +14,18 @@ import type { TimelineStage } from '@/lib/schema';
 export const TimelineScreen: React.FC = () => {
   const [selectedStage, setSelectedStage] = useState<TimelineStage | null>(null);
 
-  // Sync stage modal with URL hash #m=stage-N (Section 3.4)
-  useEffect(() => {
-    const checkHash = () => {
-      const hash = window.location.hash;
-      if (hash.startsWith('#m=stage-')) {
-        const stageNum = parseInt(hash.replace('#m=stage-', ''), 10);
-        const found = timeline.find((s) => s.n === stageNum);
-        if (found) setSelectedStage(found);
-      } else if (selectedStage) {
-        setSelectedStage(null);
-      }
-    };
-
-    checkHash();
-    window.addEventListener('hashchange', checkHash);
-    return () => window.removeEventListener('hashchange', checkHash);
-  }, [selectedStage]);
-
-  const openStageModal = (stage: TimelineStage) => {
-    if (window.location.hash !== `#m=stage-${stage.n}`) {
-      window.location.hash = `m=stage-${stage.n}`;
-    }
-    setSelectedStage(stage);
-  };
-
-  const closeStageModal = () => {
-    setSelectedStage(null);
-    if (window.location.hash.startsWith('#m=stage-')) {
-      window.history.back();
-    }
-  };
-
   // Desktop horizontal positions for the 4 nodes & cards matching timeline.png (x = 573, 791, 1036, 1261)
   const desktopLeftPositions = ['5%', '30%', '55%', '80%'];
 
   return (
-    <div className="relative min-h-[100dvh] bg-blue-screen bg-pattern-tile flex flex-col justify-between overflow-x-clip select-none">
+    <div className="relative min-h-[100dvh] bg-blue-screen bg-pattern-tile flex flex-col justify-between overflow-x-hidden select-none">
       {/* Top Bar with TIMELINE Banner */}
       <TopBar title="TIMELINE" />
 
       {/* Main Content Area */}
-      <main className="relative flex-1 w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 pt-[84px] sm:pt-[96px] pb-6 flex flex-col lg:flex-row items-center justify-between z-10 gap-4">
+      <main className="relative flex-1 w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8 pt-2 pb-6 flex flex-col lg:flex-row items-center justify-between z-10 gap-4">
         {/* Left Column: Collectible Character Card (Colt, x 17-432, y 215-870) */}
-        <div className="relative w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[380px] short:max-w-[220px] flex-shrink-0 flex justify-center items-center z-20">
+        <div className="relative w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[380px] flex-shrink-0 flex justify-center items-center z-20">
           <div className="relative transform -rotate-[3deg] hover:rotate-0 hover:scale-102 transition-transform duration-300 drop-shadow-[0_16px_36px_rgba(0,0,0,0.7)] cursor-pointer">
             <Image
               src="/art/timeline-card.webp"
@@ -75,9 +41,9 @@ export const TimelineScreen: React.FC = () => {
         {/* Right Section: Desktop Horizontal Timeline / Mobile Vertical Timeline */}
         <div className="relative flex-1 w-full overflow-visible">
           {/* DESKTOP VIEW: Alternating Horizontal Timeline (≥ 1024px) */}
-          <div className="hidden lg:block relative w-full h-[720px] short:h-[490px]">
-            {/* Horizontal Timeline Bar at y ~ 360 (short: 240px) */}
-            <div className="absolute top-[355px] short:top-[240px] left-0 right-[-60px] h-[14px] bg-node-gold border-b-[4px] border-node-ring shadow-[0_4px_8px_rgba(0,0,0,0.5)] z-10" />
+          <div className="hidden lg:block relative w-full h-[720px]">
+            {/* Horizontal Timeline Bar at y ~ 360 */}
+            <div className="absolute top-[355px] left-0 right-[-60px] h-[14px] bg-node-gold border-b-[4px] border-node-ring shadow-[0_4px_8px_rgba(0,0,0,0.5)] z-10" />
 
             {/* Stages Grid (4 stages alternating, nodes strictly on the line) */}
             <div className="relative w-full h-full">
@@ -89,59 +55,57 @@ export const TimelineScreen: React.FC = () => {
                 return (
                   <div
                     key={stage.n}
-                    className="absolute top-0 bottom-0 w-[210px] xl:w-[230px] short:w-[195px]"
+                    className="absolute top-0 bottom-0 w-[210px] xl:w-[230px]"
                     style={{ left: leftPos }}
                   >
                     {/* Node on the center bar */}
-                    <div className="absolute top-[335px] short:top-[220px] left-1/2 -translate-x-1/2 z-20 short:scale-85">
+                    <div className="absolute top-[335px] left-1/2 -translate-x-1/2 z-20">
                       <Node number={stage.n} />
                     </div>
 
-                    {/* Stage Card: Placed Above (top ~ 10px / short 5px) or Below (top ~ 420px / short 280px) */}
+                    {/* Stage Card: Placed Above (top ~ 0px) or Below (top ~ 410px) */}
                     <div
                       className={`absolute left-0 right-0 transform -skew-x-[4deg] transition-all duration-200 hover:-translate-y-2 hover:rotate-1 ${
-                        isAbove
-                          ? 'top-[10px] short:top-[5px]'
-                          : 'top-[420px] short:top-[280px]'
+                        isAbove ? 'top-[10px]' : 'top-[420px]'
                       }`}
                     >
-                      <article className="cq-card relative bg-cream rounded-md overflow-hidden border-2 border-black shadow-[0_10px_20px_rgba(0,0,0,0.6)]">
+                      <article className="relative bg-cream rounded-md overflow-hidden border-2 border-black shadow-[0_10px_20px_rgba(0,0,0,0.6)]">
                         {/* Black Top Plate with Stage Label & Info Dot */}
-                        <div className="h-[34px] short:h-[28px] bg-black px-3 flex items-center justify-between">
+                        <div className="h-[34px] bg-black px-3 flex items-center justify-between">
                           <span className="font-display text-white text-xs tracking-wider text-outline-sm">
                             STAGE {String(stage.n).padStart(2, '0')}
                           </span>
                           <InfoDot
-                            onClick={() => openStageModal(stage)}
+                            onClick={() => setSelectedStage(stage)}
                             ariaLabel={`More info about Stage ${stage.n}: ${stage.title}`}
                           />
                         </div>
 
                         {/* Card Body in Cream */}
-                        <div className="p-3 short:p-2 space-y-2 short:space-y-1 text-black">
+                        <div className="p-3 space-y-2 text-black">
                           {/* Fallback Graphic */}
-                          <div className="w-full h-[68px] short:h-[44px] rounded bg-gradient-to-br from-[#351694] to-[#9146EA] flex items-center justify-center p-2 shadow-inner">
+                          <div className="w-full h-[68px] rounded bg-gradient-to-br from-[#351694] to-[#9146EA] flex items-center justify-center p-2 shadow-inner">
                             <Image
                               src="/art/badge.png"
                               alt=""
                               width={40}
                               height={36}
-                              className="w-auto h-[40px] short:h-[30px] drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]"
+                              className="w-auto h-[40px] drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]"
                             />
                           </div>
 
                           {/* Stage Title */}
-                          <h3 className="font-display text-base short:text-sm text-black leading-tight line-clamp-1">
+                          <h3 className="font-display text-base text-black leading-tight line-clamp-1">
                             {stage.title.replace('TODO: ', '')}
                           </h3>
 
                           {/* Date Chip */}
-                          <div className="inline-block px-2 py-0.5 rounded bg-panel-header text-white font-display text-[11px] short:text-[10px] tracking-wide text-outline-sm">
+                          <div className="inline-block px-2 py-0.5 rounded bg-panel-header text-white font-display text-[11px] tracking-wide text-outline-sm">
                             {formatDate(stage.startISO)}
                           </div>
 
                           {/* Summary text */}
-                          <p className="font-body text-[11px] short:text-[10px] text-neutral-800 line-clamp-2 font-bold leading-snug">
+                          <p className="font-body text-[11px] text-neutral-800 line-clamp-2 font-bold leading-snug">
                             {stage.summary.replace('TODO: ', '')}
                           </p>
 
@@ -188,7 +152,7 @@ export const TimelineScreen: React.FC = () => {
                         STAGE {String(stage.n).padStart(2, '0')}
                       </span>
                       <InfoDot
-                        onClick={() => openStageModal(stage)}
+                        onClick={() => setSelectedStage(stage)}
                         ariaLabel={`More info about Stage ${stage.n}: ${stage.title}`}
                       />
                     </div>
@@ -234,7 +198,7 @@ export const TimelineScreen: React.FC = () => {
       {selectedStage && (
         <Modal
           isOpen={!!selectedStage}
-          onClose={closeStageModal}
+          onClose={() => setSelectedStage(null)}
           title={`STAGE ${String(selectedStage.n).padStart(2, '0')}`}
         >
           <div className="space-y-4">
@@ -258,7 +222,7 @@ export const TimelineScreen: React.FC = () => {
             <div className="pt-4 flex justify-end">
               <button
                 type="button"
-                onClick={closeStageModal}
+                onClick={() => setSelectedStage(null)}
                 className="btn-3d-yellow px-6 py-2.5 font-display text-lg text-black rounded-sm cursor-pointer"
               >
                 <span className="transform skew-x-[8deg]">GOT IT!</span>
@@ -267,12 +231,6 @@ export const TimelineScreen: React.FC = () => {
           </div>
         </Modal>
       )}
-
-      {/* Scroll Affordance (Section 4.4) */}
-      <ScrollAffordance />
-
-      {/* Navigation Sequence Rail (Section 3.6) */}
-      <NavigationRail />
 
       {/* Footer */}
       <Footer />

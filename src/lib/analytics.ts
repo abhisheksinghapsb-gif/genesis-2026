@@ -3,24 +3,25 @@
  * Fires events when configured, no cookies, no tracking IDs stored.
  */
 
-type AnalyticsEvent =
-  | { name: 'register_click'; placement: 'landing' | 'menu' | 'footer' }
+export type AnalyticsEvent =
+  | { name: 'register_click'; placement: 'landing' | 'menu' | 'footer' | 'hud' | 'menu_drawer' | 'final' }
   | { name: 'nav_click'; destination: string }
   | { name: 'modal_open'; modalId: string }
   | { name: 'faq_open'; question: string };
 
-export function trackEvent(event: AnalyticsEvent): void {
+export function trackEvent(
+  eventOrName: AnalyticsEvent | string,
+  payload?: Record<string, unknown>
+): void {
   if (typeof window === 'undefined') return;
 
-  // In production, can forward to Cloudflare Web Analytics / Plausible / Vercel
-  if (process.env.NODE_ENV === 'development') {
-    // console.log in dev only if enabled
-    return;
-  }
+  const eventDetail =
+    typeof eventOrName === 'string'
+      ? { name: eventOrName, ...(payload || {}) }
+      : eventOrName;
 
-  // Forward to standard custom event if an analytics script is listening
   try {
-    const customEvent = new CustomEvent('genesis_analytics', { detail: event });
+    const customEvent = new CustomEvent('genesis_analytics', { detail: eventDetail });
     window.dispatchEvent(customEvent);
   } catch {
     // Silent fail

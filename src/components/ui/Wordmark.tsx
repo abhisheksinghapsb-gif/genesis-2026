@@ -5,6 +5,7 @@ import React from 'react';
 interface WordmarkProps {
   className?: string;
   size?: 'normal' | 'large';
+  text?: string;
 }
 
 const letterTransforms = [
@@ -20,8 +21,9 @@ const letterTransforms = [
 export const Wordmark: React.FC<WordmarkProps> = ({
   className = '',
   size = 'large',
+  text = 'GENESIS',
 }) => {
-  const letters = 'GENESIS'.split('');
+  const letters = (text || 'GENESIS').split('');
 
   const fontSizeClass =
     size === 'large'
@@ -29,21 +31,18 @@ export const Wordmark: React.FC<WordmarkProps> = ({
       : 'text-[44px] sm:text-[60px] md:text-[80px]';
 
   return (
-    <h1
-      className={`font-display font-black tracking-wider select-none inline-flex items-center justify-center m-0 leading-none ${fontSizeClass} ${className}`}
-      aria-label="GENESIS"
+    <div
+      className={`relative inline-flex items-center justify-center font-display uppercase tracking-wider text-outline-xl select-none ${className}`}
+      aria-label={text}
     >
-      {letters.map((char, index) => {
-        const trans = letterTransforms[index % letterTransforms.length];
+      {letters.map((char, idx) => {
+        const transform = letterTransforms[idx % letterTransforms.length];
         return (
           <span
-            key={index}
-            className="inline-block transition-transform duration-200 hover:-translate-y-3 cursor-default"
+            key={idx}
+            className={`inline-block font-display ${fontSizeClass} transition-transform duration-200 hover:-translate-y-2 hover:scale-105 cursor-pointer`}
             style={{
-              transform: `translateY(${trans.dy}) rotate(${trans.rot})`,
-              color: 'var(--wordmark-grey)',
-              WebkitTextStroke: '9px #000000',
-              paintOrder: 'stroke fill',
+              transform: `translateY(${transform?.dy ?? '0px'}) rotate(${transform?.rot ?? '0deg'})`,
               textShadow: '0 10px 0 #000000',
             }}
           >
@@ -51,6 +50,6 @@ export const Wordmark: React.FC<WordmarkProps> = ({
           </span>
         );
       })}
-    </h1>
+    </div>
   );
 };

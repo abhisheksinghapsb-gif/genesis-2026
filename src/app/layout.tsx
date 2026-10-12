@@ -48,8 +48,6 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-import { AppShell } from '@/components/layout/AppShell';
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -58,23 +56,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${lilita.variable} ${rubik.variable}`}>
       <head>
-        <link rel="manifest" href="/manifest.json" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                if (
-                  (navigator.connection && navigator.connection.saveData) ||
-                  (window.matchMedia && window.matchMedia('(prefers-reduced-data: reduce)').matches) ||
-                  navigator.hardwareConcurrency <= 4 ||
-                  (navigator.deviceMemory && navigator.deviceMemory <= 2)
-                ) {
+                if (navigator.hardwareConcurrency <= 4 || (navigator.deviceMemory && navigator.deviceMemory <= 2)) {
                   document.documentElement.setAttribute('data-motion', 'lite');
-                }
-                if ('serviceWorker' in navigator) {
-                  window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js').catch(function() {});
-                  });
                 }
               } catch(e) {}
             `,
@@ -89,7 +76,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <div id="main-content" className="flex-1 flex flex-col">
-          <AppShell>{children}</AppShell>
+          {children}
         </div>
       </body>
     </html>
