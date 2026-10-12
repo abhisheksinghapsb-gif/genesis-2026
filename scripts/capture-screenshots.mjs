@@ -35,12 +35,16 @@ const run = async () => {
   const browser = await chromium.launch();
 
   const viewports = [
-    { name: 'phase3-timeline-390', selector: '#timeline', width: 390, height: 844 },
-    { name: 'phase3-timeline-768', selector: '#timeline', width: 768, height: 1024 },
-    { name: 'phase3-timeline-1440', selector: '#timeline', width: 1440, height: 1024 },
-    { name: 'phase3-prizes-390', selector: '#prizes', width: 390, height: 844 },
-    { name: 'phase3-prizes-768', selector: '#prizes', width: 768, height: 1024 },
-    { name: 'phase3-prizes-1440', selector: '#prizes', width: 1440, height: 1024 },
+    { name: 'phase4-sponsors-390', selector: '#sponsors', width: 390, height: 844 },
+    { name: 'phase4-sponsors-768', selector: '#sponsors', width: 768, height: 1024 },
+    { name: 'phase4-sponsors-1440', selector: '#sponsors', width: 1440, height: 1024 },
+    { name: 'phase4-memories-390', selector: '#memories', width: 390, height: 844 },
+    { name: 'phase4-memories-768', selector: '#memories', width: 768, height: 1024 },
+    { name: 'phase4-memories-1440', selector: '#memories', width: 1440, height: 1024 },
+    { name: 'phase4-faq-390', selector: '#faq', width: 390, height: 844 },
+    { name: 'phase4-faq-768', selector: '#faq', width: 768, height: 1024 },
+    { name: 'phase4-faq-1440', selector: '#faq', width: 1440, height: 1024 },
+    { name: 'phase4-footer-1440', selector: 'footer', width: 1440, height: 1024 },
   ];
 
   for (const vp of viewports) {

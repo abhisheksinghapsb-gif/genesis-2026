@@ -1,0 +1,110 @@
+[
+  {
+    "id": "mem-1",
+    "title": "GRAND LAN FINALS",
+    "year": "2025",
+    "edition": "GENESIS 4.0",
+    "category": "LAN ARENA",
+    "caption": "Electric championship crowd cheering the final clutch play at AIT Pune.",
+    "colorGradient": "from-cyan-600/40 via-blue-900/60 to-black"
+  },
+  {
+    "id": "mem-2",
+    "title": "VR IMMERSION CAGE",
+    "year": "2025",
+    "edition": "GENESIS 4.0",
+    "category": "VR TRACK",
+    "caption": "Brawlers battling in real-time Meta Quest standalone arena matches.",
+    "colorGradient": "from-purple-600/40 via-indigo-950/60 to-black"
+  },
+  {
+    "id": "mem-3",
+    "title": "TROPHY CEREMONY",
+    "year": "2025",
+    "edition": "GENESIS 4.0",
+    "category": "VICTORY",
+    "caption": "Champions lifting the golden Genesis 4.0 trophy on main stage.",
+    "colorGradient": "from-amber-600/40 via-orange-950/60 to-black"
+  },
+  {
+    "id": "mem-4",
+    "title": "TACTICAL TEAM HUDDLE",
+    "year": "2025",
+    "edition": "GENESIS 4.0",
+    "category": "SQUADS",
+    "caption": "Top squads dialing in strategies before the knockout semi-finals bracket.",
+    "colorGradient": "from-emerald-600/40 via-teal-950/60 to-black"
+  },
+  {
+    "id": "mem-5",
+    "title": "MIDNIGHT LAN HACKATHON",
+    "year": "2024",
+    "edition": "GENESIS 3.0",
+    "category": "COMMUNITY",
+    "caption": "Developers and esports enthusiasts bonding over late-night energy drinks.",
+    "colorGradient": "from-rose-600/40 via-pink-950/60 to-black"
+  },
+  {
+    "id": "mem-6",
+    "title": "STAGE LIGHTING SHOWCASE",
+    "year": "2024",
+    "edition": "GENESIS 3.0",
+    "category": "PRODUCTION",
+    "caption": "Laser beams and haze setting the mood for the tournament opening.",
+    "colorGradient": "from-blue-600/40 via-indigo-950/60 to-black"
+  },
+  {
+    "id": "mem-7",
+    "title": "AR HEADSET DEMO ZONE",
+    "year": "2024",
+    "edition": "GENESIS 3.0",
+    "category": "TECH LAB",
+    "caption": "Students trying out spatial computing headsets and prototype game demos.",
+    "colorGradient": "from-violet-600/40 via-purple-950/60 to-black"
+  },
+  {
+    "id": "mem-8",
+    "title": "COSPLAY & BRAWLERS",
+    "year": "2024",
+    "edition": "GENESIS 3.0",
+    "category": "FESTIVAL",
+    "caption": "Attendees bringing game heroes to life with custom cosplay and gear.",
+    "colorGradient": "from-amber-500/40 via-yellow-950/60 to-black"
+  },
+  {
+    "id": "mem-9",
+    "title": "CASTERS & SHOUTCAST DESK",
+    "year": "2023",
+    "edition": "GENESIS 2.0",
+    "category": "BROADCAST",
+    "caption": "Our live commentary crew breaking down bracket upsets on stream.",
+    "colorGradient": "from-cyan-500/40 via-slate-950/60 to-black"
+  },
+  {
+    "id": "mem-10",
+    "title": "ORGANIZING COMMITTEE",
+    "year": "2023",
+    "edition": "GENESIS 2.0",
+    "category": "GDXR CREW",
+    "caption": "The hardworking GDXR club members pulling off an unforgettable festival.",
+    "colorGradient": "from-orange-500/40 via-red-950/60 to-black"
+  },
+  {
+    "id": "mem-11",
+    "title": "AUDIENCE ROAR",
+    "year": "2023",
+    "edition": "GENESIS 2.0",
+    "category": "MOMENTS",
+    "caption": "A packed hall jumping to their feet on the game-winning elimination.",
+    "colorGradient": "from-fuchsia-600/40 via-purple-950/60 to-black"
+  },
+  {
+    "id": "mem-12",
+    "title": "CERTIFICATE & PRIZE DISTRIBUTION",
+    "year": "2023",
+    "edition": "GENESIS 2.0",
+    "category": "AWARDS",
+    "caption": "Handing out certificates and cash giant checks to our podium finishers.",
+    "colorGradient": "from-teal-500/40 via-emerald-950/60 to-black"
+  }
+]

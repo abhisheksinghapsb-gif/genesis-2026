@@ -57,11 +57,21 @@ const config: Config = {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(200%)' },
         },
+        'marquee-left': {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        'marquee-right': {
+          '0%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0%)' },
+        },
       },
       animation: {
         'gentle-float': 'gentle-float 4s ease-in-out infinite',
         'gentle-pulse': 'gentle-pulse 3s ease-in-out infinite',
         'shine-sweep': 'shine-sweep 3s ease-in-out infinite',
+        'marquee-left': 'marquee-left 35s linear infinite',
+        'marquee-right': 'marquee-right 35s linear infinite',
       },
     },
   },

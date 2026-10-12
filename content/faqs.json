@@ -1,0 +1,32 @@
+[
+  {
+    "id": "faq-1",
+    "q": "Who can participate?",
+    "a": "Demo answer, details coming soon. Students currently enrolled in recognized colleges/universities are eligible with valid student credentials.",
+    "category": "ELIGIBILITY"
+  },
+  {
+    "id": "faq-2",
+    "q": "How big can a team be?",
+    "a": "Demo answer, details coming soon. Squad rosters can range from 1 to 4 players depending on the game title.",
+    "category": "TEAMS"
+  },
+  {
+    "id": "faq-3",
+    "q": "Is there a registration fee?",
+    "a": "Demo answer, details coming soon. As indicated in the event briefing, official registration for qualifying teams is ₹0.",
+    "category": "REGISTRATION"
+  },
+  {
+    "id": "faq-4",
+    "q": "What is the VR track?",
+    "a": "Demo answer, details coming soon. A dedicated competitive bracket hosted on standalone Meta Quest headsets and VR rigs.",
+    "category": "TRACKS"
+  },
+  {
+    "id": "faq-5",
+    "q": "Where and when is the event?",
+    "a": "Demo answer, details coming soon. The LAN semi-finals and grand finale are scheduled for 12–13 December 2026 at the AIT Pune campus.",
+    "category": "VENUE"
+  }
+]

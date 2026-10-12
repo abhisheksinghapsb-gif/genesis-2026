@@ -1,0 +1,36 @@
+[
+  {
+    "id": "tier-title",
+    "tier": "TITLE SPONSORS",
+    "tierBadge": "TIER 01",
+    "staggerDirection": "left",
+    "sponsors": [
+      {
+        "id": "game-cloud",
+        "name": "Game Cloud Technologies Private Limited",
+        "shortName": "GAME CLOUD TECHNOLOGIES",
+        "role": "Title Sponsor & Ecosystem Partner",
+        "logo": "/img/sponsors/game-cloud.webp",
+        "website": "https://gamecloud-ltd.com",
+        "accent": "amber"
+      }
+    ]
+  },
+  {
+    "id": "tier-platform",
+    "tier": "PLATFORM SPONSORS",
+    "tierBadge": "TIER 02",
+    "staggerDirection": "right",
+    "sponsors": [
+      {
+        "id": "gamedoora",
+        "name": "Gamedoora",
+        "shortName": "GAMEDOORA",
+        "role": "Official Gaming Platform Partner",
+        "logo": "/img/sponsors/gamedoora.webp",
+        "website": "https://gamedoora.com",
+        "accent": "cyan"
+      }
+    ]
+  }
+]

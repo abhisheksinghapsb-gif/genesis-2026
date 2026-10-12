@@ -6,11 +6,11 @@ import { HeroSection } from '@/components/hero/HeroSection';
 import { AboutSection } from '@/components/about/AboutSection';
 import { TimelineSection } from '@/components/timeline/TimelineSection';
 import { PrizesSection } from '@/components/prizes/PrizesSection';
-import { SponsorsSkeleton } from '@/components/sponsors/SponsorsSkeleton';
-import { MemoriesSkeleton } from '@/components/memories/MemoriesSkeleton';
-import { FaqSkeleton } from '@/components/faq/FaqSkeleton';
+import { SponsorsSection } from '@/components/sponsors/SponsorsSection';
+import { MemoriesSection } from '@/components/memories/MemoriesSection';
+import { FaqSection } from '@/components/faq/FaqSection';
 import { RegisterSkeleton } from '@/components/register/RegisterSkeleton';
-import { FooterSkeleton } from '@/components/footer/FooterSkeleton';
+import { FooterSection } from '@/components/footer/FooterSection';
 import { ThemedDivider } from '@/components/ui/ThemedDivider';
 
 export default function HomePage() {
@@ -44,19 +44,19 @@ export default function HomePage() {
       <ThemedDivider variant="purple" />
 
       {/* 5. Sponsors Section */}
-      <SponsorsSkeleton />
+      <SponsorsSection />
 
       {/* Themed Divider */}
       <ThemedDivider variant="cyan" />
 
       {/* 6. Memories Section */}
-      <MemoriesSkeleton />
+      <MemoriesSection />
 
       {/* Themed Divider */}
       <ThemedDivider variant="gold" />
 
       {/* 7. FAQs Section */}
-      <FaqSkeleton />
+      <FaqSection />
 
       {/* Themed Divider */}
       <ThemedDivider variant="purple" />
@@ -65,7 +65,7 @@ export default function HomePage() {
       <RegisterSkeleton />
 
       {/* Footer */}
-      <FooterSkeleton />
+      <FooterSection />
     </div>
   );
 }
