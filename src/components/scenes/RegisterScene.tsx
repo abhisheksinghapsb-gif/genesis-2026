@@ -44,13 +44,15 @@ export const RegisterScene: React.FC<RegisterSceneProps> = ({
   }, [confettiFired]);
 
   const handleRegister = () => {
-    sound.playTap();
+    sound.playUnlock();
     trackEvent('register_click', { placement: 'final' });
-    if (siteConfig.registrationUrl && siteConfig.registrationUrl.startsWith('https://')) {
-      window.open(siteConfig.registrationUrl, '_blank', 'noopener,noreferrer');
-    } else {
-      onToast('Registrations opening soon! Stay tuned, Brawler.');
-    }
+    onToast('🎉 Squad Registration Unlocked! Ready on this page.');
+    confetti({
+      particleCount: 80,
+      spread: 70,
+      origin: { y: 0.7 },
+      colors: ['#EFC609', '#EE7123', '#248EF6', '#FFFFFF'],
+    });
   };
 
   const handleCalendar = () => {

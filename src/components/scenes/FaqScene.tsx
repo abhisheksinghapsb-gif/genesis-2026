@@ -65,7 +65,7 @@ export const FaqScene: React.FC<FaqSceneProps> = ({ onToast, scrollProgress = 0 
             alt="Peeking Star Badge"
             width={72}
             height={64}
-            className="w-14 sm:w-18 h-auto drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)]"
+            className="w-14 sm:w-18 h-auto drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)] animate-float-fast"
           />
         </div>
 

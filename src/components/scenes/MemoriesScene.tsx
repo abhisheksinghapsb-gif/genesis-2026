@@ -147,7 +147,7 @@ export const MemoriesScene: React.FC<MemoriesSceneProps> = ({
                         alt=""
                         width={44}
                         height={38}
-                        className="drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]"
+                        className="drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] animate-float-fast"
                       />
                       <span className="mt-2 font-display text-[10px] sm:text-xs text-white tracking-widest text-outline-sm">
                         GENESIS #{String(idx + 1).padStart(2, '0')}

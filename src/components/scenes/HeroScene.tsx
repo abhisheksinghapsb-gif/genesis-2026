@@ -41,13 +41,9 @@ export const HeroScene: React.FC<HeroSceneProps> = ({ onToast, scrollProgress = 
   const handleRegister = () => {
     sound.playTap();
     trackEvent('register_click', { placement: 'landing' });
-    if (siteConfig.registrationUrl && siteConfig.registrationUrl.startsWith('https://')) {
-      const url = new URL(siteConfig.registrationUrl);
-      if (!url.search) {
-        url.searchParams.set('utm_source', 'genesis_site');
-        url.searchParams.set('utm_medium', 'landing');
-      }
-      window.open(url.toString(), '_blank', 'noopener,noreferrer');
+    const regElem = document.getElementById('register');
+    if (regElem) {
+      regElem.scrollIntoView({ behavior: 'smooth' });
     } else {
       onToast('Registrations opening soon! Stay tuned, Brawler.');
     }
@@ -260,7 +256,7 @@ export const HeroScene: React.FC<HeroSceneProps> = ({ onToast, scrollProgress = 
           alt="Observatory Telescope"
           width={250}
           height={300}
-          className="w-full h-auto drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)]"
+          className="w-full h-auto drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)] animate-sway"
           priority
         />
       </div>
@@ -324,7 +320,7 @@ export const HeroScene: React.FC<HeroSceneProps> = ({ onToast, scrollProgress = 
               alt="GENESIS 2026 Champion Badge"
               width={160}
               height={140}
-              className="w-24 h-auto sm:w-32 md:w-40 drop-shadow-[0_12px_24px_rgba(0,0,0,0.7)]"
+              className="w-24 h-auto sm:w-32 md:w-40 drop-shadow-[0_12px_24px_rgba(0,0,0,0.7)] animate-pulse-glow"
               priority
             />
           </FloatLoop>

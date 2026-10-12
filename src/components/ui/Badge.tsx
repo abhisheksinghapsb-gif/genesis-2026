@@ -48,11 +48,13 @@ export const Badge: React.FC<BadgeProps> = ({
 
   const labelText = `${trackName ? trackName + ', ' : ''}${rankLabel} prize, ${formatPrize(amount)}`;
 
+  const animClass = rank === 1 ? 'animate-pulse-glow' : rank === 2 ? 'animate-float' : 'animate-float-slow';
+
   return (
     <div
       role="img"
       aria-label={labelText}
-      className={`relative inline-block select-none cursor-pointer transform ${colors.tilt} transition-transform duration-200 hover:scale-105 active:scale-95 group ${className}`}
+      className={`relative inline-block select-none cursor-pointer transform ${colors.tilt} ${animClass} transition-transform duration-200 hover:scale-105 active:scale-95 group ${className}`}
     >
       <svg
         width="180"

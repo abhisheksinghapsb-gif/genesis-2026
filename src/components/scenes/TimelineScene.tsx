@@ -60,7 +60,7 @@ export const TimelineScene: React.FC<TimelineSceneProps> = ({
         {/* Left Column: Collectible Colt Character Card */}
         <div className="relative w-full max-w-[260px] sm:max-w-[300px] lg:max-w-[360px] flex-shrink-0 flex justify-center items-center z-20">
           <Tilt3D maxTilt={10}>
-            <div className="relative transform -rotate-[3deg] hover:rotate-0 transition-transform duration-300 drop-shadow-[0_16px_36px_rgba(0,0,0,0.7)] cursor-pointer">
+            <div className="relative transform -rotate-[3deg] hover:rotate-0 transition-transform duration-300 drop-shadow-[0_16px_36px_rgba(0,0,0,0.7)] cursor-pointer animate-float-slow">
               <Image
                 src="/art/timeline-card.webp"
                 alt="Colt Collectible Character Card"

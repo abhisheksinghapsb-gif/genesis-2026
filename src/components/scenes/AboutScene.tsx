@@ -111,7 +111,7 @@ export const AboutScene: React.FC<AboutSceneProps> = ({ scrollProgress = 0 }) =>
                 alt="Robot Astronomer Hero Art"
                 width={500}
                 height={600}
-                className="w-full h-auto object-contain"
+                className="w-full h-auto object-contain animate-float-slow"
                 priority
               />
 

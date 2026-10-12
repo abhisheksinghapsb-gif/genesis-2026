@@ -24,9 +24,6 @@ export const SponsorsScene: React.FC<SponsorsSceneProps> = ({ scrollProgress = 0
 
   const handleSponsorClick = (url?: string) => {
     sound.playTap();
-    if (url && url.startsWith('http')) {
-      window.open(url, '_blank', 'noopener,noreferrer,sponsored');
-    }
   };
 
   return (
@@ -68,7 +65,7 @@ export const SponsorsScene: React.FC<SponsorsSceneProps> = ({ scrollProgress = 0
                           alt={company.name}
                           width={440}
                           height={140}
-                          className="max-h-[80px] sm:max-h-[110px] w-auto object-contain filter contrast-105"
+                          className="max-h-[80px] sm:max-h-[110px] w-auto object-contain filter contrast-105 animate-float"
                           priority
                         />
                       </div>
@@ -106,7 +103,7 @@ export const SponsorsScene: React.FC<SponsorsSceneProps> = ({ scrollProgress = 0
                           alt={company.name}
                           width={440}
                           height={140}
-                          className="max-h-[80px] sm:max-h-[110px] w-auto object-contain filter contrast-105"
+                          className="max-h-[80px] sm:max-h-[110px] w-auto object-contain filter contrast-105 animate-float-slow"
                           priority
                         />
                       </div>
