@@ -9,7 +9,7 @@ import { PrizesSection } from '@/components/prizes/PrizesSection';
 import { SponsorsSection } from '@/components/sponsors/SponsorsSection';
 import { MemoriesSection } from '@/components/memories/MemoriesSection';
 import { FaqSection } from '@/components/faq/FaqSection';
-import { RegisterSkeleton } from '@/components/register/RegisterSkeleton';
+import { RegisterSection } from '@/components/register/RegisterSection';
 import { FooterSection } from '@/components/footer/FooterSection';
 import { ThemedDivider } from '@/components/ui/ThemedDivider';
 
@@ -62,7 +62,7 @@ export default function HomePage() {
       <ThemedDivider variant="purple" />
 
       {/* 8. Register Section */}
-      <RegisterSkeleton />
+      <RegisterSection />
 
       {/* Footer */}
       <FooterSection />

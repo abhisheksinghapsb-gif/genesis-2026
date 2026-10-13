@@ -41,6 +41,9 @@ const run = async () => {
     { name: 'phase5-fallback-390', url: 'http://localhost:3000/?3d=off', selector: '#home', width: 390, height: 844 },
     { name: 'phase5-fallback-768', url: 'http://localhost:3000/?3d=off', selector: '#home', width: 768, height: 1024 },
     { name: 'phase5-fallback-1440', url: 'http://localhost:3000/?3d=off', selector: '#home', width: 1440, height: 1024 },
+    { name: 'phase6-register-390', url: 'http://localhost:3000/#register', selector: '#register', width: 390, height: 844 },
+    { name: 'phase6-register-768', url: 'http://localhost:3000/#register', selector: '#register', width: 768, height: 1024 },
+    { name: 'phase6-register-1440', url: 'http://localhost:3000/#register', selector: '#register', width: 1440, height: 1024 },
   ];
 
   for (const vp of viewports) {

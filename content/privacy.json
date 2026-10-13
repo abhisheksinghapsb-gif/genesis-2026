@@ -1,0 +1,24 @@
+{
+  "version": "1.0",
+  "effectiveDate": "2026-10-13",
+  "tournament": "GENESIS 2026 (5th Edition)",
+  "organizer": "GDXR Club, Army Institute of Technology (AIT) Pune",
+  "contactEmail": "gdxr@aitpune.edu.in",
+  "summary": "We collect team registration details solely for organizing brackets, verifying eligibility, coordinating check-ins, and distributing tournament updates for GENESIS 2026.",
+  "dataCollected": [
+    "Team / Clan Name",
+    "Selected Competitive Track (Gaming Championship or VR Track)",
+    "Squad Leader Full Name, Email Address, and Phone Number",
+    "Squad Members Full Name, Email Address, and optional Phone Number",
+    "Timestamp of consent and registration"
+  ],
+  "usage": [
+    "Tournament seedings, match scheduling, and bracket management",
+    "Sending official confirmation emails and Discord access tokens",
+    "Emergency contact during on-campus LAN and VR events",
+    "Verification of student/participant identity during badge pickup"
+  ],
+  "retention": "All registration records are retained for 90 days following the conclusion of GENESIS 2026, after which non-anonymized personal data is securely purged.",
+  "thirdPartySharing": "We do not sell, rent, or share personal participant information with commercial third parties or external advertisers.",
+  "security": "Data is stored on Postgres with Row Level Security (RLS) and encrypted transport (TLS 1.3). Access is restricted to authorized GDXR tournament admins."
+}

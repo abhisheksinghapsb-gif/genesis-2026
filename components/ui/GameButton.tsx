@@ -7,6 +7,8 @@ export interface GameButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
   variant?: 'yellow' | 'orange' | 'blue' | 'red' | 'cream' | 'green';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   href?: string;
+  target?: string;
+  rel?: string;
   fullWidth?: boolean;
   children: React.ReactNode;
   icon?: React.ReactNode;
@@ -16,6 +18,8 @@ export const GameButton: React.FC<GameButtonProps> = ({
   variant = 'yellow',
   size = 'md',
   href,
+  target,
+  rel,
   fullWidth = false,
   className,
   children,
@@ -72,7 +76,7 @@ export const GameButton: React.FC<GameButtonProps> = ({
 
   if (href) {
     return (
-      <Link href={href} className={baseClasses} role="button">
+      <Link href={href} target={target} rel={rel} className={baseClasses} role="button">
         {innerContent}
       </Link>
     );
