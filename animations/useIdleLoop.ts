@@ -46,5 +46,6 @@ export function useIdleLoop({ threshold = 0.1 }: IdleLoopOptions = {}) {
   return {
     containerRef,
     shouldAnimate,
+    isIntersecting: isInView,
   };
 }

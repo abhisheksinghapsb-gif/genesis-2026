@@ -5,6 +5,7 @@ import { useIdleLoop } from '@/animations/useIdleLoop';
 import { SlantedBanner } from '@/components/ui/SlantedBanner';
 import { WatermarkPattern } from '@/components/ui/WatermarkPattern';
 import { MemoriesLightbox, type MemoryItem } from './MemoriesLightbox';
+import { MemoryCard } from './MemoryCard';
 import memoryData from '@/content/memories.json';
 
 const ALL_MEMORIES = memoryData as MemoryItem[];
@@ -122,48 +123,12 @@ export const MemoriesSection: React.FC = () => {
             {marqueeRow1.map((item, idx) => {
               const originalIndex = filteredMemories.findIndex((m) => m.id === item.id);
               return (
-                <button
+                <MemoryCard
                   key={`${item.id}-r1-${idx}`}
-                  type="button"
+                  item={item}
+                  rotationClass="-rotate-1.5"
                   onClick={() => setActiveItemIndex(originalIndex >= 0 ? originalIndex : 0)}
-                  className="group/card relative flex h-48 w-72 sm:h-56 sm:w-80 shrink-0 -rotate-1.5 flex-col overflow-hidden rounded-2xl border-4 border-[#0B1D40] bg-gradient-to-b from-[#132A5C] via-[#0E2047] to-[#08132B] p-3 text-left shadow-[0_6px_0_#050B17] transition-all duration-300 hover:z-20 hover:scale-105 hover:rotate-0 hover:border-cyan-400 hover:shadow-[0_0_24px_rgba(0,168,255,0.5)] active:translate-y-1"
-                >
-                  {/* Subtle Card Glow / Ambient Background */}
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${item.colorGradient} opacity-40 transition-opacity group-hover/card:opacity-70`}
-                  />
-
-                  {/* Inner Frame */}
-                  <div className="relative z-10 flex h-full w-full flex-col justify-between rounded-xl border border-cyan-400/20 bg-slate-950/60 p-4">
-                    {/* Top Badges */}
-                    <div className="flex items-center justify-between">
-                      <span className="rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 font-heading text-[10px] text-amber-300 uppercase">
-                        {item.category}
-                      </span>
-                      <span className="font-heading text-xs text-sky-300">
-                        {item.edition}
-                      </span>
-                    </div>
-
-                    {/* Bottom Title & Caption */}
-                    <div>
-                      <h4 className="font-heading text-lg sm:text-xl text-white group-hover/card:text-amber-300 transition-colors drop-shadow">
-                        {item.title}
-                      </h4>
-                      <p className="mt-1 line-clamp-2 font-body text-xs font-bold text-sky-200">
-                        {item.caption}
-                      </p>
-                    </div>
-
-                    {/* Hover Hint */}
-                    <div className="flex items-center justify-between border-t border-cyan-900/40 pt-2 font-heading text-[10px] text-cyan-400">
-                      <span>AIT PUNE</span>
-                      <span className="opacity-0 group-hover/card:opacity-100 transition-opacity">
-                        CLICK TO EXPAND ↗
-                      </span>
-                    </div>
-                  </div>
-                </button>
+                />
               );
             })}
           </div>
@@ -179,48 +144,12 @@ export const MemoriesSection: React.FC = () => {
             {marqueeRow2.map((item, idx) => {
               const originalIndex = filteredMemories.findIndex((m) => m.id === item.id);
               return (
-                <button
+                <MemoryCard
                   key={`${item.id}-r2-${idx}`}
-                  type="button"
+                  item={item}
+                  rotationClass="rotate-1.5"
                   onClick={() => setActiveItemIndex(originalIndex >= 0 ? originalIndex : 0)}
-                  className="group/card relative flex h-48 w-72 sm:h-56 sm:w-80 shrink-0 rotate-1.5 flex-col overflow-hidden rounded-2xl border-4 border-[#0B1D40] bg-gradient-to-b from-[#132A5C] via-[#0E2047] to-[#08132B] p-3 text-left shadow-[0_6px_0_#050B17] transition-all duration-300 hover:z-20 hover:scale-105 hover:rotate-0 hover:border-cyan-400 hover:shadow-[0_0_24px_rgba(0,168,255,0.5)] active:translate-y-1"
-                >
-                  {/* Subtle Card Glow / Ambient Background */}
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${item.colorGradient} opacity-40 transition-opacity group-hover/card:opacity-70`}
-                  />
-
-                  {/* Inner Frame */}
-                  <div className="relative z-10 flex h-full w-full flex-col justify-between rounded-xl border border-cyan-400/20 bg-slate-950/60 p-4">
-                    {/* Top Badges */}
-                    <div className="flex items-center justify-between">
-                      <span className="rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 font-heading text-[10px] text-amber-300 uppercase">
-                        {item.category}
-                      </span>
-                      <span className="font-heading text-xs text-sky-300">
-                        {item.edition}
-                      </span>
-                    </div>
-
-                    {/* Bottom Title & Caption */}
-                    <div>
-                      <h4 className="font-heading text-lg sm:text-xl text-white group-hover/card:text-amber-300 transition-colors drop-shadow">
-                        {item.title}
-                      </h4>
-                      <p className="mt-1 line-clamp-2 font-body text-xs font-bold text-sky-200">
-                        {item.caption}
-                      </p>
-                    </div>
-
-                    {/* Hover Hint */}
-                    <div className="flex items-center justify-between border-t border-cyan-900/40 pt-2 font-heading text-[10px] text-cyan-400">
-                      <span>AIT PUNE</span>
-                      <span className="opacity-0 group-hover/card:opacity-100 transition-opacity">
-                        CLICK TO EXPAND ↗
-                      </span>
-                    </div>
-                  </div>
-                </button>
+                />
               );
             })}
           </div>

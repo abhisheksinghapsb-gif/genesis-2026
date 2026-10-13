@@ -35,16 +35,12 @@ const run = async () => {
   const browser = await chromium.launch();
 
   const viewports = [
-    { name: 'phase4-sponsors-390', selector: '#sponsors', width: 390, height: 844 },
-    { name: 'phase4-sponsors-768', selector: '#sponsors', width: 768, height: 1024 },
-    { name: 'phase4-sponsors-1440', selector: '#sponsors', width: 1440, height: 1024 },
-    { name: 'phase4-memories-390', selector: '#memories', width: 390, height: 844 },
-    { name: 'phase4-memories-768', selector: '#memories', width: 768, height: 1024 },
-    { name: 'phase4-memories-1440', selector: '#memories', width: 1440, height: 1024 },
-    { name: 'phase4-faq-390', selector: '#faq', width: 390, height: 844 },
-    { name: 'phase4-faq-768', selector: '#faq', width: 768, height: 1024 },
-    { name: 'phase4-faq-1440', selector: '#faq', width: 1440, height: 1024 },
-    { name: 'phase4-footer-1440', selector: 'footer', width: 1440, height: 1024 },
+    { name: 'phase5-3d-390', url: 'http://localhost:3000/?3d=on', selector: '#home', width: 390, height: 844 },
+    { name: 'phase5-3d-768', url: 'http://localhost:3000/?3d=on', selector: '#home', width: 768, height: 1024 },
+    { name: 'phase5-3d-1440', url: 'http://localhost:3000/?3d=on', selector: '#home', width: 1440, height: 1024 },
+    { name: 'phase5-fallback-390', url: 'http://localhost:3000/?3d=off', selector: '#home', width: 390, height: 844 },
+    { name: 'phase5-fallback-768', url: 'http://localhost:3000/?3d=off', selector: '#home', width: 768, height: 1024 },
+    { name: 'phase5-fallback-1440', url: 'http://localhost:3000/?3d=off', selector: '#home', width: 1440, height: 1024 },
   ];
 
   for (const vp of viewports) {
@@ -52,12 +48,12 @@ const run = async () => {
       viewport: { width: vp.width, height: vp.height },
     });
 
-    await page.goto('http://localhost:3000', { waitUntil: 'networkidle' });
-    await page.waitForTimeout(1600);
+    await page.goto(vp.url, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(2000);
 
     const el = page.locator(vp.selector);
     await el.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(800);
 
     const shotPath = path.join(outDir, `${vp.name}.png`);
     await page.screenshot({ path: shotPath, fullPage: false });

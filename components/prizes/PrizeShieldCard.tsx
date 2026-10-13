@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ShieldBadge } from '@/components/ui/ShieldBadge';
+import { useTilt3D } from '@/animations/useTilt3D';
 
 export interface RewardItem {
   rank: string;
@@ -20,6 +21,9 @@ export interface PrizeShieldCardProps {
 export const PrizeShieldCard: React.FC<PrizeShieldCardProps> = ({ reward, shouldAnimate }) => {
   const [displayAmount, setDisplayAmount] = useState<number>(0);
   const [isCelebrated, setIsCelebrated] = useState<boolean>(false);
+
+  const { ref, transformStyle, glareStyle, onPointerMove, onPointerLeave, onPointerDown, onPointerUp } =
+    useTilt3D({ maxTilt: 10, scale: 1.04 });
 
   // Counter animation from 0 to amount on mount
   useEffect(() => {
@@ -49,9 +53,21 @@ export const PrizeShieldCard: React.FC<PrizeShieldCardProps> = ({ reward, should
 
   return (
     <div
+      ref={ref}
+      style={transformStyle}
+      onPointerMove={onPointerMove}
+      onPointerLeave={onPointerLeave}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
       onClick={handleShieldClick}
-      className="group relative flex flex-1 flex-col items-center justify-between rounded-2xl border-2 sm:border-[3px] border-[#0A1A3A] bg-gradient-to-b from-[#132A5A] via-[#0E1E42] to-[#07132B] p-4 sm:p-6 shadow-[0_8px_0_#050C1C] cursor-pointer transition-all hover:-translate-y-2 select-none"
+      className="group relative flex flex-1 flex-col items-center justify-between rounded-2xl border-2 sm:border-[3px] border-[#0A1A3A] bg-gradient-to-b from-[#132A5A] via-[#0E1E42] to-[#07132B] p-4 sm:p-6 shadow-[0_8px_0_#050C1C] cursor-pointer select-none"
     >
+      {/* Glare effect */}
+      <div
+        className="pointer-events-none absolute h-40 w-40 rounded-full bg-gradient-to-r from-white/20 to-transparent blur-md transition-opacity duration-150"
+        style={glareStyle}
+      />
+
       {/* Mini celebration ring on click */}
       {isCelebrated && (
         <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center">

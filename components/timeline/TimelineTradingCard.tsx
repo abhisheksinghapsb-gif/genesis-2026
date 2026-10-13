@@ -1,46 +1,33 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
+import { useTilt3D } from '@/animations/useTilt3D';
 
 export interface TimelineTradingCardProps {
   shouldAnimate: boolean;
 }
 
 export const TimelineTradingCard: React.FC<TimelineTradingCardProps> = ({ shouldAnimate }) => {
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 16;
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * -16;
-    setTilt({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setTilt({ x: 0, y: 0 });
-    setIsHovered(false);
-  };
+  const { ref, transformStyle, glareStyle, onPointerMove, onPointerLeave, onPointerDown, onPointerUp } =
+    useTilt3D({ maxTilt: 10, scale: 1.05 });
 
   return (
     <div
-      className="relative flex items-center justify-center select-none perspective-[1000px]"
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
+      ref={ref}
+      className="relative flex items-center justify-center select-none"
+      onPointerMove={onPointerMove}
+      onPointerLeave={onPointerLeave}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      style={transformStyle}
     >
       {/* 3D Tilting Card Container */}
       <div
-        className={`relative z-10 transition-transform duration-150 ease-out will-change-transform ${
-          shouldAnimate && !isHovered ? 'animate-gentle-float' : ''
+        className={`relative z-10 will-change-transform ${
+          shouldAnimate ? 'animate-gentle-float' : ''
         }`}
-        style={{
-          transform: isHovered
-            ? `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg) scale(1.05)`
-            : 'rotateY(0deg) rotateX(0deg) scale(1)',
-          animationDuration: '5.5s',
-        }}
+        style={{ animationDuration: '5.5s' }}
       >
         {/* Glow halo behind card */}
         <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-amber-500/20 via-cyan-400/20 to-purple-500/20 blur-xl pointer-events-none" />
@@ -53,6 +40,12 @@ export const TimelineTradingCard: React.FC<TimelineTradingCardProps> = ({ should
             fill
             sizes="(max-width: 640px) 260px, 320px"
             className="object-cover object-center filter drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+          />
+
+          {/* Dynamic 3D Glare highlight */}
+          <div
+            className="pointer-events-none absolute h-56 w-56 rounded-full bg-gradient-to-r from-white/30 to-transparent blur-md transition-opacity duration-150"
+            style={glareStyle}
           />
 
           {/* Holographic foil shine sweep overlay */}

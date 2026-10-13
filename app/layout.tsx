@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { Hud } from '@/components/hud/Hud';
 import { GameLoader } from '@/components/ui/GameLoader';
+import { CursorSparkles } from '@/components/ambient/CursorSparkles';
 
 const lilitaOne = localFont({
   src: '../public/fonts/lilita-one.woff2',
@@ -44,6 +45,7 @@ export default function RootLayout({
       <body className="antialiased min-h-screen bg-[#060D24] text-white selection:bg-amber-400 selection:text-black">
         <GameLoader />
         <Hud />
+        <CursorSparkles />
         <main id="main-content" tabIndex={-1}>
           {children}
         </main>
