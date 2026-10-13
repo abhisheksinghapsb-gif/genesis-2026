@@ -21,50 +21,47 @@ export const TimelineSection: React.FC = () => {
     <section
       id="timeline"
       ref={containerRef}
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#120626] via-[#0B1A42] to-[#0A1636] px-4 py-16 text-center select-none"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#120626] via-[#0B1A42] to-[#0A1636] text-center select-none scroll-mt-16 pt-12 md:pt-14"
       aria-label="Event Timeline"
     >
-      {/* Main Video Animation Stage */}
-      <div className="relative mx-auto w-full max-w-[1200px] overflow-hidden rounded-2xl select-none shadow-[0_0_50px_rgba(0,168,255,0.25)] border-2 border-cyan-500/30 bg-[#0B1A42]">
-        {/* 16:9 Video Canvas Frame */}
-        <div className="relative w-full pb-[56.25%]">
-          {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping Timeline Animation */}
-          <video
-            src="/videos/timeline-loop.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
-          />
+      {/* Edge-to-Edge Video Animation Stage (like innerve.tech) */}
+      <div className="relative w-full aspect-[16/9] min-h-[100svh] flex items-center justify-center overflow-hidden bg-[#0B1A42]">
+        {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping Timeline Animation */}
+        <video
+          src="/videos/timeline-loop.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
+        />
 
-          {/* Accessible Header Title for Tests & Screen Readers */}
-          <h2 className="sr-only">TIMELINE</h2>
+        {/* Accessible Header Title for Tests & Screen Readers */}
+        <h2 className="sr-only">TIMELINE</h2>
 
-          {/* Colt Brawler Trading Card Hotspot on the Left */}
+        {/* Colt Brawler Trading Card Hotspot on the Left */}
+        <button
+          type="button"
+          onClick={() => setActiveModalItem(timelineData[0] ?? null)}
+          aria-label="Colt Trading Card"
+          className="absolute top-[16%] left-[6.5%] w-[25%] h-[72%] z-20 cursor-pointer rounded-2xl outline-none hover:ring-2 hover:ring-yellow-400/50 transition-all"
+          title="Click Colt to view Stage 01 Overview"
+        />
+
+        {/* 4 Interactive Milestone Card Hotspots - Clean Hitboxes over 3D Rotating Video Cards */}
+        {timelineData.map((step, idx) => (
           <button
+            key={step.id}
             type="button"
-            onClick={() => setActiveModalItem(timelineData[0] ?? null)}
-            aria-label="Colt Trading Card"
-            className="absolute top-[16%] left-[6.5%] w-[25%] h-[72%] z-20 cursor-pointer rounded-2xl outline-none hover:ring-2 hover:ring-yellow-400/50 transition-all"
-            title="Click Colt to view Stage 01 Overview"
-          />
-
-          {/* 4 Interactive Milestone Card Hotspots - Clean Hitboxes over 3D Rotating Video Cards */}
-          {timelineData.map((step, idx) => (
-            <button
-              key={step.id}
-              type="button"
-              onClick={() => setActiveModalItem(step)}
-              aria-label={`View rules and venue details for ${step.title}`}
-              className={`group absolute ${SLOT_STYLES[idx] ?? ''} z-20 cursor-pointer rounded-xl outline-none hover:ring-2 hover:ring-yellow-400/50 hover:bg-yellow-400/5 transition-all`}
-              title={`Click to view rules and venue details for Stage ${step.num}: ${step.title}`}
-            >
-              {/* Unique screen reader tag for exact step.num testing & accessibility */}
-              <span className="sr-only">{step.num}</span>
-            </button>
-          ))}
-        </div>
+            onClick={() => setActiveModalItem(step)}
+            aria-label={`View rules and venue details for ${step.title}`}
+            className={`group absolute ${SLOT_STYLES[idx] ?? ''} z-20 cursor-pointer rounded-xl outline-none hover:ring-2 hover:ring-yellow-400/50 hover:bg-yellow-400/5 transition-all`}
+            title={`Click to view rules and venue details for Stage ${step.num}: ${step.title}`}
+          >
+            {/* Unique screen reader tag for exact step.num testing & accessibility */}
+            <span className="sr-only">{step.num}</span>
+          </button>
+        ))}
       </div>
 
       {/* Stage Schedule HUD: Clean Details Card Grid On Side / Bottom */}

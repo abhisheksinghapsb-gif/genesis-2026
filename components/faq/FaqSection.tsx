@@ -40,25 +40,23 @@ export const FaqSection: React.FC = () => {
     <section
       id="faq"
       ref={containerRef}
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A1128] via-[#0E1F4B] to-[#0A1638] px-4 py-16 select-none"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A1128] via-[#0E1F4B] to-[#0A1638] select-none scroll-mt-16 pt-12 md:pt-14"
       aria-label="Frequently Asked Questions"
     >
       {/* Accessible Title */}
       <h2 className="sr-only">FAQS</h2>
 
-      {/* Main Video Animation Stage */}
-      <div className="relative mx-auto w-full max-w-[1200px] overflow-hidden rounded-2xl select-none shadow-[0_0_50px_rgba(0,168,255,0.25)] border-2 border-cyan-500/30 bg-[#0E1F4B]">
-        {/* 16:9 Video Canvas Frame */}
-        <div className="relative w-full pb-[56.25%]">
-          {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping FAQs Animation */}
-          <video
-            src="/videos/faqs-loop.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
-          />
+      {/* Edge-to-Edge Video Animation Stage (like innerve.tech) */}
+      <div className="relative w-full aspect-[16/9] min-h-[100svh] flex items-center justify-center overflow-hidden bg-[#0E1F4B]">
+        {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping FAQs Animation */}
+        <video
+          src="/videos/faqs-loop.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
+        />
 
           {/* Interactive Portal Container inside the Video Window */}
           <div className="absolute top-[16%] left-[18%] w-[64%] h-[78%] z-20 flex flex-col p-2 sm:p-4 overflow-y-auto">
@@ -121,7 +119,6 @@ export const FaqSection: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
 
       {/* Still Stuck? Ask Organizers Button */}
       <button

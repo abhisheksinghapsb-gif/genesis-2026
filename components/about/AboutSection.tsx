@@ -48,26 +48,33 @@ export const AboutSection: React.FC = () => {
     <section
       id="about"
       ref={containerRef}
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A1A44] via-[#21093E] to-[#120626] px-4 py-16 text-center select-none"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A1A44] via-[#21093E] to-[#120626] text-center select-none scroll-mt-16 pt-12 md:pt-14"
       aria-label="About Genesis 2026"
     >
-      {/* Main Video Animation Stage */}
-      <div className="relative mx-auto w-full max-w-[1200px] overflow-hidden rounded-2xl select-none shadow-[0_0_50px_rgba(157,78,221,0.3)] border-2 border-purple-500/30 bg-[#120626]">
-        {/* 16:9 Video Canvas Frame */}
-        <div className="relative w-full pb-[56.25%]">
-          {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping About Animation */}
-          <video
-            src="/videos/about-loop.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
-          />
+      {/* Edge-to-Edge Video Animation Stage (like innerve.tech) */}
+      <div className="relative w-full aspect-[16/9] min-h-[100svh] flex items-center justify-center overflow-hidden bg-[#120626]">
+        {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping About Animation */}
+        <video
+          src="/videos/about-loop.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
+        />
+
+        {/* Complete, fully visible red ABOUT heading directly above GENESIS (Brawl Stars typography) */}
+        <div className="pointer-events-none absolute top-[2%] left-[18%] sm:left-[20%] md:left-[21%] z-20 select-none">
+          <span
+            className="font-heading font-black tracking-widest text-[#FF1824] uppercase text-3xl sm:text-5xl md:text-6xl lg:text-7xl drop-shadow-[0_4px_0_#000] drop-shadow-[0_0_15px_rgba(255,24,36,0.6)]"
+            style={{ WebkitTextStroke: '2px #000' }}
+          >
+            ABOUT
+          </span>
+        </div>
 
           {/* Accessible Typography Overlays for SEO, Screen Readers, and Test Assertions */}
           <div className="sr-only">
-            <span>ABOUT</span>
             <span>GENESIS</span>
             <p>
               Brawlers, gear up! The GDXR Club is dropping into the arena with the Fifth Edition of
@@ -101,7 +108,6 @@ export const AboutSection: React.FC = () => {
             )}
           </button>
         </div>
-      </div>
-    </section>
-  );
-};
+      </section>
+    );
+  };

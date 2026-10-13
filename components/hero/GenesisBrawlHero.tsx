@@ -94,9 +94,9 @@ export const GenesisBrawlHero: React.FC = () => {
   };
 
   return (
-    <div className="relative mx-auto w-full max-w-[1200px] overflow-hidden rounded-2xl select-none shadow-[0_0_50px_rgba(0,168,255,0.25)] border-2 border-cyan-500/30 bg-[#060D24]">
-      {/* Aspect Ratio Box: 1024 / 728 = 1.40659 */}
-      <div className="relative w-full pb-[71.09375%]">
+    <div className="relative w-full min-h-[100svh] flex items-center justify-center overflow-hidden select-none bg-[#060D24]">
+      {/* Edge-to-Edge Stage Frame (like innerve.tech) */}
+      <div className="relative w-full aspect-[16/9] min-h-[100svh] flex items-center justify-center overflow-hidden">
         {/* 1. STRICT BASE ARTWORK: First paint placeholder */}
         <Image
           src="/img/hero/genesis-brawl-hero.webp"

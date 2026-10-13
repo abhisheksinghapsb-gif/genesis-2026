@@ -14,28 +14,28 @@ export const SponsorsSection: React.FC = () => {
     <section
       id="sponsors"
       ref={containerRef}
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A183C] via-[#0E204E] to-[#0A1535] px-4 py-16 text-center select-none"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A183C] via-[#0E204E] to-[#0A1535] text-center select-none scroll-mt-16 pt-12 md:pt-14"
       aria-label="Event Sponsors"
     >
-      {/* Main Video Animation Stage */}
-      <div className="relative mx-auto w-full max-w-[1200px] overflow-hidden rounded-2xl select-none shadow-[0_0_50px_rgba(0,168,255,0.25)] border-2 border-cyan-500/30 bg-[#0E204E]">
-        {/* 16:9 Video Canvas Frame */}
-        <div className="relative w-full pb-[56.25%]">
-          {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping Sponsors Animation */}
-          <video
-            src="/videos/sponsors-loop.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
-          />
+      {/* Edge-to-Edge Video Animation Stage (like innerve.tech) */}
+      <div className="relative w-full aspect-[16/9] min-h-[100svh] flex items-center justify-center overflow-hidden bg-[#0E204E]">
+        {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping Sponsors Animation */}
+        <video
+          src="/videos/sponsors-loop.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
+        />
 
-          {/* Accessible Typography for Screen Readers & Tests */}
-          <div className="sr-only">
-            <h2>SPONSORS</h2>
-            <div>
-              <h3>TITLE SPONSORS</h3>
+        {/* Accessible Header Title for Tests & Screen Readers */}
+        <h2 className="sr-only">SPONSORS</h2>
+
+        {/* Accessible Typography for Screen Readers & Tests */}
+        <div className="sr-only">
+          <div>
+            <h3>TITLE SPONSORS</h3>
               <span>Game Cloud Technologies</span>
               <span>Title Sponsor & Ecosystem Partner</span>
             </div>
@@ -104,7 +104,6 @@ export const SponsorsSection: React.FC = () => {
             title="Visit Gamedoora"
           />
         </div>
-      </div>
 
       {/* Become a Partner Modal */}
       <SponsorContactModal

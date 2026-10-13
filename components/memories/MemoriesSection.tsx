@@ -38,22 +38,20 @@ export const MemoriesSection: React.FC = () => {
     <section
       id="memories"
       ref={containerRef}
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A183C] via-[#10193E] to-[#0A1128] px-4 py-16 text-center select-none"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A183C] via-[#10193E] to-[#0A1128] text-center select-none scroll-mt-16 pt-12 md:pt-14"
       aria-label="Event Memories Gallery"
     >
-      {/* Main Video Animation Stage */}
-      <div className="relative mx-auto w-full max-w-[1200px] overflow-hidden rounded-2xl select-none shadow-[0_0_50px_rgba(255,183,3,0.3)] border-2 border-yellow-500/30 bg-[#10193E]">
-        {/* 16:9 Video Canvas Frame */}
-        <div className="relative w-full pb-[56.25%]">
-          {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping Memories Animation */}
-          <video
-            src="/videos/memories-loop.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
-          />
+      {/* Edge-to-Edge Video Animation Stage (like innerve.tech) */}
+      <div className="relative w-full aspect-[16/9] min-h-[100svh] flex items-center justify-center overflow-hidden bg-[#10193E]">
+        {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping Memories Animation */}
+        <video
+          src="/videos/memories-loop.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
+        />
 
           {/* Accessible Header Title for Tests & Screen Readers */}
           <h2 className="sr-only">MEMORIES</h2>
@@ -109,7 +107,6 @@ export const MemoriesSection: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
 
       {/* Accessible Fullscreen Lightbox Modal */}
       <MemoriesLightbox

@@ -391,7 +391,7 @@ export const RegisterSection: React.FC = () => {
   return (
     <section
       id="register"
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A1638] via-[#0E2054] to-[#060D24] px-4 py-24"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A1638] via-[#0E2054] to-[#060D24] px-4 py-24 scroll-mt-16"
       aria-label="Team Registration"
     >
       <WatermarkPattern opacity={0.12} />

@@ -46,8 +46,14 @@ async function main() {
     const visible = await el.isVisible();
     console.log(`Section ${sel} visible:`, visible);
     if (visible) {
-      await el.scrollIntoViewIfNeeded();
-      await page.waitForTimeout(600);
+      await page.evaluate((selector) => {
+        const target = document.querySelector(selector);
+        if (target) {
+          const top = target.getBoundingClientRect().top + window.scrollY - 60;
+          window.scrollTo({ top, behavior: 'instant' });
+        }
+      }, sel);
+      await page.waitForTimeout(800);
       const name = sel.replace('#', '');
       await page.screenshot({ path: path.join(outDir, `${name}.png`), fullPage: false });
       console.log(`Saved ${name} screenshot.`);

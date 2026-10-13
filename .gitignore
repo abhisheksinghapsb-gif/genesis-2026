@@ -40,3 +40,6 @@ next-env.d.ts
 ABout.zip
 /reference-videos/
 /public/screenshots/
+__pycache__/
+*.pyc
+

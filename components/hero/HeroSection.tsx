@@ -48,7 +48,7 @@ export const HeroSection: React.FC = () => {
       ref={containerRef}
       data-3d-state={data3dState}
       onPointerMove={handlePointerMove}
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#030716] via-[#071330] to-[#0A1A44] px-2 sm:px-4 py-8 text-center select-none"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#030716] via-[#071330] to-[#0A1A44] text-center select-none"
       aria-label="Genesis 2026 Hero"
     >
       {/* 1. Seamless Diagonal Tiling Watermark Pattern */}
@@ -74,7 +74,7 @@ export const HeroSection: React.FC = () => {
       )}
 
       {/* 3. Official Genesis Brawl Arena Artwork with Living Animations */}
-      <div className="relative z-10 w-full max-w-[1240px] my-auto flex items-center justify-center py-4">
+      <div className="relative z-10 w-full h-full flex items-center justify-center">
         <GenesisBrawlHero />
       </div>
 
