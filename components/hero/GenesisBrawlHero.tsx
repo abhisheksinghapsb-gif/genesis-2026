@@ -4,20 +4,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { HeroCountdown } from './HeroCountdown';
 
-interface Meteor {
-  id: number;
-  x: number;
-  y: number;
-  length: number;
-  speed: number;
-  angle: number;
-  delay: number;
-}
-
 export const GenesisBrawlHero: React.FC = () => {
   // Gunfire state for Colt
-  const [isFiringLeft, setIsFiringLeft] = useState(false);
-  const [isFiringRight, setIsFiringRight] = useState(false);
   const [coltRecoil, setColtRecoil] = useState(false);
 
   // Leon ninja star throw
@@ -31,9 +19,6 @@ export const GenesisBrawlHero: React.FC = () => {
 
   // Brochure modal
   const [showBrochureModal, setShowBrochureModal] = useState(false);
-
-  // Dynamic falling meteors state
-  const [meteors, setMeteors] = useState<Meteor[]>([]);
 
   // Synthesize lightweight laser blast sound using Web Audio API
   const playBlasterSound = useCallback(() => {
@@ -71,50 +56,24 @@ export const GenesisBrawlHero: React.FC = () => {
     setColtRecoil(true);
     playBlasterSound();
 
-    // Fire Right gun
-    setIsFiringRight(true);
-    setTimeout(() => setIsFiringRight(false), 90);
-
-    // Fire Left gun with slight delay
     setTimeout(() => {
-      setIsFiringLeft(true);
       playBlasterSound();
-      setTimeout(() => setIsFiringLeft(false), 90);
     }, 110);
 
-    // Second burst on right gun
     setTimeout(() => {
-      setIsFiringRight(true);
       playBlasterSound();
-      setTimeout(() => {
-        setIsFiringRight(false);
-        setColtRecoil(false);
-      }, 90);
+      setColtRecoil(false);
     }, 220);
   }, [playBlasterSound]);
 
-  // Automatic periodic gunfire loop (every ~3.6s)
+  // Automatic periodic gunfire loop (every ~4.5s)
   useEffect(() => {
     const fireInterval = setInterval(() => {
       triggerColtBurst();
-    }, 3600);
+    }, 4500);
 
     return () => clearInterval(fireInterval);
   }, [triggerColtBurst]);
-
-  // Initialize falling meteors
-  useEffect(() => {
-    const list: Meteor[] = Array.from({ length: 6 }).map((_, i) => ({
-      id: i,
-      x: 30 + Math.random() * 60, // Start between 30% and 90% width
-      y: 5 + Math.random() * 25,  // Start in upper cosmic sky
-      length: 80 + Math.random() * 70,
-      speed: 1.2 + Math.random() * 0.8,
-      angle: 32 + Math.random() * 8, // Diagonal streak angle matching artwork
-      delay: i * 0.9,
-    }));
-    setMeteors(list);
-  }, []);
 
   // Trigger Leon action
   const handleLeonClick = () => {
@@ -159,85 +118,12 @@ export const GenesisBrawlHero: React.FC = () => {
           className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
         />
 
-        {/* 2. ANIMATED LAYER: Falling Meteors across the Cosmic Sky */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden z-10" aria-hidden="true">
-          {meteors.map((m) => (
-            <div
-              key={m.id}
-              className="absolute pointer-events-none"
-              style={{
-                top: `${m.y}%`,
-                left: `${m.x}%`,
-                transform: `rotate(${m.angle}deg)`,
-                transformOrigin: 'left center',
-              }}
-            >
-              <div
-                className="animate-meteor-fall"
-                style={{
-                  width: `${m.length}px`,
-                  height: '2px',
-                  animationDelay: `${m.delay}s`,
-                  animationDuration: `${2.4 / m.speed}s`,
-                  background:
-                    'linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,105,180,0.85) 30%, rgba(138,43,226,0.5) 70%, transparent 100%)',
-                  boxShadow: '0 0 12px 2px rgba(255, 105, 180, 0.65)',
-                }}
-              >
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 h-2.5 w-2.5 rounded-full bg-white shadow-[0_0_12px_4px_#FFF,0_0_20px_6px_#FF69B4]" />
-              </div>
-            </div>
-          ))}
-        </div>
-
         {/* Accessible H1 Title aligned over Artwork title for SEO and Test assertions */}
         <h1 className="pointer-events-none absolute top-[25.5%] left-1/2 -translate-x-1/2 font-heading text-transparent select-none text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight uppercase drop-shadow-[0_0_25px_rgba(255,183,3,0.35)] z-20">
           GENESIS 2026
         </h1>
 
-        {/* 3. ANIMATED LAYER: Twinkling Cosmic Stars in Space */}
-        <div className="pointer-events-none absolute inset-0 z-10" aria-hidden="true">
-          {/* Top-left stars */}
-          <div className="absolute top-[14%] left-[12%] h-2.5 w-2.5 rounded-full bg-white animate-ping opacity-75" style={{ animationDuration: '3.1s' }} />
-          <div className="absolute top-[22%] left-[21%] h-2 w-2 rounded-full bg-cyan-200 animate-pulse" style={{ animationDuration: '2.2s' }} />
-          <div className="absolute top-[31%] left-[16%] h-3 w-3 rounded-full bg-amber-200 animate-ping opacity-60" style={{ animationDuration: '4.2s' }} />
-          <div className="absolute top-[18%] left-[7%] h-1.5 w-1.5 rounded-full bg-white animate-pulse" style={{ animationDuration: '1.8s' }} />
-
-          {/* Top-center stars behind title */}
-          <div className="absolute top-[8%] left-[45%] h-2 w-2 rounded-full bg-pink-200 animate-pulse" style={{ animationDuration: '2.5s' }} />
-          <div className="absolute top-[12%] left-[58%] h-2.5 w-2.5 rounded-full bg-white animate-ping opacity-80" style={{ animationDuration: '3.8s' }} />
-
-          {/* Top-right stars near ringed planet */}
-          <div className="absolute top-[16%] left-[82%] h-3 w-3 rounded-full bg-purple-200 animate-ping opacity-70" style={{ animationDuration: '3.3s' }} />
-          <div className="absolute top-[28%] left-[89%] h-2 w-2 rounded-full bg-cyan-200 animate-pulse" style={{ animationDuration: '2.1s' }} />
-          <div className="absolute top-[36%] left-[94%] h-2.5 w-2.5 rounded-full bg-white animate-pulse" style={{ animationDuration: '2.9s' }} />
-          <div className="absolute top-[24%] left-[73%] h-1.5 w-1.5 rounded-full bg-amber-100 animate-ping opacity-75" style={{ animationDuration: '4.5s' }} />
-
-          {/* Center-left space rocks glow */}
-          <div className="absolute top-[41%] left-[8%] h-2 w-2 rounded-full bg-sky-300 animate-pulse" style={{ animationDuration: '3.0s' }} />
-          <div className="absolute top-[48%] left-[12%] h-2 w-2 rounded-full bg-white animate-pulse" style={{ animationDuration: '2.4s' }} />
-        </div>
-
-        {/* 4. ANIMATED LAYER: Moon Atmosphere Pulse */}
-        <div
-          className="pointer-events-none absolute top-[52%] left-[50%] -translate-x-1/2 -translate-y-1/2 h-[38%] w-[42%] rounded-full bg-cyan-400/20 blur-2xl animate-pulse z-10"
-          style={{ animationDuration: '4.8s' }}
-          aria-hidden="true"
-        />
-
-        {/* 5. ANIMATED LAYER: Winged Skull Crest Aura & Wing Movement */}
-        <div
-          className="pointer-events-none absolute top-[33.2%] left-[50.2%] -translate-x-1/2 -translate-y-1/2 z-15"
-          aria-hidden="true"
-        >
-          {/* Radiant Golden Glow */}
-          <div className="absolute -inset-8 rounded-full bg-amber-400/25 blur-xl animate-pulse" style={{ animationDuration: '2.4s' }} />
-          {/* Subtle Wing Shimmer Beam */}
-          <div className="absolute -inset-4 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 animate-shine-sweep opacity-75" />
-        </div>
-
-        {/* 6. ANIMATED LAYER: Colt Gun Fire, Muzzle Flashes & Recoil */}
-        {/* Colt interactive hotspot container */}
+        {/* 2. INTERACTIVE HOTSPOT: Colt Gun Fire & Audio */}
         <div
           onClick={triggerColtBurst}
           className="absolute top-[38%] left-[14%] w-[25%] h-[38%] z-20 cursor-pointer group"
@@ -247,104 +133,34 @@ export const GenesisBrawlHero: React.FC = () => {
             transition: 'transform 0.08s cubic-bezier(0.1, 0.9, 0.2, 1)',
           }}
         >
-          {/* Gun 1: Upward Gun Barrel Muzzle Flash (at ~left 18%, top 48% of canvas) */}
-          <div
-            className={`pointer-events-none absolute top-[28%] left-[18%] -translate-x-1/2 -translate-y-1/2 transition-all duration-75 ${
-              isFiringLeft ? 'opacity-100 scale-125' : 'opacity-0 scale-50'
-            }`}
-          >
-            {/* Multi-point explosive star burst */}
-            <div className="relative flex items-center justify-center">
-              <div className="h-14 w-14 rounded-full bg-yellow-300 blur-sm animate-pulse" />
-              <div className="absolute h-20 w-8 -rotate-12 bg-gradient-to-t from-orange-500 via-yellow-200 to-white rounded-full shadow-[0_0_25px_8px_#FFB703]" />
-              <div className="absolute h-8 w-16 rotate-45 bg-gradient-to-r from-orange-500 via-yellow-100 to-white rounded-full" />
-              <div className="absolute h-5 w-5 rounded-full bg-white shadow-[0_0_20px_6px_#FFF]" />
-              {/* Bullet spark particles flying up */}
-              <div className="absolute -top-6 left-2 h-1.5 w-1.5 rounded-full bg-yellow-200 shadow-[0_0_8px_#FFF]" />
-              <div className="absolute -top-10 -left-1 h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_#FFB703]" />
-            </div>
-          </div>
-
-          {/* Gun 2: Forward Pointing Gun Barrel Muzzle Flash (at ~left 38%, top 55% of canvas) */}
-          <div
-            className={`pointer-events-none absolute top-[43%] left-[96%] -translate-x-1/2 -translate-y-1/2 transition-all duration-75 ${
-              isFiringRight ? 'opacity-100 scale-125' : 'opacity-0 scale-50'
-            }`}
-          >
-            {/* Horizontal Forward Blast Cone */}
-            <div className="relative flex items-center justify-center">
-              <div className="h-16 w-16 rounded-full bg-cyan-300 blur-sm" />
-              <div className="absolute h-8 w-24 bg-gradient-to-r from-cyan-400 via-yellow-200 to-white rounded-full shadow-[0_0_30px_10px_#00E5FF]" />
-              <div className="absolute h-18 w-10 rotate-12 bg-gradient-to-b from-orange-400 via-yellow-200 to-white rounded-full" />
-              <div className="absolute h-6 w-6 rounded-full bg-white shadow-[0_0_20px_6px_#FFF]" />
-              {/* Laser projectile blast beam */}
-              <div className="absolute left-16 h-2 w-28 bg-gradient-to-r from-yellow-300 via-cyan-200 to-transparent rounded-full shadow-[0_0_15px_#00E5FF]" />
-            </div>
-          </div>
-
           {/* Colt Hover Cue Pill */}
           <div className="pointer-events-none absolute -top-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-red-600/90 text-white font-heading text-[11px] px-2.5 py-0.5 rounded-full border border-yellow-300 shadow-lg tracking-wider">
             TAP TO FIRE 💥
           </div>
         </div>
 
-        {/* 7. ANIMATED LAYER: Leon Ninja Shuriken Star & Hands Movement */}
+        {/* 3. INTERACTIVE HOTSPOT: Leon Shuriken Throw */}
         <div
           onClick={handleLeonClick}
-          className="absolute top-[42%] left-[63%] w-[25%] h-[38%] z-20 cursor-pointer group"
+          className={`absolute top-[42%] left-[63%] w-[25%] h-[38%] z-20 cursor-pointer group transition-transform duration-150 ${
+            isLeonActive ? 'scale-105 -translate-y-1' : ''
+          }`}
           title="Click Leon to throw ninja star!"
         >
-          {/* Shuriken Star placed over Leon's hand */}
-          <div
-            className={`absolute top-[48%] left-[7%] -translate-x-1/2 -translate-y-1/2 transition-transform duration-300 ${
-              isLeonActive ? 'scale-150' : 'scale-100'
-            }`}
-            style={{
-              animation: 'spin 1.4s linear infinite',
-            }}
-          >
-            {/* Shuriken Ninja Star SVG Overlay with Purple Glow */}
-            <svg width="42" height="42" viewBox="0 0 42 42" className="drop-shadow-[0_0_12px_rgba(168,85,247,0.9)]">
-              <path
-                d="M21 0 L25 15 L40 18 L27 26 L30 42 L18 31 L6 38 L13 24 L0 18 L16 14 Z"
-                fill="#C084FC"
-                stroke="#6B21A8"
-                strokeWidth="1.5"
-              />
-              <circle cx="21" cy="21" r="3.5" fill="#581C87" stroke="#E9D5FF" strokeWidth="1" />
-            </svg>
-          </div>
-
-          {/* Flying projectile when clicked */}
-          {isLeonActive && (
-            <div className="pointer-events-none absolute top-[48%] -left-12 h-2 w-32 bg-gradient-to-l from-purple-400 via-pink-300 to-transparent rounded-full animate-ping shadow-[0_0_20px_#A855F7]" />
-          )}
-
           {/* Leon Hover Cue */}
           <div className="pointer-events-none absolute -top-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-green-600/90 text-white font-heading text-[11px] px-2.5 py-0.5 rounded-full border border-yellow-300 shadow-lg tracking-wider">
             THROW STAR ⭐
           </div>
         </div>
 
-        {/* 8. ANIMATED LAYER: Floating Balloon Character with Speech Bubble */}
+        {/* 4. INTERACTIVE HOTSPOT: Balloon Character */}
         <div
           onClick={handleBalloonClick}
           className={`absolute top-[70%] left-[84%] w-[15%] h-[28%] z-20 cursor-pointer group transition-transform ${
             isBalloonBounced ? 'scale-110 -translate-y-2' : ''
           }`}
-          style={{
-            animation: 'gentle-float 3s ease-in-out infinite',
-          }}
           title="Click balloon to bounce!"
-        >
-          {/* Glowing Aura on Balloon Head */}
-          <div className="absolute top-[28%] left-[64%] -translate-x-1/2 -translate-y-1/2 h-16 w-16 rounded-full bg-cyan-300/20 blur-md group-hover:bg-cyan-300/40 transition-colors" />
-
-          {/* Balloon Click Ripple Effect */}
-          {isBalloonBounced && (
-            <div className="pointer-events-none absolute top-[28%] left-[64%] -translate-x-1/2 -translate-y-1/2 h-20 w-20 rounded-full border-2 border-cyan-400 animate-ping" />
-          )}
-        </div>
+        />
 
         {/* 9. FUNCTIONAL INTERACTIVE HOTSPOT: Center "REGISTER" Plaque */}
         <a

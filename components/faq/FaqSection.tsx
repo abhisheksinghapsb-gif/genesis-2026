@@ -2,10 +2,6 @@
 
 import React, { useState, useMemo } from 'react';
 import { useIdleLoop } from '@/animations/useIdleLoop';
-import { SlantedBanner } from '@/components/ui/SlantedBanner';
-import { WatermarkPattern } from '@/components/ui/WatermarkPattern';
-import { CloseXIcon } from '@/components/ui/GameIcons';
-import { GameButton } from '@/components/ui/GameButton';
 import { FaqContactModal } from './FaqContactModal';
 import faqData from '@/content/faqs.json';
 
@@ -19,10 +15,9 @@ interface FaqItem {
 const FAQS = faqData as FaqItem[];
 
 export const FaqSection: React.FC = () => {
-  const { containerRef, shouldAnimate } = useIdleLoop({ threshold: 0.1 });
+  const { containerRef } = useIdleLoop({ threshold: 0.1 });
   const [searchQuery, setSearchQuery] = useState('');
   const [openFaqId, setOpenFaqId] = useState<string | null>(FAQS[0]?.id ?? null);
-  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   // Filter FAQs based on search query
@@ -45,192 +40,100 @@ export const FaqSection: React.FC = () => {
     <section
       id="faq"
       ref={containerRef}
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A1128] via-[#0E1F4B] to-[#0A1638] px-4 py-20 select-none"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A1128] via-[#0E1F4B] to-[#0A1638] px-4 py-16 select-none"
       aria-label="Frequently Asked Questions"
     >
-      <WatermarkPattern opacity={0.08} animated={shouldAnimate} />
+      {/* Accessible Title */}
+      <h2 className="sr-only">FAQS</h2>
 
-      {/* Endless Loop Video Animation Layer */}
-      <video
-        src="/videos/faqs-loop.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-35 z-0"
-      />
+      {/* Main Video Animation Stage */}
+      <div className="relative mx-auto w-full max-w-[1200px] overflow-hidden rounded-2xl select-none shadow-[0_0_50px_rgba(0,168,255,0.25)] border-2 border-cyan-500/30 bg-[#0E1F4B]">
+        {/* 16:9 Video Canvas Frame */}
+        <div className="relative w-full pb-[56.25%]">
+          {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping FAQs Animation */}
+          <video
+            src="/videos/faqs-loop.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
+          />
 
-      {/* Floating Particles in Background */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <span className="absolute top-1/4 right-[8%] text-3xl opacity-20 animate-gentle-float">
-          ❓
-        </span>
-        <span className="absolute bottom-1/3 left-[7%] text-3xl opacity-20 animate-gentle-float" style={{ animationDelay: '-2.5s' }}>
-          💡
-        </span>
-      </div>
-
-      {/* Slanted Title Banner */}
-      <div className="relative z-10 mb-8 flex flex-col items-center">
-        <SlantedBanner
-          title="FAQS"
-          subtitle="FREQUENTLY ASKED QUESTIONS"
-          color="orange"
-        />
-      </div>
-
-      {/* Main Game Window Container */}
-      <div className="relative z-10 mx-auto w-full max-w-4xl">
-        <div className="relative rounded-3xl border-4 border-[#071733] bg-[#0E2042] p-4 sm:p-7 shadow-[0_12px_36px_rgba(0,0,0,0.85)]">
-          {/* Header Bar */}
-          <div className="flex items-center justify-between border-b-2 border-[#1E3B75] pb-4">
-            <div className="flex items-center gap-2">
-              <span className="rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 px-3 py-1 font-heading text-xs uppercase text-white shadow-[0_2px_0_#7A2500]">
-                KNOWLEDGE BASE
+          {/* Interactive Portal Container inside the Video Window */}
+          <div className="absolute top-[16%] left-[18%] w-[64%] h-[78%] z-20 flex flex-col p-2 sm:p-4 overflow-y-auto">
+            {/* Search Input Box */}
+            <div className="relative mb-3 flex w-full items-center">
+              <span className="pointer-events-none absolute left-3 text-sm text-slate-400">
+                🔍
               </span>
-              <span className="font-heading text-sm sm:text-base text-sky-200 hidden sm:inline">
-                GAME RULES & LOGISTICS
-              </span>
-            </div>
-
-            {/* Red X Collapse Button */}
-            <button
-              onClick={() => setIsPanelCollapsed(!isPanelCollapsed)}
-              type="button"
-              aria-label={isPanelCollapsed ? 'Expand FAQ panel' : 'Collapse FAQ panel'}
-              className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#3B0712] bg-gradient-to-b from-[#FF5E7E] to-[#B81335] text-white shadow-[0_3px_0_#080A10] transition-transform active:translate-y-0.5"
-            >
-              {isPanelCollapsed ? (
-                <span className="font-heading text-lg leading-none">▼</span>
-              ) : (
-                <CloseXIcon size={16} />
-              )}
-            </button>
-          </div>
-
-          {/* Panel Body */}
-          {!isPanelCollapsed && (
-            <div className="mt-6 flex flex-col gap-6">
-              {/* Real-time Search Box */}
-              <div className="relative flex w-full items-center">
-                <span className="pointer-events-none absolute left-4 text-slate-400">
-                  🔍
-                </span>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search questions (e.g. fees, teams, dates, VR...)"
-                  className="w-full rounded-2xl border-2 border-[#1E3B75] bg-[#07132B] py-3.5 pr-10 pl-11 font-body text-sm sm:text-base text-white placeholder:text-slate-500 shadow-inner outline-none transition-colors focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/20"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    type="button"
-                    aria-label="Clear search query"
-                    className="absolute right-4 font-heading text-xs text-slate-400 hover:text-white"
-                  >
-                    CLEAR
-                  </button>
-                )}
-              </div>
-
-              {/* Search Result Counter */}
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search questions (e.g. fees, teams, dates, VR...)"
+                className="w-full rounded-xl border border-cyan-500/40 bg-[#07132B]/85 py-2 pl-9 pr-8 font-body text-xs sm:text-sm text-white placeholder:text-slate-400 shadow-inner outline-none transition-colors focus:border-cyan-300 focus:ring-2 focus:ring-cyan-500/20 backdrop-blur-sm"
+              />
               {searchQuery && (
-                <div className="font-heading text-xs text-amber-300">
-                  Found {filteredFaqs.length} question{filteredFaqs.length === 1 ? '' : 's'} matching &ldquo;{searchQuery}&rdquo;
-                </div>
-              )}
-
-              {/* Accordion Questions List */}
-              <div className="flex flex-col gap-3">
-                {filteredFaqs.length === 0 ? (
-                  <div className="my-8 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#1E3B75] p-8 text-center">
-                    <span className="text-3xl">🎯</span>
-                    <h4 className="mt-2 font-heading text-lg text-white">NO QUESTIONS FOUND</h4>
-                    <p className="mt-1 font-body text-xs sm:text-sm text-sky-200">
-                      Try searching with different keywords or ask our team directly below.
-                    </p>
-                  </div>
-                ) : (
-                  filteredFaqs.map((faq) => {
-                    const isOpen = openFaqId === faq.id;
-                    return (
-                      <div
-                        key={faq.id}
-                        className={`overflow-hidden rounded-2xl border-2 transition-all duration-200 ${
-                          isOpen
-                            ? 'border-cyan-400 bg-[#0A1A3E] shadow-[0_4px_0_#050F26]'
-                            : 'border-[#152B58] bg-[#07132B] shadow-[0_3px_0_#040917] hover:border-[#1E3B75]'
-                        }`}
-                      >
-                        {/* Question Toggle Header */}
-                        <button
-                          onClick={() => toggleFaq(faq.id)}
-                          type="button"
-                          aria-expanded={isOpen}
-                          aria-controls={`faq-answer-${faq.id}`}
-                          className="flex w-full items-center justify-between p-4 sm:p-5 text-left font-heading text-sm sm:text-base md:text-lg text-white transition-colors hover:text-amber-300"
-                        >
-                          <div className="flex items-center gap-3">
-                            <span className="rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 font-heading text-[10px] text-amber-300 uppercase shrink-0">
-                              {faq.category}
-                            </span>
-                            <span>{faq.q}</span>
-                          </div>
-
-                          {/* Plus / Minus with 90deg Spin */}
-                          <div
-                            className={`flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full border-2 border-[#1E3B75] bg-[#0E2042] font-heading text-lg text-amber-400 transition-transform duration-300 ${
-                              isOpen ? 'rotate-90 bg-amber-400 text-black border-amber-500' : 'rotate-0'
-                            }`}
-                          >
-                            {isOpen ? '✕' : '+'}
-                          </div>
-                        </button>
-
-                        {/* Unrolling Answer Block */}
-                        {isOpen && (
-                          <div
-                            id={`faq-answer-${faq.id}`}
-                            className="border-t border-cyan-800/40 bg-[#091836] p-4 sm:p-5 font-body text-xs sm:text-sm font-bold text-sky-200 leading-relaxed"
-                          >
-                            <span className="mr-2 inline-block rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-black text-amber-300 uppercase">
-                              DEMO
-                            </span>
-                            {faq.a}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-
-              {/* Bottom "Still Stuck?" Callout */}
-              <div className="mt-4 flex flex-col sm:flex-row items-center justify-between rounded-2xl border-2 border-[#1E3B75] bg-gradient-to-r from-[#07132B] via-[#0B1E45] to-[#07132B] p-4 sm:p-5">
-                <div className="text-center sm:text-left mb-3 sm:mb-0">
-                  <h4 className="font-heading text-base sm:text-lg text-white">STILL HAVE QUESTIONS?</h4>
-                  <p className="font-body text-xs font-bold text-sky-200">
-                    Reach out to the GDXR organizing team directly for custom queries or rule clarifications.
-                  </p>
-                </div>
-
-                <GameButton
-                  variant="yellow"
-                  size="sm"
-                  onClick={() => setIsContactModalOpen(true)}
-                  aria-label="Open contact inquiry modal"
+                <button
+                  onClick={() => setSearchQuery('')}
+                  type="button"
+                  aria-label="Clear search query"
+                  className="absolute right-3 font-heading text-[10px] text-slate-400 hover:text-white"
                 >
-                  STILL STUCK?
-                </GameButton>
-              </div>
+                  ✕
+                </button>
+              )}
             </div>
-          )}
+
+            {/* Accordion Questions List */}
+            <div className="flex flex-col gap-2 overflow-y-auto pr-1">
+              {filteredFaqs.map((faq) => {
+                const isOpen = openFaqId === faq.id;
+                return (
+                  <div
+                    key={faq.id}
+                    className="overflow-hidden rounded-xl border border-cyan-500/30 bg-[#091A3E]/90 backdrop-blur-sm transition-colors"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => toggleFaq(faq.id)}
+                      className="flex w-full items-center justify-between gap-2 p-2 sm:p-3 text-left outline-none transition-colors hover:bg-cyan-950/40"
+                    >
+                      <span className="font-heading text-xs sm:text-sm text-white drop-shadow-sm">
+                        {faq.q}
+                      </span>
+                      <span className="font-heading text-xs text-amber-300">
+                        {isOpen ? '▲' : '▼'}
+                      </span>
+                    </button>
+
+                    {isOpen && (
+                      <div className="border-t border-cyan-500/20 bg-[#06122C]/90 p-2 sm:p-3 text-left">
+                        <p className="font-body text-[11px] sm:text-xs text-sky-100 leading-relaxed">
+                          {faq.a}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Still Stuck Inquiry Modal */}
+      {/* Still Stuck? Ask Organizers Button */}
+      <button
+        type="button"
+        onClick={() => setIsContactModalOpen(true)}
+        aria-label="Open contact inquiry modal"
+        className="mt-6 flex items-center gap-2 rounded-xl border-2 border-yellow-400 bg-gradient-to-b from-amber-400 to-amber-600 px-5 py-2 font-heading text-xs uppercase text-black shadow-[0_3px_0_#4D2600] transition-transform hover:scale-105 active:scale-95"
+      >
+        <span>STILL STUCK? ASK ORGANIZERS</span>
+      </button>
+
+      {/* Support / Contact Modal */}
       <FaqContactModal
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}

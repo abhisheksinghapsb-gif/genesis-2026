@@ -2,108 +2,90 @@
 
 import React, { useState } from 'react';
 import { useIdleLoop } from '@/animations/useIdleLoop';
-import { WatermarkPattern } from '@/components/ui/WatermarkPattern';
-import { SlantedBanner } from '@/components/ui/SlantedBanner';
-import { ChamferCard } from '@/components/ui/ChamferCard';
-import { NumberedCoin } from '@/components/ui/NumberedCoin';
-import { InfoIcon } from '@/components/ui/GameIcons';
-import { TimelineTradingCard } from './TimelineTradingCard';
 import { TimelineMilestoneModal, MilestoneItem } from './TimelineMilestoneModal';
 import timelineData from '@/content/timeline.json';
 
+// Exact coordinates for the 4 milestone slots in timeline-loop.mp4
+const SLOT_STYLES = [
+  'top-[7%] left-[34.2%] w-[15.6%] h-[42%]',   // 01: Top card
+  'top-[60%] left-[49%] w-[15.6%] h-[40%]',    // 02: Bottom card
+  'top-[7%] left-[64%] w-[15.6%] h-[42%]',    // 03: Top card
+  'top-[60%] left-[83.6%] w-[15.6%] h-[40%]',  // 04: Bottom card
+];
+
 export const TimelineSection: React.FC = () => {
-  const { containerRef, shouldAnimate } = useIdleLoop({ threshold: 0.1 });
+  const { containerRef } = useIdleLoop({ threshold: 0.1 });
   const [activeModalItem, setActiveModalItem] = useState<MilestoneItem | null>(null);
 
   return (
     <section
       id="timeline"
       ref={containerRef}
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#120626] via-[#0B1A42] to-[#0A1636] px-4 py-20 text-center select-none"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#120626] via-[#0B1A42] to-[#0A1636] px-4 py-16 text-center select-none"
       aria-label="Event Timeline"
     >
-      {/* 1. Deep Space Pattern Background */}
-      <WatermarkPattern opacity={0.09} animated={shouldAnimate} />
+      {/* Main Video Animation Stage */}
+      <div className="relative mx-auto w-full max-w-[1200px] overflow-hidden rounded-2xl select-none shadow-[0_0_50px_rgba(0,168,255,0.25)] border-2 border-cyan-500/30 bg-[#0B1A42]">
+        {/* 16:9 Video Canvas Frame */}
+        <div className="relative w-full pb-[56.25%]">
+          {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping Timeline Animation */}
+          <video
+            src="/videos/timeline-loop.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
+          />
 
-      {/* 1b. Endless Loop Video Animation Layer */}
-      <video
-        src="/videos/timeline-loop.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-35 z-0"
-      />
+          {/* Accessible Header Title for Tests & Screen Readers */}
+          <h2 className="sr-only">TIMELINE</h2>
 
-      {/* 2. Orange Slanted Header Banner */}
-      <div className="relative z-10 mb-8 flex flex-col items-center">
-        <SlantedBanner title="TIMELINE" subtitle="ROADMAP TO THE GRAND ARENA" color="orange" />
-      </div>
+          {/* Colt Brawler Trading Card Hotspot on the Left */}
+          <button
+            type="button"
+            onClick={() => setActiveModalItem(timelineData[0] ?? null)}
+            aria-label="Colt Trading Card"
+            className="absolute top-[16%] left-[6.5%] w-[25%] h-[72%] z-20 cursor-pointer rounded-2xl outline-none hover:ring-2 hover:ring-yellow-400/50 transition-all"
+            title="Click Colt to view Stage 01 Overview"
+          />
 
-      {/* 3. Main Stage: Trading Card (Left) + Timeline Track (Right) */}
-      <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 lg:grid-cols-12">
-        {/* Left Column: Brawler Trading Card */}
-        <div className="lg:col-span-4 flex justify-center">
-          <TimelineTradingCard shouldAnimate={shouldAnimate} />
-        </div>
+          {/* 4 Interactive Milestone Card Hotspots */}
+          {timelineData.map((step, idx) => (
+            <button
+              key={step.id}
+              type="button"
+              onClick={() => setActiveModalItem(step)}
+              aria-label={`View rules and venue details for ${step.title}`}
+              className={`group absolute ${SLOT_STYLES[idx] ?? ''} z-20 cursor-pointer rounded-xl outline-none transition-transform hover:scale-105 active:scale-95 flex flex-col items-center justify-center px-1.5 py-1 text-center`}
+              title={`Click to view rules and details for ${step.title}`}
+            >
+              {/* Visible Milestone Details inside the Card Frame */}
+              <span className="font-heading text-[8px] sm:text-[10px] md:text-xs text-amber-800 uppercase tracking-wider font-extrabold">
+                {step.date}
+              </span>
 
-        {/* Right Column: Interactive Milestone Track */}
-        <div className="lg:col-span-8 flex flex-col justify-center">
-          {/* Milestone Track (Desktop horizontal grid, Mobile vertical flow) */}
-          <div className="relative flex flex-col gap-6 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4">
-            {/* Horizontal Golden Circuit Line on larger screens */}
-            <div className="pointer-events-none hidden lg:block absolute left-4 right-4 top-1/2 -translate-y-1/2 h-[5px] bg-gradient-to-r from-[#FFB703] via-[#FFA200] to-[#E5383B] shadow-[0_0_12px_#FFA200] z-0" />
+              <h4 className="font-heading text-[10px] sm:text-xs md:text-sm lg:text-base text-[#2B1400] font-black uppercase leading-tight mt-0.5 group-hover:text-amber-900 transition-colors">
+                {step.title}
+              </h4>
 
-            {timelineData.map((step) => (
-              <div
-                key={step.id}
-                className="relative z-10 flex flex-col items-center text-center group cursor-pointer"
-                onClick={() => setActiveModalItem(step)}
-              >
-                {/* Numbered Coin with glint & hover scale */}
-                <div className="relative mb-3 flex items-center justify-center">
-                  <NumberedCoin
-                    number={step.num}
-                    size="md"
-                    className="group-hover:scale-110 shadow-[0_6px_0_#060B17]"
-                  />
-                  {/* Subtle rotating glow ring */}
-                  <div className="pointer-events-none absolute inset-0 -m-1.5 rounded-full border border-yellow-300/40 animate-spin" style={{ animationDuration: '8s' }} />
-                </div>
+              <p className="mt-0.5 sm:mt-1 font-body text-[8px] sm:text-[9px] md:text-[11px] font-bold text-[#573507] line-clamp-2 px-1 leading-snug">
+                {step.shortDesc}
+              </p>
 
-                {/* Milestone Slanted Info Card */}
-                <ChamferCard variant="cream" elevation="sm" cornerSize={14}>
-                  <div className="flex flex-col items-center p-1 sm:p-2">
-                    <span className="font-heading text-xs text-amber-800 uppercase tracking-widest">
-                      {step.date}
-                    </span>
-
-                    <h4 className="font-heading text-base sm:text-lg text-[#2B1400] mt-1 group-hover:text-amber-900 transition-colors">
-                      {step.title}
-                    </h4>
-
-                    <p className="mt-1.5 font-body text-xs font-bold text-[#573507] line-clamp-2">
-                      {step.shortDesc}
-                    </p>
-
-                    {/* "i" Info Button with Pulse Animation */}
-                    <button
-                      type="button"
-                      aria-label={`View rules and venue details for ${step.title}`}
-                      className="mt-3 flex items-center gap-1.5 rounded-full border-2 border-[#573507] bg-gradient-to-b from-amber-300 to-amber-500 px-3 py-1 font-heading text-[10px] text-black uppercase shadow-[0_2px_0_#000] transition-transform group-hover:scale-105 active:translate-y-0.5 animate-gentle-pulse"
-                    >
-                      <InfoIcon size={14} className="text-black" />
-                      <span>DETAILS</span>
-                    </button>
-                  </div>
-                </ChamferCard>
+              {/* Action Button */}
+              <div className="mt-1 sm:mt-1.5 flex items-center gap-1 rounded-full border border-[#573507] bg-gradient-to-b from-amber-300 to-amber-500 px-2 py-0.5 font-heading text-[7px] sm:text-[9px] md:text-[10px] text-black uppercase shadow-sm font-bold transition-transform group-hover:scale-105">
+                <span>DETAILS ℹ</span>
               </div>
-            ))}
-          </div>
+
+              {/* Screen reader tags */}
+              <span className="sr-only">{step.num}</span>
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* 4. Accessible Milestone Modal */}
+      {/* Accessible Milestone Modal */}
       <TimelineMilestoneModal
         milestone={activeModalItem}
         onClose={() => setActiveModalItem(null)}

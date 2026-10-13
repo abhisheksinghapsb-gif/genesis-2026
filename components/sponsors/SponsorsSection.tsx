@@ -2,111 +2,108 @@
 
 import React, { useState } from 'react';
 import { useIdleLoop } from '@/animations/useIdleLoop';
-import { SlantedBanner } from '@/components/ui/SlantedBanner';
-import { WatermarkPattern } from '@/components/ui/WatermarkPattern';
-import { CloseXIcon } from '@/components/ui/GameIcons';
 import { SponsorContactModal } from './SponsorContactModal';
-import { SponsorCard } from './SponsorCard';
-import sponsorTiers from '@/content/sponsors.json';
 
 export const SponsorsSection: React.FC = () => {
-  const { containerRef, shouldAnimate } = useIdleLoop({ threshold: 0.1 });
-  const [collapsedTiers, setCollapsedTiers] = useState<Record<string, boolean>>({});
+  const { containerRef } = useIdleLoop({ threshold: 0.1 });
+  const [isTitleCollapsed, setIsTitleCollapsed] = useState(false);
+  const [isPlatformCollapsed, setIsPlatformCollapsed] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-
-  const toggleCollapse = (tierId: string) => {
-    setCollapsedTiers((prev) => ({ ...prev, [tierId]: !prev[tierId] }));
-  };
 
   return (
     <section
       id="sponsors"
       ref={containerRef}
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A183C] via-[#0E204E] to-[#0A1535] px-4 py-20 text-center select-none"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A183C] via-[#0E204E] to-[#0A1535] px-4 py-16 text-center select-none"
       aria-label="Event Sponsors"
     >
-      <WatermarkPattern opacity={0.08} animated={shouldAnimate} />
+      {/* Main Video Animation Stage */}
+      <div className="relative mx-auto w-full max-w-[1200px] overflow-hidden rounded-2xl select-none shadow-[0_0_50px_rgba(0,168,255,0.25)] border-2 border-cyan-500/30 bg-[#0E204E]">
+        {/* 16:9 Video Canvas Frame */}
+        <div className="relative w-full pb-[56.25%]">
+          {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping Sponsors Animation */}
+          <video
+            src="/videos/sponsors-loop.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
+          />
 
-      {/* Endless Loop Video Animation Layer */}
-      <video
-        src="/videos/sponsors-loop.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-35 z-0"
-      />
-
-      {/* Header Banner */}
-      <div className="relative z-10 mb-10 flex flex-col items-center">
-        <SlantedBanner
-          title="SPONSORS"
-          subtitle="POWERED BY INDUSTRY GIANTS"
-          color="orange"
-        />
-      </div>
-
-      {/* Staggered Windows Grid */}
-      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-10">
-        {sponsorTiers.map((tierGroup, idx) => {
-          const isCollapsed = collapsedTiers[tierGroup.id];
-          const isLeft = tierGroup.staggerDirection === 'left' || idx % 2 === 0;
-
-          return (
-            <div
-              key={tierGroup.id}
-              className={`w-full max-w-3xl transition-all duration-300 ${
-                isLeft ? 'self-start sm:translate-x-4' : 'self-end sm:-translate-x-4'
-              }`}
-            >
-              {/* Game Window Container */}
-              <div className="relative rounded-2xl border-[3px] sm:border-4 border-[#071733] bg-[#0E2042] p-3 sm:p-5 shadow-2xl">
-                {/* Window Header Bar */}
-                <div className="flex items-center justify-between border-b-2 border-[#1E3B75] pb-3">
-                  {/* Left: Blue Tab Icon (Click opens contact modal) */}
-                  <button
-                    onClick={() => setIsContactModalOpen(true)}
-                    type="button"
-                    title="Become a partner"
-                    aria-label={`Partner with Genesis - ${tierGroup.tier}`}
-                    className="group inline-flex items-center gap-1.5 rounded-lg border-2 border-[#092B60] bg-gradient-to-r from-[#00A8FF] to-[#0066CC] px-3 py-1 font-heading text-xs text-white uppercase shadow-[0_2px_0_#061A3A] transition-transform hover:scale-105 active:translate-y-0.5"
-                  >
-                    <span className="h-2 w-2 rounded-full bg-cyan-200 animate-ping" />
-                    <span>{tierGroup.tierBadge}</span>
-                    <span className="text-[10px] opacity-75 hidden sm:inline">(PARTNER)</span>
-                  </button>
-
-                  {/* Center Title */}
-                  <h3 className="font-heading text-base sm:text-xl md:text-2xl text-white drop-shadow-[0_2px_0_#000]">
-                    {tierGroup.tier}
-                  </h3>
-
-                  {/* Right: Red X Collapse Toggle */}
-                  <button
-                    onClick={() => toggleCollapse(tierGroup.id)}
-                    aria-label={isCollapsed ? `Expand ${tierGroup.tier}` : `Collapse ${tierGroup.tier}`}
-                    className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border-2 border-[#3B0712] bg-gradient-to-b from-[#FF5E7E] to-[#B81335] text-white shadow-[0_3px_0_#080A10] transition-transform active:translate-y-0.5"
-                  >
-                    {isCollapsed ? (
-                      <span className="font-heading text-lg leading-none">▼</span>
-                    ) : (
-                      <CloseXIcon size={16} />
-                    )}
-                  </button>
-                </div>
-
-                {/* Window Body (Sponsor Logo Pedestals) */}
-                {!isCollapsed && (
-                  <div className="mt-6 grid grid-cols-1 gap-6 p-2">
-                    {tierGroup.sponsors.map((sponsor) => (
-                      <SponsorCard key={sponsor.id} sponsor={sponsor} />
-                    ))}
-                  </div>
-                )}
-              </div>
+          {/* Accessible Typography for Screen Readers & Tests */}
+          <div className="sr-only">
+            <h2>SPONSORS</h2>
+            <div>
+              <h3>TITLE SPONSORS</h3>
+              <span>Game Cloud Technologies</span>
+              <span>Title Sponsor & Ecosystem Partner</span>
             </div>
-          );
-        })}
+            <div>
+              <h3>PLATFORM SPONSORS</h3>
+              <span>Gamedoora</span>
+              <span>Official Gaming Platform Partner</span>
+            </div>
+          </div>
+
+          {/* 1. TITLE SPONSORS Interactive Controls */}
+          {/* Partner with Genesis Button */}
+          <button
+            type="button"
+            onClick={() => setIsContactModalOpen(true)}
+            aria-label="Partner with Genesis - TITLE SPONSORS"
+            className="absolute top-[15%] left-[6.5%] w-[8%] h-[6%] z-20 cursor-pointer outline-none rounded-md"
+            title="Become a Sponsor"
+          />
+
+          {/* Red X Collapse Button for TITLE SPONSORS */}
+          <button
+            type="button"
+            onClick={() => setIsTitleCollapsed(!isTitleCollapsed)}
+            aria-label={isTitleCollapsed ? 'Expand TITLE SPONSORS' : 'Collapse TITLE SPONSORS'}
+            className="absolute top-[15%] left-[43.5%] w-[3.5%] h-[6%] z-20 flex items-center justify-center cursor-pointer outline-none rounded-full"
+            title={isTitleCollapsed ? 'Expand TITLE SPONSORS' : 'Collapse TITLE SPONSORS'}
+          />
+
+          {/* Clickable Sponsor Link: GameCloud Technologies */}
+          <a
+            href="https://gamecloud-ltd.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute top-[26%] left-[6.5%] w-[40%] h-[30%] z-20 cursor-pointer rounded-xl outline-none hover:ring-2 hover:ring-cyan-400/50 transition-all"
+            aria-label="Visit Game Cloud Technologies official website"
+            title="Visit Game Cloud Technologies"
+          />
+
+          {/* 2. PLATFORM SPONSORS Interactive Controls */}
+          {/* Partner with Genesis Button */}
+          <button
+            type="button"
+            onClick={() => setIsContactModalOpen(true)}
+            aria-label="Partner with Genesis - PLATFORM SPONSORS"
+            className="absolute top-[58.5%] left-[55.5%] w-[8%] h-[6%] z-20 cursor-pointer outline-none rounded-md"
+            title="Become a Sponsor"
+          />
+
+          {/* Red X Collapse Button for PLATFORM SPONSORS */}
+          <button
+            type="button"
+            onClick={() => setIsPlatformCollapsed(!isPlatformCollapsed)}
+            aria-label={isPlatformCollapsed ? 'Expand PLATFORM SPONSORS' : 'Collapse PLATFORM SPONSORS'}
+            className="absolute top-[58.5%] left-[92.5%] w-[3.5%] h-[6%] z-20 flex items-center justify-center cursor-pointer outline-none rounded-full"
+            title={isPlatformCollapsed ? 'Expand PLATFORM SPONSORS' : 'Collapse PLATFORM SPONSORS'}
+          />
+
+          {/* Clickable Sponsor Link: Gamedoora */}
+          <a
+            href="https://gamedoora.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute top-[68.5%] left-[55.5%] w-[40%] h-[26%] z-20 cursor-pointer rounded-xl outline-none hover:ring-2 hover:ring-cyan-400/50 transition-all"
+            aria-label="Visit Gamedoora official website"
+            title="Visit Gamedoora"
+          />
+        </div>
       </div>
 
       {/* Become a Partner Modal */}

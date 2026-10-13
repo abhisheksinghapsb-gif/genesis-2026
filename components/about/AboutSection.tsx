@@ -1,21 +1,47 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useIdleLoop } from '@/animations/useIdleLoop';
-import { useParallax } from '@/animations/useParallax';
-import { ChamferCard } from '@/components/ui/ChamferCard';
-import { AboutRobot } from './AboutRobot';
-import { AboutHoloPlanets } from './AboutHoloPlanets';
-import { AboutCrowd } from './AboutCrowd';
 
 export const AboutSection: React.FC = () => {
-  const { containerRef, shouldAnimate } = useIdleLoop({ threshold: 0.1 });
-  const parallax = useParallax();
-  const [speedBoost, setSpeedBoost] = useState(false);
+  const { containerRef } = useIdleLoop({ threshold: 0.1 });
+  const [isScanned, setIsScanned] = useState(false);
+
+  // Synthesize robot scanner sound using Web Audio API
+  const playScanSound = useCallback(() => {
+    try {
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.25);
+
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.25);
+    } catch {
+      // Audio autoplay restriction
+    }
+  }, []);
 
   const handleRobotScan = () => {
-    setSpeedBoost(true);
-    setTimeout(() => setSpeedBoost(false), 2000);
+    setIsScanned(true);
+    playScanSound();
+    setTimeout(() => setIsScanned(false), 1200);
   };
 
   return (
@@ -25,108 +51,57 @@ export const AboutSection: React.FC = () => {
       className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A1A44] via-[#21093E] to-[#120626] px-4 py-16 text-center select-none"
       aria-label="About Genesis 2026"
     >
-      {/* 1. Dynamic Nebula & Glass Dome Ambient Aura with slow hue drift */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
-        style={{
-          transform: `translate3d(${parallax.farX * 0.4}px, ${parallax.farY * 0.4}px, 0)`,
-        }}
-        aria-hidden="true"
-      >
-        <div className="absolute left-1/4 top-10 h-96 w-96 rounded-full bg-gradient-to-br from-[#FF5400]/25 to-[#9D4EDD]/30 blur-3xl" />
-        <div className="absolute right-1/4 bottom-20 h-96 w-96 rounded-full bg-gradient-to-tl from-[#9D4EDD]/30 to-[#38D4FF]/20 blur-3xl" />
-      </div>
+      {/* Main Video Animation Stage */}
+      <div className="relative mx-auto w-full max-w-[1200px] overflow-hidden rounded-2xl select-none shadow-[0_0_50px_rgba(157,78,221,0.3)] border-2 border-purple-500/30 bg-[#120626]">
+        {/* 16:9 Video Canvas Frame */}
+        <div className="relative w-full pb-[56.25%]">
+          {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping About Animation */}
+          <video
+            src="/videos/about-loop.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
+          />
 
-      {/* 1b. Endless Loop Video Animation Layer */}
-      <video
-        src="/videos/about-loop.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40 z-0"
-      />
+          {/* Accessible Typography Overlays for SEO, Screen Readers, and Test Assertions */}
+          <div className="sr-only">
+            <span>ABOUT</span>
+            <span>GENESIS</span>
+            <p>
+              Brawlers, gear up! The GDXR Club is dropping into the arena with the Fifth Edition of
+              GENESIS 2026 and this time, the battle is closer to home than ever!
+            </p>
+            <p>
+              After the last showdown in 2025, GENESIS is back, bigger and bolder. This isn&apos;t
+              just about pixels, code, or pressing buttons. It&apos;s about unleashing your inner
+              Brawler, teaming up, showing off your skills, and turning your passion for gaming into
+              an epic real-world showdown.
+            </p>
+            <p>Lock and load, Brawlers. It&apos;s time to make history!</p>
+          </div>
 
-      {/* 2. Section Header: Red ABOUT + Grey GENESIS */}
-      <div className="relative z-20 mb-8 flex flex-col items-center">
-        <div className="flex items-center justify-center gap-3">
-          <span className="font-heading text-4xl sm:text-6xl md:text-7xl text-[#FF2A55] tracking-wide uppercase drop-shadow-[0_6px_0_#070A12] stroke-black">
-            ABOUT
-          </span>
-          <span className="font-heading text-4xl sm:text-6xl md:text-7xl text-slate-300 tracking-wide uppercase drop-shadow-[0_6px_0_#070A12] stroke-black">
-            GENESIS
-          </span>
-        </div>
-        <p className="mt-1 font-heading text-xs sm:text-sm text-amber-300 tracking-widest uppercase">
-          THE 5TH EDITION AR/VR & GAMING ODYSSEY
-        </p>
-      </div>
-
-      {/* 3. Main Stage: Two-Column Responsive Layout (Art on top on Mobile, side-by-side on Desktop) */}
-      <div className="relative z-20 mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
-        {/* Left Column (Desktop) / Bottom (Mobile): Cream Chamfered Card */}
-        <div
-          className="order-2 lg:order-1 lg:col-span-6 w-full text-left transition-transform duration-75 will-change-transform"
-          style={{
-            transform: `translate3d(${parallax.nearX * 0.3}px, ${parallax.nearY * 0.3}px, 0)`,
-          }}
-        >
-          <ChamferCard variant="cream" elevation="lg" cornerSize={18}>
-            <div className="flex flex-col gap-4 p-2 sm:p-4">
-              <div className="inline-flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-[#E52E2E] animate-ping" />
-                <span className="font-heading text-xs tracking-widest text-[#B81335] uppercase">
-                  OFFICIAL BRIEFING • ARENA CALL
-                </span>
-              </div>
-
-              {/* Exact card text with glowing yellow keywords */}
-              <p className="font-body text-base sm:text-lg md:text-xl font-extrabold text-[#261706] leading-relaxed">
-                Brawlers, gear up! The{' '}
-                <span className="rounded bg-yellow-400 px-1 py-0.5 text-black font-black shadow-[0_2px_0_#000] inline-block animate-pulse">
-                  GDXR Club
-                </span>{' '}
-                is dropping into the arena with the Fifth Edition of{' '}
-                <span className="rounded bg-yellow-400 px-1 py-0.5 text-black font-black shadow-[0_2px_0_#000] inline-block animate-pulse">
-                  GENESIS 2026
-                </span>{' '}
-                and this time, the battle is closer to home than ever!
-              </p>
-
-              <p className="font-body text-sm sm:text-base font-bold text-[#4D2E07] leading-relaxed">
-                After the last showdown in 2025, GENESIS is back, bigger and bolder. This isn&apos;t
-                just about pixels, code, or pressing buttons. It&apos;s about unleashing your inner{' '}
-                <span className="rounded bg-yellow-400 px-1 py-0.5 text-black font-black shadow-[0_2px_0_#000] inline-block animate-pulse">
-                  Brawler
-                </span>
-                , teaming up, showing off your skills, and turning your passion for gaming into an
-                epic real-world showdown.
-              </p>
-
-              <p className="font-heading text-base sm:text-lg text-[#B81335] tracking-wide uppercase pt-2 border-t-2 border-[#CCA66E]/50">
-                Lock and load, Brawlers. It&apos;s time to make history!
-              </p>
+          {/* Interactive Hotspot: Robot Brawler on Podium with Orbiting Holo Planets */}
+          <button
+            type="button"
+            onClick={handleRobotScan}
+            aria-label="Robot Brawler"
+            className="group absolute top-[15%] left-[58%] w-[38%] h-[75%] z-20 cursor-pointer outline-none rounded-xl"
+            title="Click Robot Brawler to initiate bio-scan!"
+          >
+            {/* Robot Hover Scan Cue */}
+            <div className="pointer-events-none absolute top-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-purple-600/90 text-white font-heading text-[11px] px-2.5 py-0.5 rounded-full border border-yellow-300 shadow-lg tracking-wider">
+              SCAN BRAWLER 🤖
             </div>
-          </ChamferCard>
-        </div>
 
-        {/* Right Column (Desktop) / Top (Mobile): Robot Brawler on Podium with Orbiting Holo Planets */}
-        <div
-          className="order-1 lg:order-2 lg:col-span-6 relative flex flex-col items-center justify-center transition-transform duration-75 will-change-transform"
-          style={{
-            transform: `translate3d(${parallax.midX * 0.5}px, ${parallax.midY * 0.5}px, 0)`,
-          }}
-        >
-          {/* Orbiting Holo Planets with speed boost trigger */}
-          <AboutHoloPlanets speedBoost={speedBoost} />
-
-          {/* Robot Brawler Hero Figure */}
-          <AboutRobot shouldAnimate={shouldAnimate} onScanTrigger={handleRobotScan} />
+            {/* Ripple Wave on Click */}
+            {isScanned && (
+              <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-44 w-44 rounded-full border-2 border-cyan-400 animate-ping shadow-[0_0_25px_#38D4FF]" />
+            )}
+          </button>
         </div>
       </div>
-
-      {/* 4. Cheering Crowd Silhouettes along the Bottom Edge */}
-      <AboutCrowd shouldAnimate={shouldAnimate} />
     </section>
   );
 };

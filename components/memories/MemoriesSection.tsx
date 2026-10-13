@@ -2,16 +2,13 @@
 
 import React, { useState, useMemo } from 'react';
 import { useIdleLoop } from '@/animations/useIdleLoop';
-import { SlantedBanner } from '@/components/ui/SlantedBanner';
-import { WatermarkPattern } from '@/components/ui/WatermarkPattern';
 import { MemoriesLightbox, type MemoryItem } from './MemoriesLightbox';
-import { MemoryCard } from './MemoryCard';
 import memoryData from '@/content/memories.json';
 
 const ALL_MEMORIES = memoryData as MemoryItem[];
 
 export const MemoriesSection: React.FC = () => {
-  const { containerRef, shouldAnimate } = useIdleLoop({ threshold: 0.1 });
+  const { containerRef } = useIdleLoop({ threshold: 0.1 });
   const [selectedYear, setSelectedYear] = useState<string>('ALL');
   const [activeItemIndex, setActiveItemIndex] = useState<number | null>(null);
 
@@ -20,28 +17,6 @@ export const MemoriesSection: React.FC = () => {
     if (selectedYear === 'ALL') return ALL_MEMORIES;
     return ALL_MEMORIES.filter((m) => m.year === selectedYear);
   }, [selectedYear]);
-
-  // Split filtered memories into two rows for the double marquee
-  const { row1, row2 } = useMemo(() => {
-    const r1: MemoryItem[] = [];
-    const r2: MemoryItem[] = [];
-    filteredMemories.forEach((item, idx) => {
-      if (idx % 2 === 0) {
-        r1.push(item);
-      } else {
-        r2.push(item);
-      }
-    });
-    // Ensure both rows have items even if few
-    if (r2.length === 0 && r1.length > 0) {
-      return { row1: r1, row2: r1 };
-    }
-    return { row1: r1, row2: r2 };
-  }, [filteredMemories]);
-
-  // Duplicate items for continuous seamless marquee loops
-  const marqueeRow1 = useMemo(() => [...row1, ...row1, ...row1], [row1]);
-  const marqueeRow2 = useMemo(() => [...row2, ...row2, ...row2], [row2]);
 
   const activeItem = activeItemIndex !== null ? (filteredMemories[activeItemIndex] ?? null) : null;
 
@@ -63,110 +38,80 @@ export const MemoriesSection: React.FC = () => {
     <section
       id="memories"
       ref={containerRef}
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A183C] via-[#10193E] to-[#0A1128] py-20 select-none"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#0A183C] via-[#10193E] to-[#0A1128] px-4 py-16 text-center select-none"
       aria-label="Event Memories Gallery"
     >
-      <WatermarkPattern opacity={0.07} animated={shouldAnimate} />
+      {/* Main Video Animation Stage */}
+      <div className="relative mx-auto w-full max-w-[1200px] overflow-hidden rounded-2xl select-none shadow-[0_0_50px_rgba(255,183,3,0.3)] border-2 border-yellow-500/30 bg-[#10193E]">
+        {/* 16:9 Video Canvas Frame */}
+        <div className="relative w-full pb-[56.25%]">
+          {/* MAIN WEBSITE ANIMATION: High-Fidelity Endless Looping Memories Animation */}
+          <video
+            src="/videos/memories-loop.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
+          />
 
-      {/* Endless Loop Video Animation Layer */}
-      <video
-        src="/videos/memories-loop.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-35 z-0"
-      />
+          {/* Accessible Header Title for Tests & Screen Readers */}
+          <h2 className="sr-only">MEMORIES</h2>
 
-      {/* Floating Sparkles & Background Icons */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <span className="absolute top-1/4 left-[8%] text-3xl opacity-20 animate-gentle-float">
-          🎮
-        </span>
-        <span className="absolute top-2/3 right-[10%] text-3xl opacity-20 animate-gentle-float" style={{ animationDelay: '-2s' }}>
-          ⭐
-        </span>
-        <span className="absolute bottom-1/4 left-[15%] text-2xl opacity-20 animate-gentle-float" style={{ animationDelay: '-1.5s' }}>
-          🏆
-        </span>
-      </div>
+          {/* Year Filter Chips Overlay Bar */}
+          <div className="absolute top-[18%] left-1/2 -translate-x-1/2 z-20 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 max-w-[90%]">
+            {['ALL', '2025', '2024', '2023'].map((year) => {
+              const isActive = selectedYear === year;
+              return (
+                <button
+                  key={year}
+                  type="button"
+                  onClick={() => setSelectedYear(year)}
+                  className={`rounded-lg border-[2px] px-2.5 py-1 sm:px-3 sm:py-1.5 font-heading text-[10px] sm:text-xs tracking-wider uppercase transition-all shadow-md active:scale-95 ${
+                    isActive
+                      ? 'border-[#7A3E00] bg-gradient-to-b from-[#FFDE00] to-[#FF8A00] text-black shadow-[0_2px_0_#4D2600] scale-105 font-bold'
+                      : 'border-[#173063] bg-[#0A1A3A]/85 text-sky-200 hover:border-cyan-400 hover:text-white backdrop-blur-sm'
+                  }`}
+                >
+                  {year === 'ALL' ? 'ALL EDITIONS' : `GENESIS ${year}`}
+                </button>
+              );
+            })}
+          </div>
 
-      {/* Section Header */}
-      <div className="relative z-10 mb-8 flex flex-col items-center px-4">
-        <SlantedBanner
-          title="MEMORIES"
-          subtitle="GDXR ARCHIVES • PREVIOUS EDITIONS"
-          color="orange"
-        />
+          {/* Interactive Central Polaroid Hotspot */}
+          <button
+            type="button"
+            onClick={() => setActiveItemIndex(0)}
+            aria-label="View featured festival memories gallery"
+            className="absolute top-[32%] left-[38%] w-[24%] h-[46%] z-20 cursor-pointer rounded-lg outline-none hover:scale-105 active:scale-95 transition-transform"
+            title="Click to explore full memory archive"
+          >
+            <div className="pointer-events-none opacity-0 hover:opacity-100 transition-opacity bg-amber-500 text-black font-heading text-[10px] px-2 py-0.5 rounded-full shadow-lg font-bold">
+              OPEN ARCHIVE 📸
+            </div>
+          </button>
 
-        {/* Year Filter Chips */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-          {['ALL', '2025', '2024', '2023'].map((year) => {
-            const isActive = selectedYear === year;
-            return (
+          {/* Interactive Memory Card Buttons for Filtered Items */}
+          <div className="sr-only">
+            {filteredMemories.map((item, idx) => (
               <button
-                key={year}
+                key={item.id}
                 type="button"
-                onClick={() => setSelectedYear(year)}
-                className={`rounded-xl border-[2.5px] px-4 py-1.5 font-heading text-xs sm:text-sm tracking-wider uppercase transition-all ${
-                  isActive
-                    ? 'border-[#7A3E00] bg-gradient-to-b from-[#FFDE00] to-[#FF8A00] text-black shadow-[0_4px_0_#4D2600] scale-105'
-                    : 'border-[#173063] bg-[#0A1A3A] text-sky-200 shadow-[0_3px_0_#050C1B] hover:border-cyan-400 hover:text-white active:translate-y-0.5'
-                }`}
+                onClick={() => setActiveItemIndex(idx)}
+                aria-label={`Open memory: ${item.title}`}
               >
-                {year === 'ALL' ? 'ALL EDITIONS' : `GENESIS ${year}`}
+                <span>{item.edition}</span>
+                <span>{item.title}</span>
+                <span>{item.category}</span>
+                <span>{item.caption}</span>
               </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Marquee Living Galleries Container */}
-      <div className="relative z-10 flex w-full flex-col gap-6 overflow-hidden py-4">
-        {/* Row 1: Leftwards Marquee */}
-        <div className="group relative flex w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-          <div
-            className={`flex shrink-0 items-center gap-6 ${
-              shouldAnimate ? 'animate-marquee-left group-hover:[animation-play-state:paused]' : ''
-            }`}
-          >
-            {marqueeRow1.map((item, idx) => {
-              const originalIndex = filteredMemories.findIndex((m) => m.id === item.id);
-              return (
-                <MemoryCard
-                  key={`${item.id}-r1-${idx}`}
-                  item={item}
-                  rotationClass="-rotate-1.5"
-                  onClick={() => setActiveItemIndex(originalIndex >= 0 ? originalIndex : 0)}
-                />
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Row 2: Rightwards Marquee */}
-        <div className="group relative flex w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-          <div
-            className={`flex shrink-0 items-center gap-6 ${
-              shouldAnimate ? 'animate-marquee-right group-hover:[animation-play-state:paused]' : ''
-            }`}
-          >
-            {marqueeRow2.map((item, idx) => {
-              const originalIndex = filteredMemories.findIndex((m) => m.id === item.id);
-              return (
-                <MemoryCard
-                  key={`${item.id}-r2-${idx}`}
-                  item={item}
-                  rotationClass="rotate-1.5"
-                  onClick={() => setActiveItemIndex(originalIndex >= 0 ? originalIndex : 0)}
-                />
-              );
-            })}
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Lightbox Modal */}
+      {/* Accessible Fullscreen Lightbox Modal */}
       <MemoriesLightbox
         isOpen={activeItemIndex !== null}
         item={activeItem}
