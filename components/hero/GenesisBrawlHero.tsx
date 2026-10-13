@@ -138,14 +138,25 @@ export const GenesisBrawlHero: React.FC = () => {
     <div className="relative mx-auto w-full max-w-[1200px] overflow-hidden rounded-2xl select-none shadow-[0_0_50px_rgba(0,168,255,0.25)] border-2 border-cyan-500/30 bg-[#060D24]">
       {/* Aspect Ratio Box: 1024 / 728 = 1.40659 */}
       <div className="relative w-full pb-[71.09375%]">
-        {/* 1. STRICT BASE ARTWORK: 100% complete with every single element preserved */}
+        {/* 1. STRICT BASE ARTWORK: First paint placeholder */}
         <Image
           src="/img/hero/genesis-brawl-hero.webp"
           alt="GENESIS 2026 Official Arena Artwork"
           fill
           priority
           sizes="(max-width: 1200px) 100vw, 1200px"
-          className="pointer-events-none object-cover"
+          className="pointer-events-none object-cover z-0"
+        />
+
+        {/* 1b. ENDLESS LOOP VIDEO ANIMATION: Continuous looping reference animation */}
+        <video
+          src="/videos/hero-loop.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="/img/hero/genesis-brawl-hero.webp"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover z-0"
         />
 
         {/* 2. ANIMATED LAYER: Falling Meteors across the Cosmic Sky */}

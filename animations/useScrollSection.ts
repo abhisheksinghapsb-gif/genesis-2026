@@ -11,11 +11,13 @@ export function useScrollSection() {
 
   // Section history stack for the game HUD Back button
   const sectionHistoryRef = useRef<string[]>(['home']);
+  const activeSectionIdRef = useRef<string>('home');
   const isNavigatingRef = useRef<boolean>(false);
 
   // Scroll to section by ID
   const scrollToSection = useCallback((sectionId: string) => {
     isNavigatingRef.current = true;
+    activeSectionIdRef.current = sectionId;
     const targetEl = document.getElementById(sectionId);
     if (targetEl) {
       const top = targetEl.getBoundingClientRect().top + window.scrollY - 70; // offset for HUD
@@ -58,6 +60,7 @@ export function useScrollSection() {
         const targetEl = document.getElementById(previousSection);
         if (targetEl) {
           isNavigatingRef.current = true;
+          activeSectionIdRef.current = previousSection;
           const top = targetEl.getBoundingClientRect().top + window.scrollY - 70;
           window.scrollTo({ top, behavior: 'smooth' });
 
@@ -134,25 +137,22 @@ export function useScrollSection() {
         }
       }
 
-      setActiveSectionId((prev) => {
-        if (prev !== currentVisible) {
-          // Update stack and URL
-          const currentStack = sectionHistoryRef.current;
-          if (currentStack[currentStack.length - 1] !== currentVisible) {
-            sectionHistoryRef.current.push(currentVisible);
-            setCanGoBack(sectionHistoryRef.current.length > 1);
-          }
-
-          const hash = currentVisible === 'home' ? '' : `#${currentVisible}`;
-          window.history.replaceState(
-            null,
-            '',
-            hash || window.location.pathname + window.location.search,
-          );
-          return currentVisible;
+      if (activeSectionIdRef.current !== currentVisible) {
+        activeSectionIdRef.current = currentVisible;
+        const currentStack = sectionHistoryRef.current;
+        if (currentStack[currentStack.length - 1] !== currentVisible) {
+          sectionHistoryRef.current.push(currentVisible);
+          setCanGoBack(sectionHistoryRef.current.length > 1);
         }
-        return prev;
-      });
+
+        const hash = currentVisible === 'home' ? '' : `#${currentVisible}`;
+        window.history.replaceState(
+          null,
+          '',
+          hash || window.location.pathname + window.location.search,
+        );
+        setActiveSectionId(currentVisible);
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });

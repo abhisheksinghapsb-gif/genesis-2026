@@ -27,6 +27,16 @@ export const SponsorsSection: React.FC = () => {
     >
       <WatermarkPattern opacity={0.08} animated={shouldAnimate} />
 
+      {/* Endless Loop Video Animation Layer */}
+      <video
+        src="/videos/sponsors-loop.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-35 z-0"
+      />
+
       {/* Header Banner */}
       <div className="relative z-10 mb-10 flex flex-col items-center">
         <SlantedBanner

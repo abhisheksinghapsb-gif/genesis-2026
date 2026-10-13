@@ -68,6 +68,16 @@ export const MemoriesSection: React.FC = () => {
     >
       <WatermarkPattern opacity={0.07} animated={shouldAnimate} />
 
+      {/* Endless Loop Video Animation Layer */}
+      <video
+        src="/videos/memories-loop.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-35 z-0"
+      />
+
       {/* Floating Sparkles & Background Icons */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
         <span className="absolute top-1/4 left-[8%] text-3xl opacity-20 animate-gentle-float">

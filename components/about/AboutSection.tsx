@@ -37,6 +37,16 @@ export const AboutSection: React.FC = () => {
         <div className="absolute right-1/4 bottom-20 h-96 w-96 rounded-full bg-gradient-to-tl from-[#9D4EDD]/30 to-[#38D4FF]/20 blur-3xl" />
       </div>
 
+      {/* 1b. Endless Loop Video Animation Layer */}
+      <video
+        src="/videos/about-loop.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40 z-0"
+      />
+
       {/* 2. Section Header: Red ABOUT + Grey GENESIS */}
       <div className="relative z-20 mb-8 flex flex-col items-center">
         <div className="flex items-center justify-center gap-3">

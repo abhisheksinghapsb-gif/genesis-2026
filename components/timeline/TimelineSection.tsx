@@ -25,6 +25,16 @@ export const TimelineSection: React.FC = () => {
       {/* 1. Deep Space Pattern Background */}
       <WatermarkPattern opacity={0.09} animated={shouldAnimate} />
 
+      {/* 1b. Endless Loop Video Animation Layer */}
+      <video
+        src="/videos/timeline-loop.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-35 z-0"
+      />
+
       {/* 2. Orange Slanted Header Banner */}
       <div className="relative z-10 mb-8 flex flex-col items-center">
         <SlantedBanner title="TIMELINE" subtitle="ROADMAP TO THE GRAND ARENA" color="orange" />
