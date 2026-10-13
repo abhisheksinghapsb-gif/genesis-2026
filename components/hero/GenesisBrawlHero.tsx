@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import { HeroCountdown } from './HeroCountdown';
 
 interface Meteor {
   id: number;
@@ -346,7 +347,12 @@ export const GenesisBrawlHero: React.FC = () => {
           <div className="absolute inset-0 rounded-lg border-2 border-yellow-300/0 group-hover:border-yellow-300 group-hover:shadow-[0_0_20px_rgba(255,183,3,0.7)] transition-all" />
         </a>
 
-        {/* 10. FUNCTIONAL INTERACTIVE HOTSPOTS: Top Navigation Items */}
+        {/* 10. LIVE TOURNAMENT COUNTDOWN & SQUADS HUD ON OBSERVATORY DECK */}
+        <div className="pointer-events-auto absolute top-[66.5%] left-[22%] w-[56%] z-30 flex flex-col items-center justify-center transform scale-[0.72] sm:scale-[0.88] md:scale-95 lg:scale-100 origin-top">
+          <HeroCountdown />
+        </div>
+
+        {/* 11. FUNCTIONAL INTERACTIVE HOTSPOTS: Top Navigation Items */}
         {/* Top-Left: GDAI Crest */}
         <button
           onClick={handleGdaiClick}
