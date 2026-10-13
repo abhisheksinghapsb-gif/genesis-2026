@@ -192,32 +192,6 @@ export const GenesisBrawlHero: React.FC = () => {
           )}
         </button>
 
-        {/* Top Nav: BROCHURE */}
-        <button
-          onClick={() => setShowBrochureModal(true)}
-          className="group absolute top-[4.2%] left-[18.2%] w-[19%] h-[6.2%] z-30 rounded-xl transition-all hover:scale-105 active:scale-95 outline-none"
-          aria-label="Open Event Brochure and Rulebook"
-        >
-          <div className="absolute inset-0 rounded-xl border border-cyan-400/0 group-hover:border-cyan-400 group-hover:bg-cyan-500/10 group-hover:shadow-[0_0_15px_rgba(0,229,255,0.4)] transition-all" />
-        </button>
-
-        {/* Top Nav: PRIZE */}
-        <a
-          href="#prizes"
-          className="group absolute top-[4.2%] left-[40.2%] w-[16%] h-[6.2%] z-30 rounded-xl transition-all hover:scale-105 active:scale-95 outline-none"
-          aria-label="View ₹60,000 Prize Pool"
-        >
-          <div className="absolute inset-0 rounded-xl border border-yellow-400/0 group-hover:border-yellow-400 group-hover:bg-yellow-500/10 group-hover:shadow-[0_0_15px_rgba(255,183,3,0.4)] transition-all" />
-        </a>
-
-        {/* Top Nav: SPONSORS */}
-        <a
-          href="#sponsors"
-          className="group absolute top-[4.2%] left-[62.8%] w-[19%] h-[6.2%] z-30 rounded-xl transition-all hover:scale-105 active:scale-95 outline-none"
-          aria-label="View Event Sponsors"
-        >
-          <div className="absolute inset-0 rounded-xl border border-green-400/0 group-hover:border-green-400 group-hover:bg-green-500/10 group-hover:shadow-[0_0_15px_rgba(34,197,94,0.4)] transition-all" />
-        </a>
 
         {/* Top-Right: Hamburger Menu Button */}
         <button

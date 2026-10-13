@@ -50,36 +50,51 @@ export const TimelineSection: React.FC = () => {
             title="Click Colt to view Stage 01 Overview"
           />
 
-          {/* 4 Interactive Milestone Card Hotspots */}
+          {/* 4 Interactive Milestone Card Hotspots - Clean Hitboxes over 3D Rotating Video Cards */}
           {timelineData.map((step, idx) => (
             <button
               key={step.id}
               type="button"
               onClick={() => setActiveModalItem(step)}
               aria-label={`View rules and venue details for ${step.title}`}
-              className={`group absolute ${SLOT_STYLES[idx] ?? ''} z-20 cursor-pointer rounded-xl outline-none transition-transform hover:scale-105 active:scale-95 flex flex-col items-center justify-center px-1.5 py-1 text-center`}
-              title={`Click to view rules and details for ${step.title}`}
+              className={`group absolute ${SLOT_STYLES[idx] ?? ''} z-20 cursor-pointer rounded-xl outline-none hover:ring-2 hover:ring-yellow-400/50 hover:bg-yellow-400/5 transition-all`}
+              title={`Click to view rules and venue details for Stage ${step.num}: ${step.title}`}
             >
-              {/* Visible Milestone Details inside the Card Frame */}
-              <span className="font-heading text-[8px] sm:text-[10px] md:text-xs text-amber-800 uppercase tracking-wider font-extrabold">
-                {step.date}
-              </span>
+              {/* Unique screen reader tag for exact step.num testing & accessibility */}
+              <span className="sr-only">{step.num}</span>
+            </button>
+          ))}
+        </div>
+      </div>
 
-              <h4 className="font-heading text-[10px] sm:text-xs md:text-sm lg:text-base text-[#2B1400] font-black uppercase leading-tight mt-0.5 group-hover:text-amber-900 transition-colors">
+      {/* Stage Schedule HUD: Clean Details Card Grid On Side / Bottom */}
+      <div className="mx-auto mt-6 w-full max-w-[1200px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          {timelineData.map((step) => (
+            <button
+              key={step.id}
+              type="button"
+              onClick={() => setActiveModalItem(step)}
+              className="group relative flex flex-col text-left rounded-xl border-2 border-cyan-500/30 bg-[#0B1A42]/90 backdrop-blur-md p-3.5 shadow-lg transition-all hover:border-yellow-400 hover:scale-[1.02] active:scale-[0.98] outline-none"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="rounded-md bg-yellow-400/20 px-2 py-0.5 font-heading text-[11px] font-black text-yellow-300 border border-yellow-400/40">
+                  PHASE {step.num}
+                </span>
+                <span className="font-heading text-xs text-cyan-300 font-bold">
+                  {step.date}
+                </span>
+              </div>
+              <h3 className="font-heading text-sm text-white font-black uppercase mt-2 group-hover:text-yellow-300 transition-colors">
                 {step.title}
-              </h4>
-
-              <p className="mt-0.5 sm:mt-1 font-body text-[8px] sm:text-[9px] md:text-[11px] font-bold text-[#573507] line-clamp-2 px-1 leading-snug">
+              </h3>
+              <p className="font-body text-xs text-sky-200/80 mt-1 line-clamp-2 leading-relaxed">
                 {step.shortDesc}
               </p>
-
-              {/* Action Button */}
-              <div className="mt-1 sm:mt-1.5 flex items-center gap-1 rounded-full border border-[#573507] bg-gradient-to-b from-amber-300 to-amber-500 px-2 py-0.5 font-heading text-[7px] sm:text-[9px] md:text-[10px] text-black uppercase shadow-sm font-bold transition-transform group-hover:scale-105">
-                <span>DETAILS ℹ</span>
+              <div className="mt-3 flex items-center justify-between text-[11px] font-heading text-yellow-400 font-bold">
+                <span className="text-slate-400">📍 {step.venue}</span>
+                <span className="group-hover:translate-x-1 transition-transform">DETAILS ▶</span>
               </div>
-
-              {/* Screen reader tags */}
-              <span className="sr-only">{step.num}</span>
             </button>
           ))}
         </div>
