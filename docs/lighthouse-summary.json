@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-13T03:31:01.285Z",
+  "timestamp": "2026-10-13T03:45:26.254Z",
   "url": "http://localhost:3000/",
   "desktop": {
     "formFactor": "desktop",
@@ -10,9 +10,9 @@
       "seo": 100
     },
     "metrics": {
-      "fcp": "0.4 s",
+      "fcp": "0.5 s",
       "lcp": "0.7 s",
-      "tbt": "50 ms",
+      "tbt": "30 ms",
       "cls": "0.005",
       "speedIndex": "1.9 s"
     }
@@ -20,17 +20,17 @@
   "mobile": {
     "formFactor": "mobile (emulated)",
     "scores": {
-      "performance": 56,
+      "performance": 62,
       "accessibility": 94,
       "bestPractices": 96,
       "seo": 100
     },
     "metrics": {
-      "fcp": "2.1 s",
-      "lcp": "3.4 s",
-      "tbt": "2,540 ms",
-      "cls": "0",
-      "speedIndex": "5.7 s"
+      "fcp": "1.6 s",
+      "lcp": "3.3 s",
+      "tbt": "1,870 ms",
+      "cls": "0.003",
+      "speedIndex": "4.7 s"
     }
   }
 }

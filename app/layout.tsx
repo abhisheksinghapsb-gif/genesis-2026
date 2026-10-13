@@ -17,14 +17,44 @@ const nunito = localFont({
   display: 'swap',
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: 'GENESIS 2026 | 5th Edition GDXR Event • AIT Pune',
   description:
     'The 5th edition of the GDXR (AR/VR) Club flagship gaming and virtual reality competition at Army Institute of Technology, Pune. ₹60,000 cash prize pool.',
-  keywords: ['GENESIS 2026', 'GDXR', 'AIT Pune', 'Gaming Event', 'VR Competition', 'AR VR Club'],
+  keywords: ['GENESIS 2026', 'GDXR', 'AIT Pune', 'Gaming Event', 'VR Competition', 'AR VR Club', 'Esports Pune'],
   authors: [{ name: 'GDXR Club, AIT Pune' }],
   icons: {
     icon: '/favicon.ico',
+  },
+  openGraph: {
+    title: 'GENESIS 2026 | 5th Edition GDXR Event • AIT Pune',
+    description:
+      'The 5th edition of the GDXR (AR/VR) Club flagship gaming and virtual reality competition at Army Institute of Technology, Pune. ₹60,000 cash prize pool.',
+    url: siteUrl,
+    siteName: 'GENESIS 2026',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'GENESIS 2026 - 5th Edition GDXR Event at AIT Pune',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'GENESIS 2026 | 5th Edition GDXR Event • AIT Pune',
+    description:
+      'The 5th edition of the GDXR (AR/VR) Club flagship gaming and virtual reality competition at Army Institute of Technology, Pune. ₹60,000 cash prize pool.',
+    images: ['/og-image.png'],
+  },
+  alternates: {
+    canonical: siteUrl,
   },
 };
 

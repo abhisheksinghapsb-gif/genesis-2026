@@ -13,24 +13,24 @@ Phase 8 completes full-scope automated end-to-end verification, cross-device vis
 
 - **Cross-Browser Matrix:** 6 viewport & engine configurations (Chromium, Firefox, WebKit, emulated Mobile Safari, emulated Mobile Android, Tablet) — **100% Passing**.
 - **Visual Capture Archive:** 60 high-resolution screenshots generated and archived in `docs/qa-screenshots/`.
-- **Lighthouse CI Core Web Vitals:** Desktop Performance **96/100**, Accessibility **90/100**, Best Practices **96/100**, SEO **100/100**; Desktop LCP: **0.7s**, CLS: **0.005**. Mobile Accessibility **94/100**, SEO **100/100**, CLS: **0**.
-- **Load Testing (Autocannon):** 300 concurrent virtual users sustained **288.87 req/s** (63.3 MB/s throughput, 0 errors); `/api/register` achieved **265.47 req/s** (5.3x over the ~50 req/s target, p50 = 49 ms, 0 errors).
-- **Code Quality & Budgets:** 0 ESLint warnings, 0 TypeScript errors, 46/46 Vitest unit tests passing, and first load JS bundle gzipped at **167.87 KB** (within the strict $\le 170\text{ KB}$ budget).
+- **Lighthouse CI Core Web Vitals:** Desktop Performance **96/100**, Accessibility **90/100**, Best Practices **96/100**, SEO **100/100**; Desktop LCP: **0.7s**, CLS: **0.005**, TBT: **30 ms**. Mobile Accessibility **94/100**, SEO **100/100**.
+- **Load Testing (Autocannon):** 300 concurrent virtual users sustained **263.87 req/s** (58.6 MB/s throughput, 0 errors); `/api/register` achieved **250.80 req/s** (5.0x over the ~50 req/s target, p50 = 55 ms, 0 errors).
+- **Code Quality & Budgets:** 0 ESLint warnings, 0 TypeScript errors, 50/50 Vitest unit/integration tests passing across 9 test suites, and first load JS bundle gzipped at **167.87 KB** (within the strict $\le 170\text{ KB}$ budget).
 
 ---
 
 ## 2. Cross-Browser & Device Compatibility Matrix
 
-All end-to-end user journeys were validated across Playwright test runners:
+All end-to-end user journeys were validated across Playwright test runners on the production build:
 
 | Target Profile | Engine / Device | Viewport | Execution Time | Status | Screenshots Generated |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Desktop Chrome (1440px)** | Chromium | 1440 × 1024 | 14.2s | ✅ PASSED | 10 captures in `docs/qa-screenshots/` |
-| **Desktop Firefox** | Gecko (Firefox 157) | 1440 × 1024 | 17.2s | ✅ PASSED | 10 captures in `docs/qa-screenshots/` |
-| **Desktop WebKit** | WebKit (Safari 27) | 1440 × 1024 | 1.5m | ✅ PASSED | 10 captures in `docs/qa-screenshots/` |
-| **Mobile Safari (iPhone 14) (emulated)** | WebKit | 390 × 844 (dpr 3) | 1.0m | ✅ PASSED | 10 captures in `docs/qa-screenshots/` |
-| **Mobile Android (Pixel 7) (emulated)** | Chromium | 412 × 915 (dpr 2.625) | 14.2s | ✅ PASSED | 10 captures in `docs/qa-screenshots/` |
-| **Tablet (768px)** | Chromium | 768 × 1024 | 11.4s | ✅ PASSED | 10 captures in `docs/qa-screenshots/` |
+| **Desktop Chrome (1440px)** | Chromium | 1440 × 1024 | 12.1s | ✅ PASSED | 10 captures in `docs/qa-screenshots/` |
+| **Desktop Firefox** | Gecko (Firefox 157) | 1440 × 1024 | 17.0s | ✅ PASSED | 10 captures in `docs/qa-screenshots/` |
+| **Desktop WebKit** | WebKit (Safari 27) | 1440 × 1024 | 1.6m | ✅ PASSED | 10 captures in `docs/qa-screenshots/` |
+| **Mobile Safari (iPhone 14) (emulated)** | WebKit | 390 × 844 (dpr 3) | 1.1m | ✅ PASSED | 10 captures in `docs/qa-screenshots/` |
+| **Mobile Android (Pixel 7) (emulated)** | Chromium | 412 × 915 (dpr 2.625) | 14.0s | ✅ PASSED | 10 captures in `docs/qa-screenshots/` |
+| **Tablet (768px)** | Chromium | 768 × 1024 | 11.6s | ✅ PASSED | 10 captures in `docs/qa-screenshots/` |
 
 ### Verified User Journeys:
 1. **Hero & 3D Celestial Canvas:** Dual-layer rendering, interactive pointer parallax, scroll reactivity, and WebGL watchdog fallback.
@@ -153,7 +153,9 @@ Load testing executed using `autocannon (Node.js)` against the production server
 
 - **Linting (`npm run lint`):** 0 errors, 0 warnings (`eslint . --max-warnings=0`).
 - **Type Checking (`npm run typecheck`):** 0 errors (`tsc --noEmit`).
-- **Unit & Integration Suite (`npm test`):** 7 test files, 46 tests passing:
+- **Unit & Integration Suite (`npm test`):** 9 test files, 50 tests passing:
+  - `tests/api/health.test.ts`: 2/2 passed (GET /api/health and lightweight HEAD uptime checks).
+  - `tests/unit/sentry.test.ts`: 2/2 passed (Sentry no-op verification & telemetry activation).
   - `tests/unit/phase5.test.tsx`: 6/6 passed (Hardware capabilities, WebGL watchdog, FPS downgrade to CSS fallback).
   - `tests/api/register.test.ts`: 10/10 passed (Validation, rate limiter, Turnstile mock, duplicate checks, team IDs).
   - `tests/unit/hud.test.tsx`: 6/6 passed (HUD visibility, section tracker, drawer accessibility).

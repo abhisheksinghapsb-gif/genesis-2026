@@ -1,18 +1,18 @@
 {
   "tool": "autocannon (Node.js)",
-  "timestamp": "2026-10-13T03:29:06.792Z",
+  "timestamp": "2026-10-13T03:44:14.400Z",
   "pageTest": {
     "target": "http://localhost:3000/",
     "virtualUsers": 300,
     "durationSeconds": 15,
-    "totalRequests": 4333,
-    "reqPerSecAvg": 288.87,
-    "throughputBytesSec": 63274461.87,
+    "totalRequests": 3958,
+    "reqPerSecAvg": 263.87,
+    "throughputBytesSec": 58569523.2,
     "latency": {
-      "p50": 949,
-      "p90": 1240,
-      "p99": 1364,
-      "max": 1438
+      "p50": 1124,
+      "p90": 1182,
+      "p99": 1261,
+      "max": 1291
     },
     "errors": 0,
     "timeouts": 0
@@ -22,14 +22,14 @@
     "targetRate": "~50 req/s",
     "connections": 15,
     "durationSeconds": 15,
-    "totalRequests": 3982,
-    "reqPerSecAvg": 265.47,
-    "throughputBytesSec": 166970.47,
+    "totalRequests": 3762,
+    "reqPerSecAvg": 250.8,
+    "throughputBytesSec": 157721.6,
     "latency": {
-      "p50": 49,
-      "p90": 71,
-      "p99": 91,
-      "max": 1031
+      "p50": 55,
+      "p90": 69,
+      "p99": 95,
+      "max": 1227
     },
     "errors": 0,
     "timeouts": 0

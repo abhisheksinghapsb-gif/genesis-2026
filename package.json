@@ -16,6 +16,7 @@
     "test:e2e": "playwright test",
     "depcheck": "depcheck",
     "budget:check": "node scripts/check-budgets.mjs",
+    "og:generate": "node scripts/generate-og-image.mjs",
     "prepare": "husky"
   },
   "dependencies": {
