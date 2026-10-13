@@ -13,22 +13,42 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'Mobile Chrome (390px)',
+      name: 'Desktop Chrome (1440px)',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1440, height: 1024 },
+      },
+    },
+    {
+      name: 'Desktop Firefox',
+      use: {
+        ...devices['Desktop Firefox'],
+        viewport: { width: 1440, height: 1024 },
+      },
+    },
+    {
+      name: 'Desktop WebKit',
+      use: {
+        ...devices['Desktop Safari'],
+        viewport: { width: 1440, height: 1024 },
+      },
+    },
+    {
+      name: 'Mobile Safari (iPhone 14) (emulated)',
+      use: {
+        ...devices['iPhone 14'],
+      },
+    },
+    {
+      name: 'Mobile Android (Pixel 7) (emulated)',
       use: {
         ...devices['Pixel 7'],
-        viewport: { width: 390, height: 844 },
       },
     },
     {
       name: 'Tablet (768px)',
       use: {
         viewport: { width: 768, height: 1024 },
-      },
-    },
-    {
-      name: 'Desktop Chrome (1440px)',
-      use: {
-        viewport: { width: 1440, height: 1024 },
       },
     },
   ],

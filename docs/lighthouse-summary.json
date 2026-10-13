@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-10-13T03:31:01.285Z",
+  "url": "http://localhost:3000/",
+  "desktop": {
+    "formFactor": "desktop",
+    "scores": {
+      "performance": 96,
+      "accessibility": 90,
+      "bestPractices": 96,
+      "seo": 100
+    },
+    "metrics": {
+      "fcp": "0.4 s",
+      "lcp": "0.7 s",
+      "tbt": "50 ms",
+      "cls": "0.005",
+      "speedIndex": "1.9 s"
+    }
+  },
+  "mobile": {
+    "formFactor": "mobile (emulated)",
+    "scores": {
+      "performance": 56,
+      "accessibility": 94,
+      "bestPractices": 96,
+      "seo": 100
+    },
+    "metrics": {
+      "fcp": "2.1 s",
+      "lcp": "3.4 s",
+      "tbt": "2,540 ms",
+      "cls": "0",
+      "speedIndex": "5.7 s"
+    }
+  }
+}

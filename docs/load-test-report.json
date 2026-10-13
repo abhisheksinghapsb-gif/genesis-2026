@@ -1,0 +1,37 @@
+{
+  "tool": "autocannon (Node.js)",
+  "timestamp": "2026-10-13T03:29:06.792Z",
+  "pageTest": {
+    "target": "http://localhost:3000/",
+    "virtualUsers": 300,
+    "durationSeconds": 15,
+    "totalRequests": 4333,
+    "reqPerSecAvg": 288.87,
+    "throughputBytesSec": 63274461.87,
+    "latency": {
+      "p50": 949,
+      "p90": 1240,
+      "p99": 1364,
+      "max": 1438
+    },
+    "errors": 0,
+    "timeouts": 0
+  },
+  "apiTest": {
+    "target": "http://localhost:3000/api/register",
+    "targetRate": "~50 req/s",
+    "connections": 15,
+    "durationSeconds": 15,
+    "totalRequests": 3982,
+    "reqPerSecAvg": 265.47,
+    "throughputBytesSec": 166970.47,
+    "latency": {
+      "p50": 49,
+      "p90": 71,
+      "p99": 91,
+      "max": 1031
+    },
+    "errors": 0,
+    "timeouts": 0
+  }
+}
