@@ -10,6 +10,8 @@ create table if not exists public.registrations (
     edition text not null default 'genesis-2026',
     team_name text not null,
     track text not null check (track in ('gaming', 'vr')),
+    college text not null default '',
+    city text not null default '',
     leader_name text not null,
     leader_email text not null,
     leader_phone text not null,

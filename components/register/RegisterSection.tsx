@@ -1,13 +1,18 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SlantedBanner } from '@/components/ui/SlantedBanner';
 import { ChamferCard } from '@/components/ui/ChamferCard';
 import { GameButton } from '@/components/ui/GameButton';
 import { WatermarkPattern } from '@/components/ui/WatermarkPattern';
 import { DUMMY_TURNSTILE_SITEKEY } from '@/lib/turnstile';
+import { registrationSchema } from '@/lib/validation';
+import { track as trackAnalytics } from '@/lib/analytics';
+import { downloadIcsCalendar } from '@/lib/calendar';
 import eventConfig from '@/content/event.json';
 import privacyData from '@/content/privacy.json';
+
+const DRAFT_STORAGE_KEY = 'genesis_registration_draft';
 
 interface MemberFormState {
   name: string;
@@ -21,10 +26,50 @@ interface StatsData {
   vr: number;
 }
 
+interface RegisteredSquadResult {
+  teamId: string;
+  teamName: string;
+  track: 'gaming' | 'vr';
+  college: string;
+  city: string;
+  leaderName: string;
+  leaderEmail: string;
+  memberCount: number;
+}
+
+// SVG Track Icons
+const GamingGamepadSvg = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className="h-8 w-8 text-amber-400 drop-shadow-[0_2px_0_#000000]"
+    aria-hidden="true"
+  >
+    <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-3c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+  </svg>
+);
+
+const VrHeadsetSvg = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className="h-8 w-8 text-sky-400 drop-shadow-[0_2px_0_#000000]"
+    aria-hidden="true"
+  >
+    <path d="M20.5 6h-17C2.1 6 1 7.1 1 8.5v7C1 16.9 2.1 18 3.5 18h4.8c.4 0 .7-.2.9-.5l1.6-2.5h2.4l1.6 2.5c.2.3.5.5.9.5h4.8c1.4 0 2.5-1.1 2.5-2.5v-7c0-1.4-1.1-2.5-2.5-2.5zm-13 7.5c-1.4 0-2.5-1.1-2.5-2.5s1.1-2.5 2.5-2.5 2.5 1.1 2.5 2.5-1.1 2.5-2.5 2.5zm9 0c-1.4 0-2.5-1.1-2.5-2.5s1.1-2.5 2.5-2.5 2.5 1.1 2.5 2.5-1.1 2.5-2.5 2.5z" />
+  </svg>
+);
+
 export const RegisterSection: React.FC = () => {
-  // Form state
+  // Wizard navigation step: 1 = Team, 2 = Members, 3 = Review
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+
+  // Form Fields
   const [track, setTrack] = useState<'gaming' | 'vr'>('gaming');
   const [teamName, setTeamName] = useState('');
+  const [college, setCollege] = useState('');
+  const [city, setCity] = useState('');
+  const [teamSize, setTeamSize] = useState<number>(1); // 1 = solo, 2, 3, 4
   const [leaderName, setLeaderName] = useState('');
   const [leaderEmail, setLeaderEmail] = useState('');
   const [leaderPhone, setLeaderPhone] = useState('');
@@ -32,24 +77,64 @@ export const RegisterSection: React.FC = () => {
   const [consent, setConsent] = useState(false);
   const [turnstileToken] = useState('test-dummy-turnstile-token');
 
-  // UI status
+  // UI state
+  const [draftRestored, setDraftRestored] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
-  const [registeredSquad, setRegisteredSquad] = useState<{
-    teamId: string;
-    teamName: string;
-    track: 'gaming' | 'vr';
-    leaderName: string;
-    leaderEmail: string;
-    memberCount: number;
-  } | null>(null);
-
+  const [registeredSquad, setRegisteredSquad] = useState<RegisteredSquadResult | null>(null);
   const [stats, setStats] = useState<StatsData | null>(null);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
   const [copiedId, setCopiedId] = useState(false);
 
-  // Fetch live stats ticker
+  // 1. Restore draft from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.teamName) setTeamName(parsed.teamName);
+        if (parsed.track) setTrack(parsed.track);
+        if (parsed.college) setCollege(parsed.college);
+        if (parsed.city) setCity(parsed.city);
+        if (typeof parsed.teamSize === 'number') setTeamSize(parsed.teamSize);
+        if (parsed.leaderName) setLeaderName(parsed.leaderName);
+        if (parsed.leaderEmail) setLeaderEmail(parsed.leaderEmail);
+        if (parsed.leaderPhone) setLeaderPhone(parsed.leaderPhone);
+        if (Array.isArray(parsed.members)) setMembers(parsed.members);
+        setDraftRestored(true);
+      }
+    } catch {
+      // Ignore parse errors
+    }
+  }, []);
+
+  // 2. Autosave draft to localStorage (never store Turnstile token)
+  const saveDraft = useCallback(() => {
+    try {
+      const draft = {
+        teamName,
+        track,
+        college,
+        city,
+        teamSize,
+        leaderName,
+        leaderEmail,
+        leaderPhone,
+        members,
+      };
+      localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+    } catch {
+      // Storage quota or private browsing
+    }
+  }, [teamName, track, college, city, teamSize, leaderName, leaderEmail, leaderPhone, members]);
+
+  useEffect(() => {
+    const timer = setTimeout(saveDraft, 500);
+    return () => clearTimeout(timer);
+  }, [saveDraft]);
+
+  // 3. Fetch live tournament stats
   useEffect(() => {
     let isMounted = true;
     const fetchStats = async () => {
@@ -66,24 +151,36 @@ export const RegisterSection: React.FC = () => {
           }
         }
       } catch {
-        // Fallback to static values if offline
+        // Offline safe
       }
     };
-
     fetchStats();
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const handleAddMember = () => {
-    if (members.length < 3) {
-      setMembers([...members, { name: '', email: '', phone: '' }]);
+  // 4. Update member rows whenever teamSize changes
+  const handleTeamSizeChange = (size: number) => {
+    setTeamSize(size);
+    const requiredAdditionalMembers = size - 1; // 1 leader + (size - 1) members
+    if (requiredAdditionalMembers <= 0) {
+      setMembers([]);
+      return;
     }
-  };
 
-  const handleRemoveMember = (indexToRemove: number) => {
-    setMembers(members.filter((_, idx) => idx !== indexToRemove));
+    setMembers((current) => {
+      const next: MemberFormState[] = [];
+      for (let i = 0; i < requiredAdditionalMembers; i++) {
+        const existing = current[i];
+        if (existing) {
+          next.push(existing);
+        } else {
+          next.push({ name: '', email: '', phone: '' });
+        }
+      }
+      return next;
+    });
   };
 
   const handleMemberChange = (
@@ -99,26 +196,80 @@ export const RegisterSection: React.FC = () => {
     }
   };
 
-  const handleCopyTeamId = () => {
-    if (registeredSquad?.teamId && typeof navigator !== 'undefined') {
-      navigator.clipboard.writeText(registeredSquad.teamId);
-      setCopiedId(true);
-      setTimeout(() => setCopiedId(false), 2500);
-    }
-  };
-
-  const handleResetForm = () => {
-    setRegisteredSquad(null);
-    setTeamName('');
-    setLeaderName('');
-    setLeaderEmail('');
-    setLeaderPhone('');
-    setMembers([]);
-    setConsent(false);
+  // 5. Multi-Step Validation & Navigation
+  const handleNextToStep2 = () => {
     setErrorMessage(null);
     setFieldErrors({});
+
+    // Validate Step 1 fields against schema rules
+    const step1Payload = {
+      teamName: teamName.trim(),
+      track,
+      college: college.trim(),
+      city: city.trim(),
+      leaderName: 'Placeholder Leader',
+      leaderEmail: 'placeholder@example.com',
+      leaderPhone: '9876543210',
+      members: [],
+      consent: true as const,
+    };
+
+    const res = registrationSchema.safeParse(step1Payload);
+    if (!res.success) {
+      const flattened = res.error.flatten();
+      const step1Errors: Record<string, string[]> = {};
+      if (flattened.fieldErrors.teamName) step1Errors.teamName = flattened.fieldErrors.teamName;
+      if (flattened.fieldErrors.college) step1Errors.college = flattened.fieldErrors.college;
+      if (flattened.fieldErrors.city) step1Errors.city = flattened.fieldErrors.city;
+
+      if (Object.keys(step1Errors).length > 0) {
+        setFieldErrors(step1Errors);
+        setErrorMessage('Please fill out all squad details before continuing.');
+        return;
+      }
+    }
+
+    trackAnalytics('registration_step_2_viewed', { track, teamSize });
+    setCurrentStep(2);
   };
 
+  const handleNextToStep3 = () => {
+    setErrorMessage(null);
+    setFieldErrors({});
+
+    // Format current member inputs
+    const formattedMembers = members.map((m) => ({
+      name: m.name.trim(),
+      email: m.email.trim(),
+      phone: m.phone.trim() ? m.phone.trim() : undefined,
+    }));
+
+    const step2Payload = {
+      teamName: teamName.trim(),
+      track,
+      college: college.trim(),
+      city: city.trim(),
+      leaderName: leaderName.trim(),
+      leaderEmail: leaderEmail.trim(),
+      leaderPhone: leaderPhone.trim(),
+      members: formattedMembers,
+      consent: true as const,
+    };
+
+    const res = registrationSchema.safeParse(step2Payload);
+    if (!res.success) {
+      const flattened = res.error.flatten();
+      const firstError = res.error.errors[0]?.message || 'Please check leader and member details.';
+      setFieldErrors(flattened.fieldErrors);
+      setErrorMessage(firstError);
+      return;
+    }
+
+    trackAnalytics('registration_step_3_viewed', { teamName, teamSize });
+    setCurrentStep(3);
+  };
+
+  // 6. Submit Registration (Step 3)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -130,9 +281,9 @@ export const RegisterSection: React.FC = () => {
     }
 
     setIsSubmitting(true);
+    trackAnalytics('registration_submitted', { track, teamSize });
 
     try {
-      // Filter empty optional phones
       const formattedMembers = members.map((m) => ({
         name: m.name.trim(),
         email: m.email.trim(),
@@ -142,6 +293,8 @@ export const RegisterSection: React.FC = () => {
       const payload = {
         teamName: teamName.trim(),
         track,
+        college: college.trim(),
+        city: city.trim(),
         leaderName: leaderName.trim(),
         leaderEmail: leaderEmail.trim(),
         leaderPhone: leaderPhone.trim(),
@@ -168,17 +321,27 @@ export const RegisterSection: React.FC = () => {
         return;
       }
 
-      // Success
+      // Success: Clear autosave draft
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch {
+        // Safe
+      }
+
+      trackAnalytics('registration_success', { teamId: data.teamId, track: data.track });
+
       setRegisteredSquad({
         teamId: data.teamId,
         teamName: data.teamName,
         track: data.track,
+        college: data.college || college,
+        city: data.city || city,
         leaderName: data.leaderName,
         leaderEmail: data.leaderEmail,
         memberCount: data.memberCount || members.length + 1,
       });
 
-      // Update live count optimistically
+      // Update stats ticker optimistically
       setStats((prev) =>
         prev
           ? {
@@ -196,6 +359,35 @@ export const RegisterSection: React.FC = () => {
     }
   };
 
+  const handleCopyTeamId = () => {
+    if (registeredSquad?.teamId && typeof navigator !== 'undefined') {
+      navigator.clipboard.writeText(registeredSquad.teamId);
+      setCopiedId(true);
+      setTimeout(() => setCopiedId(false), 2500);
+    }
+  };
+
+  const handleResetForm = () => {
+    setRegisteredSquad(null);
+    setCurrentStep(1);
+    setTeamName('');
+    setCollege('');
+    setCity('');
+    setTeamSize(1);
+    setLeaderName('');
+    setLeaderEmail('');
+    setLeaderPhone('');
+    setMembers([]);
+    setConsent(false);
+    setErrorMessage(null);
+    setFieldErrors({});
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch {
+      // Safe
+    }
+  };
+
   return (
     <section
       id="register"
@@ -208,7 +400,7 @@ export const RegisterSection: React.FC = () => {
         {/* Slanted Game Title Banner */}
         <SlantedBanner
           title="REGISTER SQUAD"
-          subtitle="ASSEMBLE YOUR TEAM • ENTER THE ARENA"
+          subtitle="3-STEP REGISTRATION • ENTER THE ARENA"
           color="orange"
         />
 
@@ -228,10 +420,72 @@ export const RegisterSection: React.FC = () => {
           </div>
         )}
 
+        {/* Draft Restore Badge */}
+        {draftRestored && !registeredSquad && (
+          <div className="mt-2.5 flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-950/50 px-3 py-0.5 font-body text-[11px] text-amber-300">
+            <span>💾</span>
+            <span>Draft restored from your last visit</span>
+            <button
+              type="button"
+              onClick={() => {
+                handleResetForm();
+                setDraftRestored(false);
+              }}
+              className="underline text-amber-400 hover:text-white"
+            >
+              Clear
+            </button>
+          </div>
+        )}
+
+        {/* Multi-Step Progress Tracker */}
+        {!registeredSquad && (
+          <div className="mt-6 flex w-full max-w-md items-center justify-between font-heading text-xs uppercase tracking-wider text-amber-100">
+            <div
+              className={`flex items-center gap-1.5 rounded-full px-3 py-1 border-2 transition-all ${
+                currentStep === 1
+                  ? 'border-amber-400 bg-amber-500 text-black shadow-[0_2px_0_#000000]'
+                  : 'border-amber-900/60 bg-[#12234e] text-amber-400'
+              }`}
+            >
+              <span>1</span>
+              <span className="hidden sm:inline">TEAM</span>
+            </div>
+
+            <div className="h-0.5 flex-1 bg-amber-500/30 mx-2" />
+
+            <div
+              className={`flex items-center gap-1.5 rounded-full px-3 py-1 border-2 transition-all ${
+                currentStep === 2
+                  ? 'border-amber-400 bg-amber-500 text-black shadow-[0_2px_0_#000000]'
+                  : currentStep > 2
+                  ? 'border-emerald-500 bg-emerald-950 text-emerald-300'
+                  : 'border-amber-900/60 bg-[#12234e] text-slate-400'
+              }`}
+            >
+              <span>2</span>
+              <span className="hidden sm:inline">MEMBERS</span>
+            </div>
+
+            <div className="h-0.5 flex-1 bg-amber-500/30 mx-2" />
+
+            <div
+              className={`flex items-center gap-1.5 rounded-full px-3 py-1 border-2 transition-all ${
+                currentStep === 3
+                  ? 'border-amber-400 bg-amber-500 text-black shadow-[0_2px_0_#000000]'
+                  : 'border-amber-900/60 bg-[#12234e] text-slate-400'
+              }`}
+            >
+              <span>3</span>
+              <span className="hidden sm:inline">REVIEW</span>
+            </div>
+          </div>
+        )}
+
         {/* Main Card Container */}
-        <div className="mt-8 w-full text-left">
+        <div className="mt-6 w-full text-left">
           {registeredSquad ? (
-            /* ================= SUCCESS CONFIRMATION STATE ================= */
+            /* ================= VICTORY SCREEN & CALENDAR DOWNLOAD ================= */
             <ChamferCard variant="cream" elevation="lg">
               <div className="flex flex-col items-center text-center">
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-4 border-[#3D2500] bg-gradient-to-b from-emerald-400 to-green-600 shadow-[0_6px_0_#080A10]">
@@ -247,10 +501,12 @@ export const RegisterSection: React.FC = () => {
                 </h3>
 
                 <p className="mt-2 max-w-lg font-body text-sm font-semibold text-[#573507]">
-                  Squad <strong>{registeredSquad.teamName}</strong> has been officially booked for the {registeredSquad.track === 'gaming' ? 'Gaming Championship' : 'VR Immersion Track'}.
+                  Squad <strong>{registeredSquad.teamName}</strong> from{' '}
+                  <strong>{registeredSquad.college}</strong> ({registeredSquad.city}) is booked for the{' '}
+                  {registeredSquad.track === 'gaming' ? 'Gaming Championship' : 'VR Immersion Track'}.
                 </p>
 
-                {/* Team ID Highlight Plate */}
+                {/* Team ID Card */}
                 <div className="mt-6 flex w-full max-w-md flex-col items-center rounded-xl border-3 border-[#8C6026] bg-amber-100/90 p-4 shadow-[0_4px_0_#4B3012]">
                   <span className="font-heading text-xs tracking-wider text-[#8C6026] uppercase">
                     OFFICIAL SQUAD IDENTIFIER
@@ -269,7 +525,7 @@ export const RegisterSection: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Key Instructions */}
+                {/* Important Instructions */}
                 <div className="mt-6 flex w-full flex-col gap-2.5 rounded-xl border-2 border-amber-900/20 bg-white/40 p-4 font-body text-xs text-[#4B3012]">
                   <div className="flex items-center gap-2">
                     <span>📧</span>
@@ -285,12 +541,27 @@ export const RegisterSection: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span>🛡️</span>
-                    <span>Carry college / student photo ID for badge retrieval.</span>
+                    <span>Carry college ID or Govt photo ID for badge retrieval.</span>
                   </div>
                 </div>
 
-                {/* Actions */}
+                {/* Actions: Add to Calendar & Community links */}
                 <div className="mt-8 flex w-full flex-col sm:flex-row gap-3">
+                  <GameButton
+                    variant="green"
+                    size="md"
+                    fullWidth
+                    onClick={() =>
+                      downloadIcsCalendar({
+                        teamId: registeredSquad.teamId,
+                        teamName: registeredSquad.teamName,
+                        track: registeredSquad.track,
+                      })
+                    }
+                  >
+                    📅 ADD TO CALENDAR (.ICS)
+                  </GameButton>
+
                   <GameButton
                     variant="blue"
                     size="md"
@@ -301,9 +572,12 @@ export const RegisterSection: React.FC = () => {
                   >
                     JOIN DISCORD ARENA
                   </GameButton>
+                </div>
+
+                <div className="mt-4 w-full">
                   <GameButton
                     variant="cream"
-                    size="md"
+                    size="sm"
                     fullWidth
                     onClick={handleResetForm}
                   >
@@ -313,288 +587,491 @@ export const RegisterSection: React.FC = () => {
               </div>
             </ChamferCard>
           ) : (
-            /* ================= REGISTRATION FORM ================= */
+            /* ================= STEPPER WIZARD FORM ================= */
             <ChamferCard variant="cream" elevation="lg">
-              <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
-                {/* 1. Track Selector */}
-                <div>
-                  <label className="block font-heading text-xs tracking-wider text-[#704B18] uppercase">
-                    1. Select Tournament Track *
-                  </label>
-                  <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {/* Gaming Track Option */}
-                    <button
-                      type="button"
-                      onClick={() => setTrack('gaming')}
-                      className={`relative flex flex-col items-start rounded-xl border-3 p-3.5 text-left transition-all ${
-                        track === 'gaming'
-                          ? 'border-[#FF9F0A] bg-amber-100 shadow-[0_4px_0_#8C6026]'
-                          : 'border-[#BD9B65] bg-amber-50/70 opacity-80 hover:opacity-100'
-                      }`}
-                    >
-                      <div className="flex w-full items-center justify-between">
-                        <span className="font-heading text-sm text-[#2B1400]">
-                          🎮 GAMING CHAMPIONSHIP
-                        </span>
-                        {track === 'gaming' && (
-                          <span className="rounded-full bg-amber-500 px-2 py-0.5 font-heading text-[10px] text-white">
-                            SELECTED
-                          </span>
-                        )}
-                      </div>
-                      <span className="mt-1 font-body text-xs text-[#573507]">
-                        PC, Mobile & Console Arena. Brawl & Valorant.
-                      </span>
-                    </button>
-
-                    {/* VR Track Option */}
-                    <button
-                      type="button"
-                      onClick={() => setTrack('vr')}
-                      className={`relative flex flex-col items-start rounded-xl border-3 p-3.5 text-left transition-all ${
-                        track === 'vr'
-                          ? 'border-[#00A3FF] bg-sky-100 shadow-[0_4px_0_#0066CC]'
-                          : 'border-[#BD9B65] bg-amber-50/70 opacity-80 hover:opacity-100'
-                      }`}
-                    >
-                      <div className="flex w-full items-center justify-between">
-                        <span className="font-heading text-sm text-[#0B3B66]">
-                          🥽 VR IMMERSION TRACK
-                        </span>
-                        {track === 'vr' && (
-                          <span className="rounded-full bg-sky-500 px-2 py-0.5 font-heading text-[10px] text-white">
-                            SELECTED
-                          </span>
-                        )}
-                      </div>
-                      <span className="mt-1 font-body text-xs text-[#1E3A8A]">
-                        Meta Quest & Spatial Experience Trials.
-                      </span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* 2. Team Information */}
-                <div>
-                  <label
-                    htmlFor="teamName"
-                    className="block font-heading text-xs tracking-wider text-[#704B18] uppercase"
-                  >
-                    2. Squad / Clan Name *
-                  </label>
-                  <input
-                    id="teamName"
-                    type="text"
-                    required
-                    maxLength={40}
-                    value={teamName}
-                    onChange={(e) => setTeamName(e.target.value)}
-                    placeholder="e.g. HyperNova Strike"
-                    className="mt-1.5 w-full rounded-xl border-2 border-[#8C6026] bg-amber-50 px-4 py-2.5 font-heading text-sm text-[#2B1400] placeholder:text-amber-900/40 focus:border-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                  />
-                  {fieldErrors.teamName && (
-                    <span className="mt-1 block font-body text-xs font-bold text-red-600">
-                      {fieldErrors.teamName[0]}
-                    </span>
-                  )}
-                </div>
-
-                {/* 3. Squad Leader Details */}
-                <div className="rounded-xl border-2 border-[#A37B45]/60 bg-amber-100/50 p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="font-heading text-xs tracking-wider text-[#573507] uppercase">
-                      3. Squad Leader (Player 1) *
-                    </span>
-                    <span className="rounded-full bg-amber-500/30 px-2 py-0.5 font-heading text-[10px] text-amber-950 uppercase">
-                      PRIMARY CONTACT
-                    </span>
-                  </div>
-
-                  <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
+                {/* ---------------- STEP 1: TEAM INFORMATION ---------------- */}
+                {currentStep === 1 && (
+                  <div className="flex flex-col gap-5">
                     <div>
-                      <label
-                        htmlFor="leaderName"
-                        className="block font-body text-xs font-bold text-[#573507]"
-                      >
-                        Full Name *
-                      </label>
-                      <input
-                        id="leaderName"
-                        type="text"
-                        required
-                        value={leaderName}
-                        onChange={(e) => setLeaderName(e.target.value)}
-                        placeholder="Player One"
-                        className="mt-1 w-full rounded-lg border border-[#8C6026] bg-amber-50 px-3 py-2 font-body text-sm font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                      />
-                      {fieldErrors.leaderName && (
-                        <span className="mt-0.5 block font-body text-xs font-bold text-red-600">
-                          {fieldErrors.leaderName[0]}
-                        </span>
-                      )}
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="leaderEmail"
-                        className="block font-body text-xs font-bold text-[#573507]"
-                      >
-                        Email Address *
-                      </label>
-                      <input
-                        id="leaderEmail"
-                        type="email"
-                        required
-                        value={leaderEmail}
-                        onChange={(e) => setLeaderEmail(e.target.value)}
-                        placeholder="leader@example.com"
-                        className="mt-1 w-full rounded-lg border border-[#8C6026] bg-amber-50 px-3 py-2 font-body text-sm font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                      />
-                      {fieldErrors.leaderEmail && (
-                        <span className="mt-0.5 block font-body text-xs font-bold text-red-600">
-                          {fieldErrors.leaderEmail[0]}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="mt-3">
-                    <label
-                      htmlFor="leaderPhone"
-                      className="block font-body text-xs font-bold text-[#573507]"
-                    >
-                      Phone Number (WhatsApp / Calling) *
-                    </label>
-                    <input
-                      id="leaderPhone"
-                      type="tel"
-                      required
-                      value={leaderPhone}
-                      onChange={(e) => setLeaderPhone(e.target.value)}
-                      placeholder="+91 9876543210"
-                      className="mt-1 w-full rounded-lg border border-[#8C6026] bg-amber-50 px-3 py-2 font-body text-sm font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                    />
-                    {fieldErrors.leaderPhone && (
-                      <span className="mt-0.5 block font-body text-xs font-bold text-red-600">
-                        {fieldErrors.leaderPhone[0]}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* 4. Dynamic Squad Members */}
-                <div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="font-heading text-xs tracking-wider text-[#704B18] uppercase">
-                        4. Additional Squad Members ({members.length}/3)
-                      </span>
-                      <p className="font-body text-[11px] text-[#573507]">
-                        Solo entries are welcome (team size: 1 to 4 players). Add up to 3 more players.
+                      <h4 className="font-heading text-lg text-[#2B1400]">
+                        STEP 1: SQUAD & TOURNAMENT TRACK
+                      </h4>
+                      <p className="font-body text-xs font-semibold text-[#573507]">
+                        Choose your competitive discipline and provide your clan credentials.
                       </p>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={handleAddMember}
-                      disabled={members.length >= 3}
-                      className="rounded-lg border-2 border-[#573507] bg-amber-400 px-3 py-1 font-heading text-xs uppercase text-[#2B1400] shadow-[0_2px_0_#000000] active:translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-300"
-                    >
-                      + Add Member
-                    </button>
-                  </div>
-
-                  {members.map((member, idx) => (
-                    <div
-                      key={idx}
-                      className="mt-3 rounded-xl border-2 border-[#8C6026]/40 bg-white/40 p-3.5 relative"
-                    >
-                      <div className="flex items-center justify-between border-b border-amber-900/10 pb-2">
-                        <span className="font-heading text-xs text-[#4B3012]">
-                          PLAYER {idx + 2}
-                        </span>
+                    {/* Track Selection Cards with Custom SVG */}
+                    <div>
+                      <label className="block font-heading text-xs tracking-wider text-[#704B18] uppercase">
+                        Select Competitive Track *
+                      </label>
+                      <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        {/* Gaming Card */}
                         <button
                           type="button"
-                          onClick={() => handleRemoveMember(idx)}
-                          className="font-heading text-xs text-red-700 hover:text-red-900"
-                          title="Remove player"
+                          onClick={() => setTrack('gaming')}
+                          className={`relative flex items-center gap-3.5 rounded-xl border-3 p-4 text-left transition-all ${
+                            track === 'gaming'
+                              ? 'border-[#FF9F0A] bg-amber-100 shadow-[0_4px_0_#8C6026]'
+                              : 'border-[#BD9B65] bg-amber-50/70 opacity-80 hover:opacity-100'
+                          }`}
                         >
-                          ✕ REMOVE
+                          <GamingGamepadSvg />
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-heading text-sm text-[#2B1400]">
+                                GAMING CHAMPIONSHIP
+                              </span>
+                              {track === 'gaming' && (
+                                <span className="rounded-full bg-amber-500 px-2 py-0.5 font-heading text-[10px] text-white">
+                                  ACTIVE
+                                </span>
+                              )}
+                            </div>
+                            <span className="block mt-0.5 font-body text-xs text-[#573507]">
+                              PC, Mobile & Console Arena. Brawl & Valorant.
+                            </span>
+                          </div>
+                        </button>
+
+                        {/* VR Card */}
+                        <button
+                          type="button"
+                          onClick={() => setTrack('vr')}
+                          className={`relative flex items-center gap-3.5 rounded-xl border-3 p-4 text-left transition-all ${
+                            track === 'vr'
+                              ? 'border-[#00A3FF] bg-sky-100 shadow-[0_4px_0_#0066CC]'
+                              : 'border-[#BD9B65] bg-amber-50/70 opacity-80 hover:opacity-100'
+                          }`}
+                        >
+                          <VrHeadsetSvg />
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-heading text-sm text-[#0B3B66]">
+                                VR IMMERSION TRACK
+                              </span>
+                              {track === 'vr' && (
+                                <span className="rounded-full bg-sky-500 px-2 py-0.5 font-heading text-[10px] text-white">
+                                  ACTIVE
+                                </span>
+                              )}
+                            </div>
+                            <span className="block mt-0.5 font-body text-xs text-[#1E3A8A]">
+                              Meta Quest & Spatial Experience Trials.
+                            </span>
+                          </div>
                         </button>
                       </div>
+                    </div>
 
-                      <div className="mt-2.5 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+                    {/* Team Name */}
+                    <div>
+                      <label
+                        htmlFor="teamName"
+                        className="block font-heading text-xs tracking-wider text-[#704B18] uppercase"
+                      >
+                        Squad / Clan Name *
+                      </label>
+                      <input
+                        id="teamName"
+                        type="text"
+                        required
+                        maxLength={40}
+                        value={teamName}
+                        onChange={(e) => setTeamName(e.target.value)}
+                        placeholder="e.g. Apex Predators"
+                        className="mt-1.5 w-full rounded-xl border-2 border-[#8C6026] bg-amber-50 px-4 py-2.5 font-heading text-sm text-[#2B1400] placeholder:text-amber-900/40 focus:border-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                      />
+                      {fieldErrors.teamName && (
+                        <span className="mt-1 block font-body text-xs font-bold text-red-600">
+                          {fieldErrors.teamName[0]}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* College and City */}
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="college"
+                          className="block font-heading text-xs tracking-wider text-[#704B18] uppercase"
+                        >
+                          College / Institute *
+                        </label>
+                        <input
+                          id="college"
+                          type="text"
+                          required
+                          maxLength={100}
+                          value={college}
+                          onChange={(e) => setCollege(e.target.value)}
+                          placeholder="e.g. AIT Pune"
+                          className="mt-1.5 w-full rounded-xl border-2 border-[#8C6026] bg-amber-50 px-4 py-2.5 font-body text-sm font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                        />
+                        {fieldErrors.college && (
+                          <span className="mt-1 block font-body text-xs font-bold text-red-600">
+                            {fieldErrors.college[0]}
+                          </span>
+                        )}
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="city"
+                          className="block font-heading text-xs tracking-wider text-[#704B18] uppercase"
+                        >
+                          City *
+                        </label>
+                        <input
+                          id="city"
+                          type="text"
+                          required
+                          maxLength={50}
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          placeholder="e.g. Pune"
+                          className="mt-1.5 w-full rounded-xl border-2 border-[#8C6026] bg-amber-50 px-4 py-2.5 font-body text-sm font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                        />
+                        {fieldErrors.city && (
+                          <span className="mt-1 block font-body text-xs font-bold text-red-600">
+                            {fieldErrors.city[0]}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Step 1 CTA */}
+                    <div className="pt-2">
+                      <GameButton
+                        type="button"
+                        variant="yellow"
+                        size="lg"
+                        fullWidth
+                        onClick={handleNextToStep2}
+                      >
+                        NEXT: SQUAD MEMBERS →
+                      </GameButton>
+                    </div>
+                  </div>
+                )}
+
+                {/* ---------------- STEP 2: SQUAD MEMBERS ---------------- */}
+                {currentStep === 2 && (
+                  <div className="flex flex-col gap-5">
+                    <div>
+                      <h4 className="font-heading text-lg text-[#2B1400]">
+                        STEP 2: SQUAD ROSTER
+                      </h4>
+                      <p className="font-body text-xs font-semibold text-[#573507]">
+                        Choose team size (1–4 players) and fill in your roster.
+                      </p>
+                    </div>
+
+                    {/* Team Size Selector (1 to 4) */}
+                    <div>
+                      <label className="block font-heading text-xs tracking-wider text-[#704B18] uppercase">
+                        Select Squad Size (Leader + Members) *
+                      </label>
+                      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                        {[1, 2, 3, 4].map((size) => (
+                          <button
+                            key={size}
+                            type="button"
+                            onClick={() => handleTeamSizeChange(size)}
+                            className={`rounded-xl border-3 py-2.5 px-2 text-center font-heading text-xs uppercase transition-all ${
+                              teamSize === size
+                                ? 'border-[#FF9F0A] bg-amber-400 text-black shadow-[0_3px_0_#8C6026]'
+                                : 'border-[#BD9B65] bg-amber-50 text-[#573507] hover:bg-amber-100'
+                            }`}
+                          >
+                            {size === 1 ? '1 (Solo)' : `${size} Players`}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Squad Leader (Player 1) */}
+                    <div className="rounded-xl border-2 border-[#A37B45]/60 bg-amber-100/50 p-4">
+                      <div className="flex items-center justify-between">
+                        <span className="font-heading text-xs tracking-wider text-[#573507] uppercase">
+                          Player 1 (Squad Leader) *
+                        </span>
+                        <span className="rounded-full bg-amber-500/30 px-2 py-0.5 font-heading text-[10px] text-amber-950 uppercase">
+                          PRIMARY CONTACT
+                        </span>
+                      </div>
+
+                      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <div>
+                          <label
+                            htmlFor="leaderName"
+                            className="block font-body text-xs font-bold text-[#573507]"
+                          >
+                            Full Name *
+                          </label>
                           <input
+                            id="leaderName"
                             type="text"
                             required
-                            placeholder="Full Name *"
-                            value={member.name}
-                            onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
-                            className="w-full rounded-lg border border-[#8C6026] bg-amber-50 px-2.5 py-1.5 font-body text-xs font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                            value={leaderName}
+                            onChange={(e) => setLeaderName(e.target.value)}
+                            placeholder="Aarav Sharma"
+                            className="mt-1 w-full rounded-lg border border-[#8C6026] bg-amber-50 px-3 py-2 font-body text-sm font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-400"
                           />
+                          {fieldErrors.leaderName && (
+                            <span className="mt-0.5 block font-body text-xs font-bold text-red-600">
+                              {fieldErrors.leaderName[0]}
+                            </span>
+                          )}
                         </div>
+
                         <div>
+                          <label
+                            htmlFor="leaderEmail"
+                            className="block font-body text-xs font-bold text-[#573507]"
+                          >
+                            Email Address *
+                          </label>
                           <input
+                            id="leaderEmail"
                             type="email"
                             required
-                            placeholder="Email Address *"
-                            value={member.email}
-                            onChange={(e) => handleMemberChange(idx, 'email', e.target.value)}
-                            className="w-full rounded-lg border border-[#8C6026] bg-amber-50 px-2.5 py-1.5 font-body text-xs font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                            value={leaderEmail}
+                            onChange={(e) => setLeaderEmail(e.target.value)}
+                            placeholder="leader@example.com"
+                            className="mt-1 w-full rounded-lg border border-[#8C6026] bg-amber-50 px-3 py-2 font-body text-sm font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-400"
                           />
+                          {fieldErrors.leaderEmail && (
+                            <span className="mt-0.5 block font-body text-xs font-bold text-red-600">
+                              {fieldErrors.leaderEmail[0]}
+                            </span>
+                          )}
                         </div>
+                      </div>
+
+                      <div className="mt-3">
+                        <label
+                          htmlFor="leaderPhone"
+                          className="block font-body text-xs font-bold text-[#573507]"
+                        >
+                          10-Digit Indian Mobile Number *
+                        </label>
+                        <input
+                          id="leaderPhone"
+                          type="tel"
+                          required
+                          value={leaderPhone}
+                          onChange={(e) => setLeaderPhone(e.target.value)}
+                          placeholder="9876543210 (or +919876543210)"
+                          className="mt-1 w-full rounded-lg border border-[#8C6026] bg-amber-50 px-3 py-2 font-body text-sm font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                        />
+                        {fieldErrors.leaderPhone && (
+                          <span className="mt-0.5 block font-body text-xs font-bold text-red-600">
+                            {fieldErrors.leaderPhone[0]}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Additional Member Rows controlled by teamSize */}
+                    {members.map((member, idx) => (
+                      <div
+                        key={idx}
+                        className="rounded-xl border-2 border-[#8C6026]/40 bg-white/40 p-3.5"
+                      >
+                        <span className="font-heading text-xs text-[#4B3012] uppercase">
+                          Player {idx + 2}
+                        </span>
+
+                        <div className="mt-2 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+                          <div>
+                            <input
+                              type="text"
+                              required
+                              placeholder="Full Name *"
+                              value={member.name}
+                              onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
+                              className="w-full rounded-lg border border-[#8C6026] bg-amber-50 px-2.5 py-1.5 font-body text-xs font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                            />
+                          </div>
+                          <div>
+                            <input
+                              type="email"
+                              required
+                              placeholder="Email Address *"
+                              value={member.email}
+                              onChange={(e) => handleMemberChange(idx, 'email', e.target.value)}
+                              className="w-full rounded-lg border border-[#8C6026] bg-amber-50 px-2.5 py-1.5 font-body text-xs font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                            />
+                          </div>
+                          <div>
+                            <input
+                              type="tel"
+                              placeholder="Phone (Optional)"
+                              value={member.phone}
+                              onChange={(e) => handleMemberChange(idx, 'phone', e.target.value)}
+                              className="w-full rounded-lg border border-[#8C6026] bg-amber-50 px-2.5 py-1.5 font-body text-xs font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Step 2 Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                      <GameButton
+                        type="button"
+                        variant="cream"
+                        size="md"
+                        fullWidth
+                        onClick={() => setCurrentStep(1)}
+                      >
+                        ← BACK TO TEAM
+                      </GameButton>
+                      <GameButton
+                        type="button"
+                        variant="yellow"
+                        size="md"
+                        fullWidth
+                        onClick={handleNextToStep3}
+                      >
+                        NEXT: REVIEW SQUAD →
+                      </GameButton>
+                    </div>
+                  </div>
+                )}
+
+                {/* ---------------- STEP 3: REVIEW & CONFIRM ---------------- */}
+                {currentStep === 3 && (
+                  <div className="flex flex-col gap-5">
+                    <div>
+                      <h4 className="font-heading text-lg text-[#2B1400]">
+                        STEP 3: REVIEW & ENTER ARENA
+                      </h4>
+                      <p className="font-body text-xs font-semibold text-[#573507]">
+                        Verify your squad details before locking in registration.
+                      </p>
+                    </div>
+
+                    {/* Read-Only Summary Plate */}
+                    <div className="rounded-xl border-3 border-[#8C6026] bg-amber-100/80 p-4 shadow-inner">
+                      <div className="flex flex-wrap items-center justify-between border-b border-amber-900/20 pb-3">
                         <div>
-                          <input
-                            type="tel"
-                            placeholder="Phone (Optional)"
-                            value={member.phone}
-                            onChange={(e) => handleMemberChange(idx, 'phone', e.target.value)}
-                            className="w-full rounded-lg border border-[#8C6026] bg-amber-50 px-2.5 py-1.5 font-body text-xs font-semibold text-[#2B1400] placeholder:text-amber-900/40 focus:outline-none focus:ring-1 focus:ring-amber-500"
-                          />
+                          <span className="font-heading text-xs uppercase text-[#8C6026]">
+                            SQUAD NAME
+                          </span>
+                          <h5 className="font-heading text-xl text-[#2B1400]">
+                            {teamName}
+                          </h5>
+                          <span className="font-body text-xs text-[#573507]">
+                            {college} • {city}
+                          </span>
+                        </div>
+
+                        <span
+                          className={`mt-2 sm:mt-0 rounded-full px-3 py-1 font-heading text-xs font-black uppercase ${
+                            track === 'gaming'
+                              ? 'bg-amber-500 text-white'
+                              : 'bg-sky-500 text-white'
+                          }`}
+                        >
+                          {track === 'gaming' ? '🎮 Gaming Championship' : '🥽 VR Track'}
+                        </span>
+                      </div>
+
+                      {/* Squad Roster Summary */}
+                      <div className="mt-3">
+                        <span className="font-heading text-[11px] uppercase tracking-wider text-[#704B18]">
+                          ROSTER ({members.length + 1} PLAYER{members.length > 0 ? 'S' : ''}):
+                        </span>
+
+                        <div className="mt-1.5 flex flex-col gap-1.5 font-body text-xs text-[#2B1400]">
+                          <div className="flex items-center justify-between rounded-lg bg-white/50 px-3 py-1.5">
+                            <span>
+                              ⭐ <strong>{leaderName}</strong> (Leader)
+                            </span>
+                            <span className="text-[#573507]">{leaderEmail}</span>
+                          </div>
+
+                          {members.map((m, i) => (
+                            <div
+                              key={i}
+                              className="flex items-center justify-between rounded-lg bg-white/50 px-3 py-1.5"
+                            >
+                              <span>
+                                👤 <strong>{m.name || `Player ${i + 2}`}</strong>
+                              </span>
+                              <span className="text-[#573507]">{m.email}</span>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
 
-                {/* 5. Rules & Privacy Consent */}
-                <div className="rounded-lg border border-[#8C6026]/40 bg-amber-100/30 p-3">
-                  <label className="flex items-start gap-2.5 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      required
-                      checked={consent}
-                      onChange={(e) => setConsent(e.target.checked)}
-                      className="mt-1 h-4 w-4 rounded border-[#8C6026] text-amber-600 focus:ring-amber-500 cursor-pointer"
-                    />
-                    <span className="font-body text-xs text-[#4B3012]">
-                      I confirm all details are accurate and agree to abide by the official{' '}
-                      <strong>GENESIS 2026 Tournament Rules</strong> and{' '}
-                      <button
+                    {/* Rules & Privacy Consent */}
+                    <div className="rounded-lg border border-[#8C6026]/40 bg-amber-100/40 p-3.5">
+                      <label className="flex items-start gap-2.5 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          required
+                          checked={consent}
+                          onChange={(e) => setConsent(e.target.checked)}
+                          className="mt-1 h-4 w-4 rounded border-[#8C6026] text-amber-600 focus:ring-amber-500 cursor-pointer"
+                        />
+                        <span className="font-body text-xs text-[#4B3012]">
+                          I confirm all registration details are accurate and agree to abide by the official{' '}
+                          <strong>GENESIS 2026 Tournament Rules</strong> and{' '}
+                          <button
+                            type="button"
+                            onClick={() => setPrivacyModalOpen(true)}
+                            className="font-bold underline text-amber-900 hover:text-amber-950"
+                          >
+                            Privacy Policy (v{privacyData.version})
+                          </button>
+                          . Registration is 100% free.
+                        </span>
+                      </label>
+                    </div>
+
+                    {/* Cloudflare Turnstile Indicator */}
+                    <div className="flex items-center justify-between rounded-lg border border-sky-900/20 bg-sky-50 px-3 py-2 text-[11px] text-sky-900">
+                      <span className="flex items-center gap-1.5">
+                        <span className="text-sm">🛡️</span>
+                        <span>Cloudflare Turnstile Bot Protection: <strong>Active & Verified</strong></span>
+                      </span>
+                      <span className="font-mono text-[10px] text-sky-700 opacity-70">
+                        key: {DUMMY_TURNSTILE_SITEKEY.slice(0, 8)}...
+                      </span>
+                    </div>
+
+                    {/* Step 3 Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                      <GameButton
                         type="button"
-                        onClick={() => setPrivacyModalOpen(true)}
-                        className="font-bold underline text-amber-900 hover:text-amber-950"
+                        variant="cream"
+                        size="lg"
+                        fullWidth
+                        onClick={() => setCurrentStep(2)}
                       >
-                        Privacy Policy (v{privacyData.version})
-                      </button>
-                      . Registration is free.
-                    </span>
-                  </label>
-                </div>
+                        ← EDIT SQUAD
+                      </GameButton>
 
-                {/* Cloudflare Turnstile Indicator */}
-                <div className="flex items-center justify-between rounded-lg border border-sky-900/20 bg-sky-50 px-3 py-2 text-[11px] text-sky-900">
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-sm">🛡️</span>
-                    <span>Cloudflare Turnstile Bot Protection: <strong>Active & Verified</strong></span>
-                  </span>
-                  <span className="font-mono text-[10px] text-sky-700 opacity-70">
-                    key: {DUMMY_TURNSTILE_SITEKEY.slice(0, 8)}...
-                  </span>
-                </div>
+                      <GameButton
+                        type="submit"
+                        variant="yellow"
+                        size="lg"
+                        fullWidth
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? 'TRANSMITTING SQUAD DATA...' : 'ENTER ARENA • SUBMIT REGISTRATION'}
+                      </GameButton>
+                    </div>
+                  </div>
+                )}
 
-                {/* Global Error Banner */}
+                {/* Inline Arcade Alert Banner */}
                 {errorMessage && (
                   <div
                     role="alert"
@@ -604,19 +1081,6 @@ export const RegisterSection: React.FC = () => {
                     <span>{errorMessage}</span>
                   </div>
                 )}
-
-                {/* Submit Button */}
-                <div className="pt-2">
-                  <GameButton
-                    type="submit"
-                    variant="yellow"
-                    size="lg"
-                    fullWidth
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? 'TRANSMITTING SQUAD DATA...' : 'ENTER ARENA • SUBMIT REGISTRATION'}
-                  </GameButton>
-                </div>
               </form>
             </ChamferCard>
           )}

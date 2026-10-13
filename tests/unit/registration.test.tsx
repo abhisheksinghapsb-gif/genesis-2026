@@ -3,9 +3,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { RegisterSection } from '@/components/register/RegisterSection';
 
-describe('Phase 6: RegisterSection UI Component', () => {
+describe('Phase 7: RegisterSection 3-Step Wizard Component', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    localStorage.clear();
 
     // Default mock for /api/stats
     vi.stubGlobal(
@@ -27,146 +28,155 @@ describe('Phase 6: RegisterSection UI Component', () => {
           json: async () => ({
             success: true,
             teamId: 'GEN-2026-9999',
-            teamName: 'Test Squad',
+            teamName: 'Cyber Titans',
             track: 'gaming',
+            college: 'AIT Pune',
+            city: 'Pune',
             leaderName: 'Test Leader',
-            leaderEmail: 'test@example.com',
-            memberCount: 1,
+            leaderEmail: 'leader@example.com',
+            memberCount: 2,
           }),
         });
       })
     );
   });
 
-  it('renders section title, track choices, and initial inputs', async () => {
+  it('renders Step 1 with team name, SVG track cards, college, and city inputs', async () => {
     render(<RegisterSection />);
 
     await waitFor(() => {
       expect(screen.getByText(/REGISTER SQUAD/i)).toBeInTheDocument();
     });
 
+    expect(screen.getByText(/STEP 1: SQUAD & TOURNAMENT TRACK/i)).toBeInTheDocument();
     expect(screen.getByText(/GAMING CHAMPIONSHIP/i)).toBeInTheDocument();
     expect(screen.getByText(/VR IMMERSION TRACK/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Squad \/ Clan Name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Full Name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Email Address/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Phone Number/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/College \/ Institute/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/City/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /NEXT: SQUAD MEMBERS →/i })).toBeInTheDocument();
   });
 
-  it('allows switching tracks between Gaming and VR', async () => {
+  it('validates Step 1 fields before advancing to Step 2', async () => {
     render(<RegisterSection />);
     await waitFor(() => expect(screen.getByText(/REGISTER SQUAD/i)).toBeInTheDocument());
 
-    const vrButton = screen.getByText(/VR IMMERSION TRACK/i).closest('button');
-    expect(vrButton).toBeInTheDocument();
+    const nextBtn = screen.getByRole('button', { name: /NEXT: SQUAD MEMBERS →/i });
+    fireEvent.click(nextBtn);
 
-    if (vrButton) {
-      fireEvent.click(vrButton);
-    }
+    // Shows friendly inline error
+    expect(screen.getByText(/Please fill out all squad details before continuing/i)).toBeInTheDocument();
 
-    // VR Track is now selected
-    expect(screen.getByText(/Meta Quest & Spatial Experience Trials/i)).toBeInTheDocument();
-  });
-
-  it('dynamically adds up to 3 additional members and allows removing them', async () => {
-    render(<RegisterSection />);
-    await waitFor(() => expect(screen.getByText(/REGISTER SQUAD/i)).toBeInTheDocument());
-
-    const addMemberBtn = screen.getByRole('button', { name: /\+ Add Member/i });
-    expect(addMemberBtn).toBeInTheDocument();
-
-    // Add Player 2
-    fireEvent.click(addMemberBtn);
-    expect(screen.getByText(/PLAYER 2/i)).toBeInTheDocument();
-
-    // Add Player 3
-    fireEvent.click(addMemberBtn);
-    expect(screen.getByText(/PLAYER 3/i)).toBeInTheDocument();
-
-    // Add Player 4
-    fireEvent.click(addMemberBtn);
-    expect(screen.getByText(/PLAYER 4/i)).toBeInTheDocument();
-
-    // At 3 additional members (4 players total), Add button should be disabled
-    expect(addMemberBtn).toBeDisabled();
-
-    // Remove one member
-    const removeButtons = screen.getAllByRole('button', { name: /✕ REMOVE/i });
-    expect(removeButtons.length).toBe(3);
-    const firstRemoveBtn = removeButtons[0];
-    expect(firstRemoveBtn).toBeDefined();
-    if (firstRemoveBtn) {
-      fireEvent.click(firstRemoveBtn);
-    }
-
-    // Now 2 members left, button enabled again
-    expect(screen.getByRole('button', { name: /\+ Add Member/i })).not.toBeDisabled();
-  });
-
-  it('opens and closes the Privacy Policy modal', async () => {
-    render(<RegisterSection />);
-    await waitFor(() => expect(screen.getByText(/REGISTER SQUAD/i)).toBeInTheDocument());
-
-    const privacyBtn = screen.getByRole('button', { name: /Privacy Policy/i });
-    fireEvent.click(privacyBtn);
-
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText(/HOW DATA IS USED/i)).toBeInTheDocument();
-
-    const understandBtn = screen.getByRole('button', { name: /I UNDERSTAND/i });
-    fireEvent.click(understandBtn);
-
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-  });
-
-  it('displays error if submitted without checking the consent checkbox', async () => {
-    render(<RegisterSection />);
-    await waitFor(() => expect(screen.getByText(/REGISTER SQUAD/i)).toBeInTheDocument());
-
-    // Fill in team name
-    const teamNameInput = screen.getByLabelText(/Squad \/ Clan Name/i);
-    fireEvent.change(teamNameInput, { target: { value: 'Omega Squad' } });
-
-    // Click submit
-    const submitBtn = screen.getByRole('button', { name: /ENTER ARENA/i });
-    fireEvent.click(submitBtn);
-
-    expect(
-      await screen.findByText(/You must accept the Tournament Rules & Privacy Policy/i)
-    ).toBeInTheDocument();
-  });
-
-  it('submits valid registration and shows success victory panel with Team ID', async () => {
-    render(<RegisterSection />);
-    await waitFor(() => expect(screen.getByText(/REGISTER SQUAD/i)).toBeInTheDocument());
-
-    // Fill form
+    // Fill valid Step 1 details
     fireEvent.change(screen.getByLabelText(/Squad \/ Clan Name/i), {
       target: { value: 'HyperNova Force' },
     });
-    fireEvent.change(screen.getByLabelText(/Full Name/i), {
-      target: { value: 'Commander Star' },
+    fireEvent.change(screen.getByLabelText(/College \/ Institute/i), {
+      target: { value: 'Army Institute of Technology' },
     });
-    fireEvent.change(screen.getByLabelText(/Email Address/i), {
-      target: { value: 'star@example.com' },
-    });
-    fireEvent.change(screen.getByLabelText(/Phone Number/i), {
-      target: { value: '+919876543210' },
+    fireEvent.change(screen.getByLabelText(/City/i), {
+      target: { value: 'Pune' },
     });
 
-    // Check consent
-    const consentCheckbox = screen.getByRole('checkbox');
-    fireEvent.click(consentCheckbox);
+    fireEvent.click(nextBtn);
 
-    // Submit
-    const submitBtn = screen.getByRole('button', { name: /ENTER ARENA/i });
+    // Advances to Step 2
+    await waitFor(() => {
+      expect(screen.getByText(/STEP 2: SQUAD ROSTER/i)).toBeInTheDocument();
+    });
+  });
+
+  it('controls member input rows via the team size selector (1 to 4)', async () => {
+    render(<RegisterSection />);
+    await waitFor(() => expect(screen.getByText(/REGISTER SQUAD/i)).toBeInTheDocument());
+
+    // Advance to Step 2
+    fireEvent.change(screen.getByLabelText(/Squad \/ Clan Name/i), { target: { value: 'Alpha Clan' } });
+    fireEvent.change(screen.getByLabelText(/College \/ Institute/i), { target: { value: 'COEP' } });
+    fireEvent.change(screen.getByLabelText(/City/i), { target: { value: 'Pune' } });
+    fireEvent.click(screen.getByRole('button', { name: /NEXT: SQUAD MEMBERS →/i }));
+
+    await waitFor(() => expect(screen.getByText(/STEP 2: SQUAD ROSTER/i)).toBeInTheDocument());
+
+    // Default is 1 (Solo) -> Leader only, no Player 2
+    expect(screen.getByText(/Player 1 \(Squad Leader\)/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Player 2/i)).not.toBeInTheDocument();
+
+    // Select 3 Players
+    const threePlayersBtn = screen.getByRole('button', { name: /3 Players/i });
+    fireEvent.click(threePlayersBtn);
+
+    // Now Player 2 and Player 3 rows appear
+    expect(screen.getByText(/Player 2/i)).toBeInTheDocument();
+    expect(screen.getByText(/Player 3/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Player 4/i)).not.toBeInTheDocument();
+
+    // Select 4 Players
+    const fourPlayersBtn = screen.getByRole('button', { name: /4 Players/i });
+    fireEvent.click(fourPlayersBtn);
+    expect(screen.getByText(/Player 4/i)).toBeInTheDocument();
+  });
+
+  it('restores saved draft from localStorage on load', async () => {
+    localStorage.setItem(
+      'genesis_registration_draft',
+      JSON.stringify({
+        teamName: 'Drafted Legends',
+        track: 'vr',
+        college: 'MIT Pune',
+        city: 'Pune',
+        teamSize: 2,
+        leaderName: 'Draft Leader',
+        leaderEmail: 'draft@example.com',
+        leaderPhone: '9876543210',
+        members: [{ name: 'Draft Member 2', email: 'member2@example.com', phone: '' }],
+      })
+    );
+
+    render(<RegisterSection />);
+    await waitFor(() => expect(screen.getByText(/REGISTER SQUAD/i)).toBeInTheDocument());
+
+    expect(screen.getByText(/Draft restored from your last visit/i)).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Drafted Legends')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('MIT Pune')).toBeInTheDocument();
+  });
+
+  it('advances through Step 1, Step 2, and displays read-only review in Step 3', async () => {
+    render(<RegisterSection />);
+    await waitFor(() => expect(screen.getByText(/REGISTER SQUAD/i)).toBeInTheDocument());
+
+    // Step 1
+    fireEvent.change(screen.getByLabelText(/Squad \/ Clan Name/i), { target: { value: 'Cyber Titans' } });
+    fireEvent.change(screen.getByLabelText(/College \/ Institute/i), { target: { value: 'AIT Pune' } });
+    fireEvent.change(screen.getByLabelText(/City/i), { target: { value: 'Pune' } });
+    fireEvent.click(screen.getByRole('button', { name: /NEXT: SQUAD MEMBERS →/i }));
+
+    // Step 2
+    await waitFor(() => expect(screen.getByText(/STEP 2: SQUAD ROSTER/i)).toBeInTheDocument());
+    fireEvent.change(screen.getByLabelText(/Full Name \*/i), { target: { value: 'Commander Star' } });
+    fireEvent.change(screen.getByLabelText(/Email Address \*/i), { target: { value: 'star@example.com' } });
+    fireEvent.change(screen.getByLabelText(/10-Digit Indian Mobile/i), { target: { value: '9876543210' } });
+
+    fireEvent.click(screen.getByRole('button', { name: /NEXT: REVIEW SQUAD →/i }));
+
+    // Step 3
+    await waitFor(() => expect(screen.getByText(/STEP 3: REVIEW & ENTER ARENA/i)).toBeInTheDocument());
+    expect(screen.getByText('Cyber Titans')).toBeInTheDocument();
+    expect(screen.getByText(/AIT Pune • Pune/i)).toBeInTheDocument();
+    expect(screen.getByText(/Commander Star/i)).toBeInTheDocument();
+
+    // Check consent checkbox and submit
+    const consentBox = screen.getByRole('checkbox');
+    fireEvent.click(consentBox);
+
+    const submitBtn = screen.getByRole('button', { name: /ENTER ARENA • SUBMIT/i });
     fireEvent.click(submitBtn);
 
-    // Victory screen displays Team ID
+    // Victory screen
     await waitFor(() => {
       expect(screen.getByText(/WELCOME TO THE ARENA!/i)).toBeInTheDocument();
       expect(screen.getByText(/GEN-2026-9999/i)).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /REGISTER ANOTHER SQUAD/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /ADD TO CALENDAR \(\.ICS\)/i })).toBeInTheDocument();
     });
   });
 });

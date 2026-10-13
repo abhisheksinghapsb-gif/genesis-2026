@@ -116,6 +116,8 @@ export async function POST(req: NextRequest) {
         teamId: record.team_id,
         teamName: record.team_name,
         track: record.track,
+        college: record.college,
+        city: record.city,
         leaderName: record.leader_name,
         leaderEmail: record.leader_email,
         memberCount: (record.members?.length || 0) + 1,

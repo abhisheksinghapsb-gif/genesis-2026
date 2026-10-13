@@ -1,7 +1,10 @@
 import { z } from 'zod';
 
-// Regex for international or Indian phone numbers: +? followed by 10-15 digits (allows spaces and dashes)
-const PHONE_REGEX = /^\+?[0-9\s\-]{10,15}$/;
+// Regex for 10-digit Indian mobile numbers (optional +91 prefix, starts with 6, 7, 8, or 9)
+const INDIAN_MOBILE_REGEX = /^(?:\+91[\-\s]?)?[6-9]\d{9}$/;
+
+// Regex for international or secondary phone numbers (10-15 digits)
+const GENERAL_PHONE_REGEX = /^\+?[0-9\s\-]{10,15}$/;
 
 export const memberSchema = z.object({
   name: z
@@ -17,7 +20,7 @@ export const memberSchema = z.object({
   phone: z
     .string()
     .trim()
-    .regex(PHONE_REGEX, { message: 'Enter a valid phone number (10-15 digits)' })
+    .regex(GENERAL_PHONE_REGEX, { message: 'Enter a valid phone number (10-15 digits)' })
     .optional()
     .or(z.literal('')),
 });
@@ -32,6 +35,16 @@ export const registrationSchema = z
     track: z.enum(['gaming', 'vr'], {
       errorMap: () => ({ message: 'Select either Gaming Championship or VR Track' }),
     }),
+    college: z
+      .string()
+      .trim()
+      .min(2, { message: 'College / Institute name must be at least 2 characters' })
+      .max(100, { message: 'College / Institute name cannot exceed 100 characters' }),
+    city: z
+      .string()
+      .trim()
+      .min(2, { message: 'City must be at least 2 characters' })
+      .max(50, { message: 'City cannot exceed 50 characters' }),
     leaderName: z
       .string()
       .trim()
@@ -45,7 +58,7 @@ export const registrationSchema = z
     leaderPhone: z
       .string()
       .trim()
-      .regex(PHONE_REGEX, { message: 'Enter a valid leader phone number (10-15 digits)' }),
+      .regex(INDIAN_MOBILE_REGEX, { message: 'Enter a valid 10-digit Indian mobile number' }),
     members: z
       .array(memberSchema)
       .max(3, { message: 'Maximum 3 additional team members allowed (squad cap is 4 players)' })
@@ -86,6 +99,8 @@ export interface RegistrationRecord {
   edition: string;
   team_name: string;
   track: 'gaming' | 'vr';
+  college: string;
+  city: string;
   leader_name: string;
   leader_email: string;
   leader_phone: string;

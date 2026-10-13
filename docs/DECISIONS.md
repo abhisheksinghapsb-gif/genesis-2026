@@ -80,3 +80,35 @@ This document tracks default design decisions, trade-offs, and how to change the
 * **Context:** GENESIS 2026 is free of charge (`registrationFee: 0`, `paymentsEnabled: false` in `event.json`).
 * **Decision:** The backend and frontend enforce free entry. Payment processing libraries are strictly excluded from dependencies to preserve bundle budget. If paid registrations are added in a future edition, an extension point is documented to introduce a Razorpay/Stripe checkout webhook step between validation and DB insertion.
 
+---
+
+### DECISION 011: 3-Step Wizard Navigation & Shared Schema Validation
+* **Context:** A lengthy registration form overwhelms users on mobile devices. Separating into discrete steps improves conversion while ensuring client and server validation rules never drift.
+* **Decision:** Implemented a 3-step wizard in `components/register/RegisterSection.tsx`:
+  - **Step 1 Team**: Team Name, Competitive Track (Gaming vs VR via inline SVG icons), College, City.
+  - **Step 2 Members**: Team size selector (1 to 4 players) dynamically controlling member input rows (1 = Solo Leader only; 2–4 = Leader + additional members). Leader requires 10-digit Indian mobile.
+  - **Step 3 Review**: Read-only summary card, consent checkbox, Turnstile bot check, and final submission.
+  All steps share the exact same Zod schema defined in `lib/validation.ts`.
+* **How to Change:** Update `registrationSchema` in `lib/validation.ts` to add or modify registration fields.
+
+---
+
+### DECISION 012: LocalStorage Draft Autosave & Turnstile Isolation
+* **Context:** Accidental page reloads, network flickers, or mobile app switching should not destroy participant progress.
+* **Decision:** As users edit fields, a debounced snapshot is saved to `localStorage` under `genesis_registration_draft`. On initial load, saved data is restored with a non-intrusive status pill. Upon successful submission, the draft is purged. Security constraint: the Cloudflare Turnstile token is explicitly excluded from persistence.
+* **How to Change:** Adjust storage key or debounce window in `components/register/RegisterSection.tsx`.
+
+---
+
+### DECISION 013: Zero-Dependency Analytics Event Dispatcher
+* **Context:** Tournament step drop-offs need tracking without loading heavyweight third-party trackers (Google Analytics, Segment) that degrade page load speed and consume initial JS budget.
+* **Decision:** Implemented a tiny `track()` helper in `lib/analytics.ts`. It executes via `navigator.sendBeacon()` or `fetch({ keepalive: true })` only when `NEXT_PUBLIC_ANALYTICS_URL` is configured; otherwise, it remains a zero-cost silent no-op.
+* **How to Change:** Supply an endpoint URL in `NEXT_PUBLIC_ANALYTICS_URL`.
+
+---
+
+### DECISION 014: RFC 5545 iCalendar (.ics) Generation for Tournament Attendance
+* **Context:** Registered attendees should easily add tournament match dates and check-in details to their device calendars without server-side dependencies.
+* **Decision:** `lib/calendar.ts` constructs RFC 5545 iCalendar content directly in memory from `content/event.json` dates (`2026-12-12` to `2026-12-13`), personalizes it with the generated Team ID, and initiates an immediate client-side `.ics` file download.
+
+

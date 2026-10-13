@@ -7,7 +7,7 @@ import { MemoryAdapter, setDbAdapter } from '@/lib/db';
 import { MockEmailProvider, setEmailProvider } from '@/lib/email';
 import { resetRateLimits } from '@/lib/ratelimit';
 
-describe('Phase 6 API: Squad Registration & Stats', () => {
+describe('Phase 6 & 7 API: Squad Registration & Stats', () => {
   let memoryDb: MemoryAdapter;
   let mockEmail: MockEmailProvider;
 
@@ -43,10 +43,12 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     });
   };
 
-  it('successfully registers a valid solo squad and dispatches confirmation email', async () => {
+  it('successfully registers a valid solo squad with college and city, and dispatches confirmation email', async () => {
     const payload = {
       teamName: 'Vortex Legends',
       track: 'gaming',
+      college: 'Army Institute of Technology',
+      city: 'Pune',
       leaderName: 'Karan Mehra',
       leaderEmail: 'karan@example.com',
       leaderPhone: '+919876543210',
@@ -64,6 +66,8 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     expect(data.teamId).toMatch(/^GEN-2026-\d{4}$/);
     expect(data.teamName).toBe('Vortex Legends');
     expect(data.track).toBe('gaming');
+    expect(data.college).toBe('Army Institute of Technology');
+    expect(data.city).toBe('Pune');
     expect(data.memberCount).toBe(1);
 
     // Verify mock email was sent
@@ -76,6 +80,8 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     const payload = {
       teamName: 'VR Cyber Knights',
       track: 'vr',
+      college: 'COEP Technological University',
+      city: 'Pune',
       leaderName: 'Ananya Sharma',
       leaderEmail: 'ananya@example.com',
       leaderPhone: '+919876543215',
@@ -102,6 +108,8 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     const payload = {
       teamName: 'Rogue Squad',
       track: 'gaming',
+      college: 'AIT Pune',
+      city: 'Pune',
       leaderName: 'Arjun Das',
       leaderEmail: 'arjun@example.com',
       leaderPhone: '+919876543219',
@@ -122,6 +130,8 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     const payload1 = {
       teamName: 'Alpha Clan',
       track: 'gaming',
+      college: 'AIT Pune',
+      city: 'Pune',
       leaderName: 'Sameer Rao',
       leaderEmail: 'sameer@example.com',
       leaderPhone: '+919876543290',
@@ -138,6 +148,8 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     const payload2 = {
       teamName: 'Beta Clan',
       track: 'vr',
+      college: 'AIT Pune',
+      city: 'Pune',
       leaderName: 'Sameer Rao',
       leaderEmail: 'sameer@example.com',
       leaderPhone: '+919876543291',
@@ -158,6 +170,8 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     const payload1 = {
       teamName: 'Gamma Team',
       track: 'gaming',
+      college: 'AIT Pune',
+      city: 'Pune',
       leaderName: 'Rahul V',
       leaderEmail: 'rahul1@example.com',
       leaderPhone: '+919876543888',
@@ -174,6 +188,8 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     const payload2 = {
       teamName: 'Delta Team',
       track: 'gaming',
+      college: 'AIT Pune',
+      city: 'Pune',
       leaderName: 'Other Person',
       leaderEmail: 'other@example.com',
       leaderPhone: '+919876543888',
@@ -194,6 +210,8 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     const payload = {
       teamName: 'Self Loopers',
       track: 'gaming',
+      college: 'AIT Pune',
+      city: 'Pune',
       leaderName: 'Sanjay Dutt',
       leaderEmail: 'sanjay@example.com',
       leaderPhone: '+919876543777',
@@ -214,6 +232,8 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     const payload = {
       teamName: 'Overcrowded Army',
       track: 'gaming',
+      college: 'AIT Pune',
+      city: 'Pune',
       leaderName: 'Captain Over',
       leaderEmail: 'captain@example.com',
       leaderPhone: '+919876543666',
@@ -240,6 +260,8 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     const payload = {
       teamName: 'Hype Check Squad',
       track: 'gaming',
+      college: 'AIT Pune',
+      city: 'Pune',
       leaderName: 'Hype Leader',
       leaderEmail: 'hype@example.com',
       leaderPhone: '+919876543555',
@@ -265,6 +287,8 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     const payload = {
       teamName: 'Admin Inspection Squad',
       track: 'vr',
+      college: 'AIT Pune',
+      city: 'Pune',
       leaderName: 'Admin Inspect Leader',
       leaderEmail: 'admin-inspect@example.com',
       leaderPhone: '+919876543444',
@@ -288,6 +312,8 @@ describe('Phase 6 API: Squad Registration & Stats', () => {
     const payload = {
       teamName: 'Spam Squad',
       track: 'gaming',
+      college: 'AIT Pune',
+      city: 'Pune',
       leaderName: 'Spam Leader',
       leaderEmail: 'spam1@example.com',
       leaderPhone: '+919876543331',
